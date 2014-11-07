@@ -155,7 +155,7 @@ public class RenderLib
 		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 		glEnable(GL_LIGHTING);
 	}
-	
+
 	/**
 	 * Combonation of GL functions used to smooth out the rough edges of a 2D texture.
 	 */
@@ -234,7 +234,8 @@ public class RenderLib
 		try
 		{
 			return (ModelBase) (modelClass.getConstructor()).newInstance(new Object[] {});
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			AIRI.logger.bug("Error creating new model instance.");
 			e.printStackTrace();
@@ -273,7 +274,7 @@ public class RenderLib
 	{
 		drawGradientRect(x, y, x + w, y + h, 0, color1, color2);
 	}
-	
+
 	/**
 	 * Draws a rectangle at the specified coordinates, with the 
 	 * specified width, height and linear gradient color.
@@ -287,26 +288,26 @@ public class RenderLib
 	 * @param color2 - Second color of the linear gradient
 	 */
 	public static void drawGradientRect(int x, int y, int w, int h, int zLevel, int color1, int color2)
-    {
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_ALPHA_TEST);
-        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        Tessellator tessellator = Tessellator.instance;
-        tessellator.startDrawingQuads();
-        tessellator.setColorRGBA_F((float)(color1 >> 16 & 255) / 255.0F, (float)(color1 >> 8 & 255) / 255.0F, (float)(color1 & 255) / 255.0F, (float)(color1 >> 24 & 255) / 255.0F);
-        tessellator.addVertex((double)w, (double)y, (double)zLevel);
-        tessellator.addVertex((double)x, (double)y, (double)zLevel);
-        tessellator.setColorRGBA_F((float)(color2 >> 16 & 255) / 255.0F, (float)(color2 >> 8 & 255) / 255.0F, (float)(color2 & 255) / 255.0F, (float)(color2 >> 24 & 255) / 255.0F);
-        tessellator.addVertex((double)x, (double)h, (double)zLevel);
-        tessellator.addVertex((double)w, (double)h, (double)zLevel);
-        tessellator.draw();
-        GL11.glShadeModel(GL11.GL_FLAT);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_ALPHA_TEST);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-    }
+	{
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_ALPHA_TEST);
+		OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		Tessellator tessellator = Tessellator.instance;
+		tessellator.startDrawingQuads();
+		tessellator.setColorRGBA_F((float) (color1 >> 16 & 255) / 255.0F, (float) (color1 >> 8 & 255) / 255.0F, (float) (color1 & 255) / 255.0F, (float) (color1 >> 24 & 255) / 255.0F);
+		tessellator.addVertex((double) w, (double) y, (double) zLevel);
+		tessellator.addVertex((double) x, (double) y, (double) zLevel);
+		tessellator.setColorRGBA_F((float) (color2 >> 16 & 255) / 255.0F, (float) (color2 >> 8 & 255) / 255.0F, (float) (color2 & 255) / 255.0F, (float) (color2 >> 24 & 255) / 255.0F);
+		tessellator.addVertex((double) x, (double) h, (double) zLevel);
+		tessellator.addVertex((double) w, (double) h, (double) zLevel);
+		tessellator.draw();
+		GL11.glShadeModel(GL11.GL_FLAT);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glEnable(GL11.GL_ALPHA_TEST);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+	}
 
 	/**
 	 * Draws a quad at the specified coordinates, with the 
@@ -414,10 +415,10 @@ public class RenderLib
 	{
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(x + 0, y + h, z, minU, maxV);
-		tessellator.addVertexWithUV(x + w, y + h, z, maxU, maxV);
-		tessellator.addVertexWithUV(x + w, y + 0, z, maxU, minV);
-		tessellator.addVertexWithUV(x + 0, y + 0, z, minU, minV);
+		tessellator.addVertexWithUV(x + 0, y + h, z, minU, minV);
+		tessellator.addVertexWithUV(x + w, y + h, z, maxU, minV);
+		tessellator.addVertexWithUV(x + w, y + 0, z, maxU, maxV);
+		tessellator.addVertexWithUV(x + 0, y + 0, z, minU, maxV);
 		tessellator.draw();
 	}
 
@@ -433,8 +434,10 @@ public class RenderLib
 	public static void drawString(String text, int x, int y, int color, boolean shadow)
 	{
 		text = I18n.format(text);
-		if (shadow) Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, color);
-		if (!shadow) Minecraft.getMinecraft().fontRenderer.drawString(text, x, y, color);
+		if (shadow)
+			Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, color);
+		if (!shadow)
+			Minecraft.getMinecraft().fontRenderer.drawString(text, x, y, color);
 		glColorHexRGB(0xFFFFFF);
 	}
 
@@ -622,6 +625,7 @@ public class RenderLib
 	public static interface ITooltipLineHandler
 	{
 		public Dimension getSize();
+
 		public void draw(int x, int y);
 	}
 
@@ -668,7 +672,8 @@ public class RenderLib
 		if (x < 8)
 		{
 			x = 8;
-		} else if (x > scaledDisplayResolution().getScaledWidth() - w - 8)
+		}
+		else if (x > scaledDisplayResolution().getScaledWidth() - w - 8)
 		{
 			x -= 24 + w;
 		}
@@ -684,7 +689,8 @@ public class RenderLib
 			{
 				line.draw(x, y);
 				y += line.getSize().height;
-			} else
+			}
+			else
 			{
 				Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(s, x, y, -1);
 				y += s.endsWith(TOOLTIP_LINESPACE) ? 12 : 10;
@@ -772,7 +778,8 @@ public class RenderLib
 		{
 			Gui.drawRect(posX + 1, posY + 1, posX + ((((curProgress * maxProgress) / maxProgress) * barWidth) / maxProgress) - 1, posY + 4 + barHeight, color);
 			Gui.drawRect(posX + 1, posY + 2 + (barHeight / 2), posX + ((((curProgress * maxProgress) / maxProgress) * barWidth) / maxProgress) - 1, posY + 4 + barHeight, 0x55000000);
-		} else if (curProgress > maxProgress / barWidth)
+		}
+		else if (curProgress > maxProgress / barWidth)
 		{
 			int spaceBetweenBars = 1;
 			int amountOfBars = 70;
@@ -951,7 +958,8 @@ public class RenderLib
 				}
 
 				ImageIO.write(image, format, new File(file, filename));
-			} catch (IOException e)
+			}
+			catch (IOException e)
 			{
 				e.printStackTrace();
 			}
@@ -968,7 +976,7 @@ public class RenderLib
 	{
 		drawModel(null, model, resource, 0, 0, 0);
 	}
-	
+
 	/**
 	 * Draw the specified ModelBase instance at the specified coordinates with the
 	 * specified ResourceLocation.
@@ -983,7 +991,7 @@ public class RenderLib
 	{
 		drawModel(null, model, resource, posX, posY, posZ);
 	}
-	
+
 	/**
 	 * Draw the specified ModelBase instance at the specified coordinates with the
 	 * specified ResourceLocation.
@@ -996,7 +1004,7 @@ public class RenderLib
 	{
 		drawModel(entity, model, resource, 0, 0, 0);
 	}
-	
+
 	/**
 	 * Draw the specified ModelBase instance at the specified coordinates with the
 	 * specified ResourceLocation.
@@ -1015,7 +1023,7 @@ public class RenderLib
 		GL11.glTranslated(posX, posY, posZ);
 		model.render(entity, 0, 0, 0, 0, 0, 0.625F);
 	}
-	
+
 	/**
 	 * Draw the specified ModelBase instance at the specified coordinates with the
 	 * specified ResourceLocation.
@@ -1067,14 +1075,14 @@ public class RenderLib
 		glRotatef(-((float) Math.atan(pitch / 40.0F)) * 20.0F, 1.0F, 0.0F, 0.0F);
 		entity.rotationYaw = (float) Math.atan(yaw / 40.0F) * 40.0F;
 		entity.rotationPitch = -((float) Math.atan(pitch / 40.0F)) * 20.0F;
-		
+
 		if (entity instanceof EntityLivingBase)
 		{
 			((EntityLivingBase) entity).renderYawOffset = (float) Math.atan(yaw / 40.0F) * 20.0F;
 			((EntityLivingBase) entity).rotationYawHead = entity.rotationYaw;
 			((EntityLivingBase) entity).prevRotationYawHead = entity.rotationYaw;
 		}
-		
+
 		glTranslatef(0.0F, entity.yOffset, 0.0F);
 		RenderManager.instance.playerViewY = 180.0F;
 		RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
@@ -1096,42 +1104,8 @@ public class RenderLib
 		ResourceLocation resource = downloadResource(String.format("http://s3.amazonaws.com/MinecraftSkins/%s.png", username), AbstractClientPlayer.locationStevePng, false);
 
 		bindTexture(resource);
-		{
-			float posY1 = 0.5F;
-			float posX1 = 0.25F;
-			float posY2 = 0.125F;
-			float posX2 = 0.25F;
-
-			glBegin(GL_QUADS);
-			glTexCoord2f(posY2, posX1);
-			glVertex3f(x, y, 0);
-			glTexCoord2f(posY2, posY1);
-			glVertex3f(x, y + height, 0);
-			glTexCoord2f(posX2, posY1);
-			glVertex3f(x + width, y + height, 0);
-			glTexCoord2f(posX2, posX1);
-			glVertex3f(x + width, y, 0);
-			glEnd();
-		}
-
-		bindTexture(resource);
-		{
-			float posY1 = 0.5F;
-			float posX1 = 0.25F;
-			float posY2 = 0.75F;
-			float posX2 = 0.625F;
-
-			glBegin(GL_QUADS);
-			glTexCoord2f(posY2, posX1);
-			glVertex3f(x, y, 0);
-			glTexCoord2f(posY2, posY1);
-			glVertex3f(x, y + height, 0);
-			glTexCoord2f(posX2, posY1);
-			glVertex3f(x + width, y + height, 0);
-			glTexCoord2f(posX2, posX1);
-			glVertex3f(x + width, y, 0);
-			glEnd();
-		}
+		drawQuad(x, y, width, height, 90, 0.125F, 0.25F, 0.5F, 0.25F);
+		drawQuad(x, y, width, height, 90, 0.75F, 0.625F, 0.5F, 0.25F);
 	}
 
 	/**
@@ -1357,7 +1331,7 @@ public class RenderLib
 			drawQuad(x, y, width, height, 0, 0, u, 0, v);
 		}
 	}
-	
+
 	/**
 	 * @param block - Block to get the ResourceLocation from
 	 * @param side - Side to get the ResourceLocation from
@@ -1451,7 +1425,7 @@ public class RenderLib
 		{
 			private String name, uuid;
 			private ResourceLocation resource;
-			
+
 			public PlayerResource(String username)
 			{
 				this.name = username;
