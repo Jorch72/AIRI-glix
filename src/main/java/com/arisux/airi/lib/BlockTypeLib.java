@@ -17,7 +17,9 @@ public class BlockTypeLib
 {
 	public static class HookedBlock extends Block
 	{
-		private boolean renderNormal, isOpaque, disableIcon;
+		protected boolean renderNormal;
+		protected boolean isOpaque;
+		private boolean disableIcon;
 
 		public HookedBlock(Material material)
 		{
@@ -74,9 +76,6 @@ public class BlockTypeLib
 	
 	public static class HookedBlockSlab extends BlockSlab
 	{
-		public boolean isOpaque;
-		public boolean rendersNormally;
-
 		public HookedBlockSlab(Material material)
 		{
 			super(false, material);
@@ -191,6 +190,8 @@ public class BlockTypeLib
 		{
 			super(material);
 			this.isBlockContainer = true;
+			this.isOpaque = false;
+			this.renderNormal = false;
 		}
 		
 		@Override
@@ -199,7 +200,7 @@ public class BlockTypeLib
 	        super.breakBlock(world, posX, posY, posZ, blockBroken, meta);
 	        world.removeTileEntity(posX, posY, posZ);
 	    }
-
+		
 	    @Override
 	    public boolean onBlockEventReceived(World world, int posX, int posY, int posZ, int eventId, int eventData)
 	    {
