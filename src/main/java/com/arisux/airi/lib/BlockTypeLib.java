@@ -1,13 +1,14 @@
 package com.arisux.airi.lib;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockSlab;
-import net.minecraft.block.BlockStairs;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
 
-import com.arisux.airi.lib.BlockLib.BlockIconVector;
+import com.arisux.airi.lib.BlockLib.IconSet;
+import com.arisux.airi.lib.enums.IconSides;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -70,15 +71,15 @@ public class BlockTypeLib
 			return this;
 		}
 	}
-
+	
 	public static class HookedBlockSlab extends BlockSlab
 	{
 		public boolean isOpaque;
 		public boolean rendersNormally;
 
-		public HookedBlockSlab(Material par3)
+		public HookedBlockSlab(Material material)
 		{
-			super(false, par3);
+			super(false, material);
 			this.setBlockName(getLocalizedName() + "Slab");
 		}
 
@@ -100,21 +101,25 @@ public class BlockTypeLib
 			return false;
 		}
 
+		/**
+		 * OBF: func_150002_b
+		 * DEOBF: getFullSlabName
+		 */
 		@Override
-		public String func_150002_b(int var1)
+		public String func_150002_b(int type)
 		{
-			return "slab";
+			return getUnlocalizedName() + "-slab";
 		}
 	}
 
 	public static class HookedBlockStairs extends BlockStairs
 	{
-		public HookedBlockStairs(Block par2Block)
+		public HookedBlockStairs(Block parentBlock)
 		{
-			super(par2Block, 0);
+			super(parentBlock, 0);
 			this.setHardness(3.0F);
 			this.setResistance(3.0F);
-			this.setStepSound(par2Block.stepSound);
+			this.setStepSound(parentBlock.stepSound);
 		}
 
 		@Override
@@ -135,44 +140,72 @@ public class BlockTypeLib
 			return 10;
 		}
 	}
-
+	
 	public static class HookedBlockMultiSided extends HookedBlock
 	{
-		private BlockIconVector vector;
+		private IconSet iconSet;
 
-		public HookedBlockMultiSided(BlockIconVector vector, Material material)
+		public HookedBlockMultiSided(IconSet iconSet, Material material)
 		{
 			super(material);
-			this.vector = vector;
+			this.iconSet = iconSet;
 		}
-
+		
+		@Override
 		@SideOnly(Side.CLIENT)
-		public IIcon getIcon(int i, int meta)
+		public IIcon getIcon(int side, int meta)
 		{
-			switch (i)
+			IconSides iconSide = IconSides.getSideFor(side);
+			
+			switch (iconSide)
 			{
-				case 0://bottom
-					return vector.top;
-				case 1://top
-					return vector.top;
-				case 2://back
-					return vector.front;
-				case 3://front
-					return vector.front;
-				case 4://left
-					return vector.front;
-				case 5://right
-					return vector.front;
+				case BOTTOM:
+					return iconSet.top;
+				case TOP:
+					return iconSet.top;
+				case BACK:
+					return iconSet.front;
+				case FRONT:
+					return iconSet.front;
+				case LEFT:
+					return iconSet.front;
+				case RIGHT:
+					return iconSet.front;
 				default:
-					return vector.front;
+					return iconSet.front;
 			}
 		}
 
+		@Override
 		@SideOnly(Side.CLIENT)
 		public void registerBlockIcons(IIconRegister register)
 		{
-			this.vector.registerIcons(register);
-			this.blockIcon = register.registerIcon(vector.frontRes);
+			this.iconSet.registerIcons(register);
+			this.blockIcon = register.registerIcon(iconSet.frontRes);
 		}
+	}
+	
+	public static abstract class HookedBlockContainer extends HookedBlock implements ITileEntityProvider
+	{
+		public HookedBlockContainer(Material material)
+		{
+			super(material);
+			this.isBlockContainer = true;
+		}
+		
+		@Override
+	    public void breakBlock(World world, int posX, int posY, int posZ, Block blockBroken, int meta)
+	    {
+	        super.breakBlock(world, posX, posY, posZ, blockBroken, meta);
+	        world.removeTileEntity(posX, posY, posZ);
+	    }
+
+	    @Override
+	    public boolean onBlockEventReceived(World world, int posX, int posY, int posZ, int eventId, int eventData)
+	    {
+	        super.onBlockEventReceived(world, posX, posY, posZ, eventId, eventData);
+	        TileEntity tileentity = world.getTileEntity(posX, posY, posZ);
+	        return tileentity != null ? tileentity.receiveClientEvent(eventId, eventData) : false;
+	    }
 	}
 }

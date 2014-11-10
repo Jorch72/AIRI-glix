@@ -15,17 +15,17 @@ import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public class BlockLib
 {
-	public static class BlockIconVector
+	public static class IconSet
 	{
 		public IIcon icon, top, bottom, front, back, left, right;
 		public String iconRes, topRes, bottomRes, frontRes, backRes, leftRes, rightRes;
 
-		public BlockIconVector(String icon)
+		public IconSet(String icon)
 		{
 			this(icon, null, null, null, null, null, null);
 		}
 
-		public BlockIconVector(String icon, String top, String bottom, String front, String back, String left, String right)
+		public IconSet(String icon, String top, String bottom, String front, String back, String left, String right)
 		{
 			this.iconRes = icon;
 			this.topRes = top;
