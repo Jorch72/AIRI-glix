@@ -3,6 +3,7 @@ package com.arisux.airi.lib;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
@@ -10,6 +11,7 @@ import net.minecraft.world.World;
 import com.arisux.airi.lib.BlockLib.IconSet;
 import com.arisux.airi.lib.enums.IconSides;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -71,6 +73,16 @@ public class BlockTypeLib
 		{
 			this.disableIcon = true;
 			return this;
+		}
+		
+		public float getHardness()
+		{
+			return this.blockHardness;
+		}
+		
+		public float getResistance()
+		{
+			return this.blockResistance;
 		}
 	}
 	
@@ -208,5 +220,55 @@ public class BlockTypeLib
 	        TileEntity tileentity = world.getTileEntity(posX, posY, posZ);
 	        return tileentity != null ? tileentity.receiveClientEvent(eventId, eventData) : false;
 	    }
+	}
+	
+	public static class GhostBlock extends HookedBlock
+	{
+		private Block parentBlock;
+		
+		public GhostBlock(Block parentBlock)
+		{
+			super(parentBlock.getMaterial());
+			this.disableIcon();
+			this.parentBlock = parentBlock;
+			this.register();
+		}
+		
+		@Override
+		public int getRenderType()
+		{
+			return -1;
+		}
+		
+		public Block getParentBlock()
+		{
+			return parentBlock;
+		}
+		
+		public GhostBlock setAttributesFrom(HookedBlock block)
+		{
+			this.setHardness(block.getHardness());
+			this.setResistance(block.getResistance());
+			this.setStepSound(block.stepSound);
+			return this;
+		}
+		
+		public GhostBlock register()
+		{
+			GameRegistry.registerBlock(this, this.parentBlock.getUnlocalizedName() + "Ghost");
+			return this;
+		}
+		
+		@Override
+		public boolean onBlockActivated(World world, int posX, int posY, int posZ, EntityPlayer player, int side, float subX, float subY, float subZ)
+		{
+			return parentBlock.onBlockActivated(world, posX, posY, posZ, player, side, subX, subY, subZ);
+		}
+		
+		@Override
+		public void breakBlock(World world, int posX, int posY, int posZ, Block blockBroken, int meta)
+		{
+			parentBlock.breakBlock(world, posX, posY, posZ, blockBroken, meta);
+		}
 	}
 }
