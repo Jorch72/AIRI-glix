@@ -182,9 +182,37 @@ public class BlockLib
 			return new CoordData(this.posX + data.posX, this.posY + data.posY, this.posZ + data.posZ);
 		}
 		
+		public CoordData add(int posX, int posY, int posZ)
+		{
+			return this.add(new CoordData(posX, posY, posZ));
+		}
+		
 		public CoordData subtract(CoordData data)
 		{
 			return new CoordData(this.max(data).posX - this.min(data).posX, this.max(data).posY - this.min(data).posY, this.max(data).posZ - this.min(data).posZ);
+		}
+		
+		public CoordData subtract(int posX, int posY, int posZ)
+		{
+			return this.add(new CoordData(posX, posY, posZ));
+		}
+		
+		public CoordData offsetX(int amount)
+		{
+			this.posX = this.posX + amount;
+			return this;
+		}
+		
+		public CoordData offsetY(int amount)
+		{
+			this.posY = this.posY + amount;
+			return this;
+		}
+		
+		public CoordData offsetZ(int amount)
+		{
+			this.posZ = this.posZ + amount;
+			return this;
 		}
 		
 		public void set(CoordData data)
