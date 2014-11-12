@@ -286,14 +286,4 @@ public class RegistryLib
 
 		return foundRecipes;
 	}
-	
-	/**
-	 * A more efficient way of registerring an ISimpleBlockRenderingHandler.
-	 * @param blockRenderer - The ISimpleBlockRenderingHandler to register.
-	 */
-	@SideOnly(Side.CLIENT)
-	public static void registerBlockRenderer(ISimpleBlockRenderingHandler blockRenderer)
-	{
-		RenderingRegistry.registerBlockHandler(blockRenderer.getRenderId(), blockRenderer);
-	}
 }
