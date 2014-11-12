@@ -12,7 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
-import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -285,5 +285,15 @@ public class RegistryLib
 		}
 
 		return foundRecipes;
+	}
+	
+	/**
+	 * A more efficient way of registerring an ISimpleBlockRenderingHandler.
+	 * @param blockRenderer - The ISimpleBlockRenderingHandler to register.
+	 */
+	@SideOnly(Side.CLIENT)
+	public static void registerBlockRenderer(ISimpleBlockRenderingHandler blockRenderer)
+	{
+		RenderingRegistry.registerBlockHandler(blockRenderer.getRenderId(), blockRenderer);
 	}
 }
