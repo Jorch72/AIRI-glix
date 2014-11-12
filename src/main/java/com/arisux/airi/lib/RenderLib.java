@@ -1287,7 +1287,7 @@ public class RenderLib
 		if (icon != null)
 		{
 			bindTexture(getBlockSideResourceLocation(block, side));
-			drawQuad(x, y, width, height, 0, 0, u, 0, v);
+			drawQuad(x, y, width, height, 0, 0, -u, 0, -v);
 		}
 	}
 

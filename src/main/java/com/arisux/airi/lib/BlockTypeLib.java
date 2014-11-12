@@ -231,7 +231,6 @@ public class BlockTypeLib
 			super(parentBlock.getMaterial());
 			this.disableIcon();
 			this.parentBlock = parentBlock;
-			this.register();
 		}
 		
 		@Override
@@ -252,13 +251,7 @@ public class BlockTypeLib
 			this.setStepSound(block.stepSound);
 			return this;
 		}
-		
-		public GhostBlock register()
-		{
-			GameRegistry.registerBlock(this, this.parentBlock.getUnlocalizedName() + "Ghost");
-			return this;
-		}
-		
+
 		@Override
 		public boolean onBlockActivated(World world, int posX, int posY, int posZ, EntityPlayer player, int side, float subX, float subY, float subZ)
 		{
