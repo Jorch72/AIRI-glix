@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import com.arisux.airi.lib.BlockLib.IconSet;
 import com.arisux.airi.lib.enums.IconSides;
 
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -22,6 +23,7 @@ public class BlockTypeLib
 		protected boolean renderNormal;
 		protected boolean isOpaque;
 		private boolean disableIcon;
+		private ISimpleBlockRenderingHandler renderType;
 
 		public HookedBlock(Material material)
 		{
@@ -31,6 +33,13 @@ public class BlockTypeLib
 			this.disableIcon = false;
 		}
 
+		@SideOnly(Side.CLIENT)
+		public Block setRenderType(ISimpleBlockRenderingHandler renderType)
+		{
+			this.renderType = renderType;
+			return this;
+		}
+		
 		public Block setRenderNormal(boolean renderNormal)
 		{
 			this.renderNormal = renderNormal;
@@ -52,6 +61,12 @@ public class BlockTypeLib
 		{
 			this.isOpaque = opaque;
 			return this;
+		}
+		
+		@Override
+		public int getRenderType()
+		{
+			return this.renderType == null ? 0 : this.renderType.getRenderId();
 		}
 
 		@Override
