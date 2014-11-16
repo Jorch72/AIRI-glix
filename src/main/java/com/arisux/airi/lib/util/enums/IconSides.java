@@ -1,4 +1,4 @@
-package com.arisux.airi.lib.enums;
+package com.arisux.airi.lib.util.enums;
 
 public enum IconSides
 {

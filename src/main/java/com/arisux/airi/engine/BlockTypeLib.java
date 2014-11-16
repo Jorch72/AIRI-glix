@@ -1,4 +1,4 @@
-package com.arisux.airi.lib;
+package com.arisux.airi.engine;
 
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -8,11 +8,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-import com.arisux.airi.lib.BlockLib.IconSet;
-import com.arisux.airi.lib.enums.IconSides;
+import com.arisux.airi.engine.BlockLib.IconSet;
+import com.arisux.airi.lib.util.enums.IconSides;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

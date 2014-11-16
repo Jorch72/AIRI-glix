@@ -10,9 +10,9 @@ import com.arisux.airi.api.updater.Changelog;
 import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.window.IWindow;
 import com.arisux.airi.api.window.Window;
-import com.arisux.airi.lib.GuiTypeLib.GuiCustomButton;
-import com.arisux.airi.lib.RenderLib;
-import com.arisux.airi.lib.interfaces.IActionPerformed;
+import com.arisux.airi.engine.RenderEngine;
+import com.arisux.airi.engine.GuiTypeLib.GuiCustomButton;
+import com.arisux.airi.lib.util.interfaces.IActionPerformed;
 
 public class WindowUpdates extends Window implements IWindow
 {
@@ -40,9 +40,9 @@ public class WindowUpdates extends Window implements IWindow
 		this.setTitle(AIRI.instance().updaterapi.getAvailableUpdates().size() + " Updates Available - " + (updater.getUpdaterId() + 1) + " of " + AIRI.instance().updaterapi.getAvailableUpdates().size());
 		String message = updater.getVersionData().get("MODID") + " " + updater.getVersionData().get("MODVER") + " for Minecraft " + updater.getVersionData().get("MCVER");
 
-		RenderLib.drawStringAlignCenter(message, this.xPos + this.width / 2, this.yPos + 10, 0x00AAFF);
-		RenderLib.drawStringAlignCenter("Minecraft Forge " + updater.getVersionData().get("FORGEVER"), this.xPos + this.width / 2, this.yPos + 20, 0xAAAAAA);
-		RenderLib.drawRectWithOutline(this.xPos + 5, this.yPos + 35, this.width - 10, this.height - 40, 1, 0xFF000000, 0xFF111111);
+		RenderEngine.drawStringAlignCenter(message, this.xPos + this.width / 2, this.yPos + 10, 0x00AAFF);
+		RenderEngine.drawStringAlignCenter("Minecraft Forge " + updater.getVersionData().get("FORGEVER"), this.xPos + this.width / 2, this.yPos + 20, 0xAAAAAA);
+		RenderEngine.drawRectWithOutline(this.xPos + 5, this.yPos + 35, this.width - 10, this.height - 40, 1, 0xFF000000, 0xFF111111);
 
 		GL11.glPushMatrix();
 		{
@@ -61,10 +61,10 @@ public class WindowUpdates extends Window implements IWindow
 					{
 						Minecraft.getMinecraft().fontRenderer.drawString(lines[x - 1], this.xPos * 2 + 20, this.yPos * 2 + 70 + (x * 10), 0xFF444444);
 
-						if (RenderLib.getStringRenderWidth(lines[x - 1]) > RenderLib.getStringRenderWidth(longestLine))
+						if (RenderEngine.getStringRenderWidth(lines[x - 1]) > RenderEngine.getStringRenderWidth(longestLine))
 						{
 							longestLine = lines[x - 1];
-							this.width = RenderLib.getStringRenderWidth(longestLine) / 2 < RenderLib.getStringRenderWidth(message) ? RenderLib.getStringRenderWidth(message) + 10 : RenderLib.getStringRenderWidth(longestLine) / 2 + 50;
+							this.width = RenderEngine.getStringRenderWidth(longestLine) / 2 < RenderEngine.getStringRenderWidth(message) ? RenderEngine.getStringRenderWidth(message) + 10 : RenderEngine.getStringRenderWidth(longestLine) / 2 + 50;
 							this.height = 50 + lines.length * 5;
 						}
 					}
@@ -94,7 +94,7 @@ public class WindowUpdates extends Window implements IWindow
 			});
 			if (buttonNext.isMouseOver())
 			{
-				RenderLib.drawToolTip(mouseX + 10, mouseY, "View next update");
+				RenderEngine.drawToolTip(mouseX + 10, mouseY, "View next update");
 			}
 		}
 
@@ -117,7 +117,7 @@ public class WindowUpdates extends Window implements IWindow
 			});
 			if (buttonPrevious.isMouseOver())
 			{
-				RenderLib.drawToolTip(mouseX + 10, mouseY, "View previous update");
+				RenderEngine.drawToolTip(mouseX + 10, mouseY, "View previous update");
 			}
 		}
 	}

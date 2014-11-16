@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 
-import com.arisux.airi.lib.RenderLib.PlayerResourceManager;
+import com.arisux.airi.engine.RenderEngine.PlayerResourceManager;
 
 public abstract class ItemRenderer3D implements IItemRenderer
 {

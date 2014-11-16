@@ -2,16 +2,17 @@ package com.arisux.airi.api.remapping;
 
 import java.util.ArrayList;
 
-import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.interfaces.IInitializable;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
+
+import com.arisux.airi.AIRI;
+import com.arisux.airi.lib.util.interfaces.IInitializablePre;
+
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent.MissingMapping;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-public class RemappingAPI implements IInitializable
+public class RemappingAPI implements IInitializablePre
 {
 	private ArrayList<RemappedMod> modsToRemap = new ArrayList<RemappedMod>();
 
@@ -21,7 +22,7 @@ public class RemappingAPI implements IInitializable
 	}
 	
 	@Override
-	public void initialize()
+	public void preInitialize(FMLPreInitializationEvent event)
 	{
 		;
 	}

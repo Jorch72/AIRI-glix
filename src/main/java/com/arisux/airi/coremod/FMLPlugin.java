@@ -2,16 +2,17 @@ package com.arisux.airi.coremod;
 
 import java.util.Map;
 
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 
-@MCVersion(value="1.7.10")
+@MCVersion(value=MinecraftForge.MC_VERSION)
 public class FMLPlugin implements IFMLLoadingPlugin
 {
 	@Override
 	public String[] getASMTransformerClass()
 	{
-		return new String[] { AIRIAccessTransformer.class.getName(), ASMTransformer.class.getName() };
+		return new String[] { AIRIAccessTransformer.class.getName(), AIRIClassTransformer.class.getName() };
 	}
 
 	@Override

@@ -6,14 +6,15 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import com.arisux.airi.AIRI;
 import com.arisux.airi.Settings;
-import com.arisux.airi.lib.NetworkLib;
-import com.arisux.airi.lib.PlayerLib;
-import com.arisux.airi.lib.interfaces.IInitializable;
+import com.arisux.airi.engine.WorldEngine;
+import com.arisux.airi.lib.util.NetworkUtil;
+import com.arisux.airi.lib.util.interfaces.IInitializablePost;
 
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class Updater implements IInitializable
+public class Updater implements IInitializablePost
 {
 	private HashMap<String, String> versionData = new HashMap<String, String>();
 	private String modId, curVer, updateUrl, downloadUrl, changelogUrl;
@@ -31,7 +32,8 @@ public class Updater implements IInitializable
 		this.changelogUrl = changelogUrl;
 	}
 
-	public void initialize()
+	@Override
+	public void postInitialize(FMLPostInitializationEvent event)
 	{
 		if (AIRI.instance().settings.propertyList.get(Settings.Setting.NETWORKING).getBoolean())
 		{
@@ -52,7 +54,7 @@ public class Updater implements IInitializable
 		{
 			String updateString = "Update: " + getVersionData().get("MODID") + " " + getVersionData().get("MODVER") + " for Minecraft " + getVersionData().get("MCVER");
 			AIRI.logger.info(updateString);
-			PlayerLib.sendToChat(thePlayer, updateString);
+			WorldEngine.Entities.Players.sendToChat(thePlayer, updateString);
 		}
 	}
 
@@ -76,7 +78,7 @@ public class Updater implements IInitializable
 	{
 		this.isVersionDataValid();
 
-		String retrieved = NetworkLib.getURLContents(updateUrl);
+		String retrieved = NetworkUtil.getURLContents(updateUrl);
 
 		if (retrieved != null)
 		{
@@ -98,7 +100,7 @@ public class Updater implements IInitializable
 		{
 			if (isUpdateAvailable() && changelogUrl != null)
 			{
-				String preParsedChangelog = NetworkLib.getURLContents(changelogUrl, true);
+				String preParsedChangelog = NetworkUtil.getURLContents(changelogUrl, true);
 
 				if (preParsedChangelog != null)
 				{

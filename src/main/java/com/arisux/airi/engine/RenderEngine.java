@@ -1,4 +1,4 @@
-package com.arisux.airi.lib;
+package com.arisux.airi.engine;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -39,10 +39,11 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.Color;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.GuiTypeLib.GuiCustomScreen;
+import com.arisux.airi.engine.GuiTypeLib.GuiCustomScreen;
 import com.arisux.airi.lib.compatibility.ScaledResolution;
+import com.arisux.airi.lib.util.MathUtil;
 
-public class RenderLib
+public class RenderEngine
 {
 	public static final GuiCustomScreen guiHook = new GuiCustomScreen();
 	public static boolean lightmapTexUnitTextureEnable;
@@ -132,7 +133,7 @@ public class RenderLib
 	 */
 	public static int glGetTextureID(ResourceLocation resource)
 	{
-		Object object = (ITextureObject) Minecraft.getMinecraft().getTextureManager().getTexture(resource);
+		Object object = Minecraft.getMinecraft().getTextureManager().getTexture(resource);
 		object = object == null ? new SimpleTexture(resource) : object;
 		return ((ITextureObject) object).getGlTextureId();
 	}
@@ -192,7 +193,7 @@ public class RenderLib
 	{
 		try
 		{
-			return (ModelBase) (modelClass.getConstructor()).newInstance(new Object[] {});
+			return (modelClass.getConstructor()).newInstance(new Object[] {});
 		}
 		catch (Exception e)
 		{
@@ -255,12 +256,12 @@ public class RenderLib
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
-		tessellator.setColorRGBA_F((float) (color1 >> 16 & 255) / 255.0F, (float) (color1 >> 8 & 255) / 255.0F, (float) (color1 & 255) / 255.0F, (float) (color1 >> 24 & 255) / 255.0F);
-		tessellator.addVertex((double) w, (double) y, (double) zLevel);
-		tessellator.addVertex((double) x, (double) y, (double) zLevel);
-		tessellator.setColorRGBA_F((float) (color2 >> 16 & 255) / 255.0F, (float) (color2 >> 8 & 255) / 255.0F, (float) (color2 & 255) / 255.0F, (float) (color2 >> 24 & 255) / 255.0F);
-		tessellator.addVertex((double) x, (double) h, (double) zLevel);
-		tessellator.addVertex((double) w, (double) h, (double) zLevel);
+		tessellator.setColorRGBA_F((color1 >> 16 & 255) / 255.0F, (color1 >> 8 & 255) / 255.0F, (color1 & 255) / 255.0F, (color1 >> 24 & 255) / 255.0F);
+		tessellator.addVertex(w, y, zLevel);
+		tessellator.addVertex(x, y, zLevel);
+		tessellator.setColorRGBA_F((color2 >> 16 & 255) / 255.0F, (color2 >> 8 & 255) / 255.0F, (color2 & 255) / 255.0F, (color2 >> 24 & 255) / 255.0F);
+		tessellator.addVertex(x, h, zLevel);
+		tessellator.addVertex(w, h, zLevel);
 		tessellator.draw();
 		GL11.glShadeModel(GL11.GL_FLAT);
 		GL11.glDisable(GL11.GL_BLEND);
@@ -636,7 +637,7 @@ public class RenderLib
 		{
 			x -= 24 + w;
 		}
-		y = (int) MathLib.clip(y, 8, scaledDisplayResolution().getScaledHeight() - 8 - h);
+		y = (int) MathUtil.clip(y, 8, scaledDisplayResolution().getScaledHeight() - 8 - h);
 
 		guiHook.incZLevel(300);
 		drawTooltipBox(x - 4, y - 4, w + 7, h + 7);
@@ -1314,7 +1315,7 @@ public class RenderLib
 	 */
 	public static void drawRecipe(Object obj, int x, int y, int size, int slotPadding, int backgroundColor)
 	{
-		IRecipe recipe = obj instanceof Item ? (RegistryLib.getRecipe((Item) obj)) : obj instanceof Block ? (RegistryLib.getRecipe((Block) obj)) : null;
+		IRecipe recipe = obj instanceof Item ? (ModEngine.getRecipe(obj)) : obj instanceof Block ? (ModEngine.getRecipe(obj)) : null;
 
 		if (recipe == null)
 		{
@@ -1325,7 +1326,7 @@ public class RenderLib
 		{
 			for (int gY = 0; gY < 3; ++gY)
 			{
-				RenderLib.drawRect(x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size, backgroundColor);
+				RenderEngine.drawRect(x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size, backgroundColor);
 
 				if (recipe instanceof ShapedRecipes)
 				{
@@ -1333,7 +1334,7 @@ public class RenderLib
 
 					if (slotStack != null)
 					{
-						RenderLib.drawItemIcon(slotStack.getItem(), x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size);
+						RenderEngine.drawItemIcon(slotStack.getItem(), x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size);
 					}
 				}
 			}
@@ -1396,7 +1397,7 @@ public class RenderLib
 					public void run()
 					{
 						super.run();
-						uuid = PlayerLib.getUUID(name);
+						uuid = WorldEngine.Entities.Players.getUUID(name);
 					}
 				};
 				uuidThread.start();

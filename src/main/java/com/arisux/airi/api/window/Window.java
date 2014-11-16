@@ -8,8 +8,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.GuiTypeLib.GuiCustomButton;
-import com.arisux.airi.lib.RenderLib;
+import com.arisux.airi.engine.RenderEngine;
+import com.arisux.airi.engine.GuiTypeLib.GuiCustomButton;
 import com.arisux.airi.lib.util.BasicMarkupParser;
 
 public abstract class Window implements IWindow
@@ -157,12 +157,12 @@ public abstract class Window implements IWindow
 
 	public int getDisplayMidX()
 	{
-		return RenderLib.scaledDisplayResolution().getScaledWidth() / 2 - this.width / 2;
+		return RenderEngine.scaledDisplayResolution().getScaledWidth() / 2 - this.width / 2;
 	}
 
 	public int getDisplayMidY()
 	{
-		return RenderLib.scaledDisplayResolution().getScaledHeight() / 2 - this.height / 2;
+		return RenderEngine.scaledDisplayResolution().getScaledHeight() / 2 - this.height / 2;
 	}
 
 	public void setWindowCentered()
@@ -241,6 +241,6 @@ public abstract class Window implements IWindow
 
 	public boolean isOffScreen()
 	{
-		return this.xPos >= RenderLib.scaledDisplayResolution().getScaledWidth() || this.yPos >= RenderLib.scaledDisplayResolution().getScaledHeight();
+		return this.xPos >= RenderEngine.scaledDisplayResolution().getScaledWidth() || this.yPos >= RenderEngine.scaledDisplayResolution().getScaledHeight();
 	}
 }

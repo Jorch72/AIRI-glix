@@ -1,6 +1,6 @@
 package com.arisux.airi;
 
-import com.arisux.airi.lib.ModLib;
+import com.arisux.airi.engine.ModEngine;
 
 public class Properties
 {
@@ -10,7 +10,7 @@ public class Properties
 	public final String DOMAIN = "airi:";
 	public final String PUBLIC_SERVER_ADDRESS = "http://arisux.com";
 	public final String LOCAL_SERVER_ADDRESS = "http://localhost:8080";
-	public final String SERVER_ADDRESS = ModLib.isDevelopmentEnvironment() ? LOCAL_SERVER_ADDRESS : PUBLIC_SERVER_ADDRESS;
+	public final String SERVER_ADDRESS = ModEngine.isDevelopmentEnvironment() ? LOCAL_SERVER_ADDRESS : PUBLIC_SERVER_ADDRESS;
 	public final String URL_MODPAGE = SERVER_ADDRESS + "/page/mods/airi";
 	public final String URL_LATEST = URL_MODPAGE + "/latest.txt";
 	public final String URL_CHANGELOG = URL_MODPAGE + "/changelog.txt";

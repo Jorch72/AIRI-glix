@@ -10,9 +10,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import com.arisux.airi.lib.BlockLib.CoordData;
-import com.arisux.airi.lib.BlockLib.CoordSelection;
-import com.arisux.airi.lib.*;
+import com.arisux.airi.engine.*;
+import com.arisux.airi.engine.BlockLib.CoordData;
+import com.arisux.airi.engine.BlockLib.CoordSelection;
 
 public class SchematicFile
 {
@@ -99,7 +99,7 @@ public class SchematicFile
 					{
 						world.setBlockMetadataWithNotify(pos.posX, pos.posY, pos.posZ, meta, 2);
 
-						WorldLib.setTileEntityPosition(tileEntity, pos);
+						WorldEngine.setTileEntityPosition(tileEntity, pos);
 						world.setTileEntity(pos.posX, pos.posY, pos.posZ, tileEntity);
 						tileEntity.updateContainingBlockInfo();
 					}
@@ -115,6 +115,7 @@ public class SchematicFile
 
 	public static class UnsupportedSchematicFormatException extends Exception
 	{
+		private static final long serialVersionUID = -7318855261807377764L;
 		public final String format;
 
 		public UnsupportedSchematicFormatException(String format)
