@@ -8,7 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-import com.arisux.airi.engine.BlockLib.IconSet;
+import com.arisux.airi.engine.RenderEngine.IconSet;
 import com.arisux.airi.lib.util.enums.IconSides;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -23,6 +23,7 @@ public class BlockTypeLib
 		protected boolean isOpaque;
 		private boolean disableIcon;
 		private ISimpleBlockRenderingHandler renderType;
+		private RenderEngine.IconSet iconSet;
 
 		public HookedBlock(Material material)
 		{
@@ -38,13 +39,13 @@ public class BlockTypeLib
 			this.renderType = renderType;
 			return this;
 		}
-		
+
 		public Block setRenderNormal(boolean renderNormal)
 		{
 			this.renderNormal = renderNormal;
 			return this;
 		}
-		
+
 		public String getBlockTextureName()
 		{
 			return this.textureName;
@@ -61,7 +62,7 @@ public class BlockTypeLib
 			this.isOpaque = opaque;
 			return this;
 		}
-		
+
 		@Override
 		public int getRenderType()
 		{
@@ -74,32 +75,81 @@ public class BlockTypeLib
 			return isOpaque;
 		}
 		
+		public Block setIconSet(IconSet iconSet)
+		{
+			this.iconSet = iconSet;
+			return this;
+		}
+
 		@Override
 		public void registerBlockIcons(IIconRegister iconRegister)
 		{
 			if (!disableIcon)
 			{
-				super.registerBlockIcons(iconRegister);
+				if (this.iconSet != null)
+				{
+					this.iconSet.registerIcons(iconRegister);
+					this.blockIcon = iconRegister.registerIcon(iconSet.frontRes);
+				}
+				else
+				{
+					super.registerBlockIcons(iconRegister);
+				}
 			}
+		}
+
+		@Override
+		@SideOnly(Side.CLIENT)
+		public IIcon getIcon(int side, int meta)
+		{
+			if (this.iconSet != null)
+			{
+				IconSides iconSide = IconSides.getSideFor(side);
+
+				switch (iconSide)
+				{
+					case BOTTOM:
+						return iconSet.top;
+					case TOP:
+						return iconSet.top;
+					case BACK:
+						return iconSet.front;
+					case FRONT:
+						return iconSet.front;
+					case LEFT:
+						return iconSet.front;
+					case RIGHT:
+						return iconSet.front;
+					default:
+						return iconSet.front;
+				}
+			}
+			
+			return this.blockIcon;
 		}
 
 		public Block disableIcon()
 		{
-			this.disableIcon = true;
-			return this;
+			return this.disableIcon(true);
 		}
 		
+		public Block disableIcon(boolean disableIcon)
+		{
+			this.disableIcon = disableIcon;
+			return this;
+		}
+
 		public float getHardness()
 		{
 			return this.blockHardness;
 		}
-		
+
 		public float getResistance()
 		{
 			return this.blockResistance;
 		}
 	}
-	
+
 	public static class HookedBlockSlab extends BlockSlab
 	{
 		public HookedBlockSlab(Material material)
@@ -165,51 +215,7 @@ public class BlockTypeLib
 			return 10;
 		}
 	}
-	
-	public static class HookedBlockMultiSided extends HookedBlock
-	{
-		private IconSet iconSet;
 
-		public HookedBlockMultiSided(IconSet iconSet, Material material)
-		{
-			super(material);
-			this.iconSet = iconSet;
-		}
-		
-		@Override
-		@SideOnly(Side.CLIENT)
-		public IIcon getIcon(int side, int meta)
-		{
-			IconSides iconSide = IconSides.getSideFor(side);
-			
-			switch (iconSide)
-			{
-				case BOTTOM:
-					return iconSet.top;
-				case TOP:
-					return iconSet.top;
-				case BACK:
-					return iconSet.front;
-				case FRONT:
-					return iconSet.front;
-				case LEFT:
-					return iconSet.front;
-				case RIGHT:
-					return iconSet.front;
-				default:
-					return iconSet.front;
-			}
-		}
-
-		@Override
-		@SideOnly(Side.CLIENT)
-		public void registerBlockIcons(IIconRegister register)
-		{
-			this.iconSet.registerIcons(register);
-			this.blockIcon = register.registerIcon(iconSet.frontRes);
-		}
-	}
-	
 	public static abstract class HookedBlockContainer extends HookedBlock implements ITileEntityProvider
 	{
 		public HookedBlockContainer(Material material)
@@ -219,45 +225,45 @@ public class BlockTypeLib
 			this.isOpaque = false;
 			this.renderNormal = false;
 		}
-		
+
 		@Override
-	    public void breakBlock(World world, int posX, int posY, int posZ, Block blockBroken, int meta)
-	    {
-	        super.breakBlock(world, posX, posY, posZ, blockBroken, meta);
-	        world.removeTileEntity(posX, posY, posZ);
-	    }
-		
-	    @Override
-	    public boolean onBlockEventReceived(World world, int posX, int posY, int posZ, int eventId, int eventData)
-	    {
-	        super.onBlockEventReceived(world, posX, posY, posZ, eventId, eventData);
-	        TileEntity tileentity = world.getTileEntity(posX, posY, posZ);
-	        return tileentity != null ? tileentity.receiveClientEvent(eventId, eventData) : false;
-	    }
+		public void breakBlock(World world, int posX, int posY, int posZ, Block blockBroken, int meta)
+		{
+			super.breakBlock(world, posX, posY, posZ, blockBroken, meta);
+			world.removeTileEntity(posX, posY, posZ);
+		}
+
+		@Override
+		public boolean onBlockEventReceived(World world, int posX, int posY, int posZ, int eventId, int eventData)
+		{
+			super.onBlockEventReceived(world, posX, posY, posZ, eventId, eventData);
+			TileEntity tileentity = world.getTileEntity(posX, posY, posZ);
+			return tileentity != null ? tileentity.receiveClientEvent(eventId, eventData) : false;
+		}
 	}
-	
+
 	public static class GhostBlock extends HookedBlock
 	{
 		private Block parentBlock;
-		
+
 		public GhostBlock(Block parentBlock)
 		{
 			super(parentBlock.getMaterial());
-			this.disableIcon();
+			this.disableIcon(true);
 			this.parentBlock = parentBlock;
 		}
-		
+
 		@Override
 		public int getRenderType()
 		{
 			return -1;
 		}
-		
+
 		public Block getParentBlock()
 		{
 			return parentBlock;
 		}
-		
+
 		public GhostBlock setAttributesFrom(HookedBlock block)
 		{
 			this.setHardness(block.getHardness());
@@ -271,7 +277,7 @@ public class BlockTypeLib
 		{
 			return parentBlock.onBlockActivated(world, posX, posY, posZ, player, side, subX, subY, subZ);
 		}
-		
+
 		@Override
 		public void breakBlock(World world, int posX, int posY, int posZ, Block blockBroken, int meta)
 		{

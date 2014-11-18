@@ -11,6 +11,7 @@ import com.arisux.airi.Settings;
 import com.arisux.airi.api.window.Window;
 import com.arisux.airi.api.window.WindowManager;
 import com.arisux.airi.api.window.windows.WindowUpdates;
+import com.arisux.airi.lib.util.interfaces.ModController;
 
 public class UpdaterAPI
 {
@@ -28,12 +29,12 @@ public class UpdaterAPI
 	{
 		if (AIRI.instance().settings.propertyList.get(Settings.Setting.NETWORKING).getBoolean())
 		{
-			if (AIRI.instance().updaterapi.isUpdateAvailable())
+			if (AIRI.updaterApi().isUpdateAvailable())
 			{
 				if (this.updaterWindow == null)
 				{
 					this.updaterWindow = new WindowUpdates("UpdateWindow", "Update Available", -100, 20, 250, 200);
-					AIRI.instance().windowapi.addWindow(this.updaterWindow);
+					AIRI.windowApi().addWindow(this.updaterWindow);
 				}
 			}
 			
@@ -68,9 +69,9 @@ public class UpdaterAPI
 							this.recheckUpdates = false;
 						}
 
-						if (updater.isUpdateAvailable() && !(AIRI.instance().windowapi.getWindowsRegistry().size() <= 0))
+						if (updater.isUpdateAvailable() && !(AIRI.windowApi().getWindowsRegistry().size() <= 0))
 						{
-							AIRI.instance().windowapi.showWindowManager();
+							AIRI.windowApi().showWindowManager();
 						}
 
 						this.recheckUpdates = false;
@@ -82,6 +83,11 @@ public class UpdaterAPI
 		}
 	}
 
+	public Updater createNewUpdater(ModController modController)
+	{
+		return createNewUpdater(modController.id(), modController.container().getMetadata().version, modController.container().getMetadata().updateUrl, modController.container().getMetadata().url, modController.changelogUrl());
+	}
+	
 	public Updater createNewUpdater(String modId, String curVer, String updateUrl, String downloadUrl, String changelogUrl)
 	{
 		return (new Updater(currentUpdaterId++, modId, curVer, updateUrl, downloadUrl, changelogUrl)).register();
@@ -97,7 +103,7 @@ public class UpdaterAPI
 			if (!iterator.hasNext())
 				return null;
 
-			updater = (Updater) iterator.next();
+			updater = iterator.next();
 		} while (!(updater.getVersionData().get("MODID").equalsIgnoreCase(ID)));
 
 		return updater;

@@ -10,8 +10,8 @@ import com.arisux.airi.api.updater.Changelog;
 import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.window.IWindow;
 import com.arisux.airi.api.window.Window;
-import com.arisux.airi.engine.RenderEngine;
 import com.arisux.airi.engine.GuiTypeLib.GuiCustomButton;
+import com.arisux.airi.engine.RenderEngine;
 import com.arisux.airi.lib.util.interfaces.IActionPerformed;
 
 public class WindowUpdates extends Window implements IWindow
@@ -23,7 +23,7 @@ public class WindowUpdates extends Window implements IWindow
 	public WindowUpdates(String id, String title, int xPos, int yPos, int width, int height)
 	{
 		super(id, title, xPos, yPos, width, height);
-		this.updater = AIRI.instance().updaterapi.getUpdaterRegistry().get(0);
+		this.updater = AIRI.updaterApi().getUpdaterRegistry().get(0);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class WindowUpdates extends Window implements IWindow
 	{
 		super.draw(mouseX, mouseY);
 
-		this.setTitle(AIRI.instance().updaterapi.getAvailableUpdates().size() + " Updates Available - " + (updater.getUpdaterId() + 1) + " of " + AIRI.instance().updaterapi.getAvailableUpdates().size());
+		this.setTitle(AIRI.updaterApi().getAvailableUpdates().size() + " Updates Available - " + (updater.getUpdaterId() + 1) + " of " + AIRI.updaterApi().getAvailableUpdates().size());
 		String message = updater.getVersionData().get("MODID") + " " + updater.getVersionData().get("MODVER") + " for Minecraft " + updater.getVersionData().get("MCVER");
 
 		RenderEngine.drawStringAlignCenter(message, this.xPos + this.width / 2, this.yPos + 10, 0x00AAFF);
@@ -89,7 +89,7 @@ public class WindowUpdates extends Window implements IWindow
 				@Override
 				public void actionPerformed(GuiCustomButton button)
 				{
-					updater = AIRI.instance().updaterapi.getAvailableUpdates().get(updater.getUpdaterId() < AIRI.instance().updaterapi.getAvailableUpdates().size() - 1 ? updater.getUpdaterId() + 1 : 0);
+					updater = AIRI.updaterApi().getAvailableUpdates().get(updater.getUpdaterId() < AIRI.updaterApi().getAvailableUpdates().size() - 1 ? updater.getUpdaterId() + 1 : 0);
 				}
 			});
 			if (buttonNext.isMouseOver())
@@ -112,7 +112,7 @@ public class WindowUpdates extends Window implements IWindow
 				@Override
 				public void actionPerformed(GuiCustomButton button)
 				{
-					updater = AIRI.instance().updaterapi.getAvailableUpdates().get(updater.getUpdaterId() > 0 && updater.getUpdaterId() < AIRI.instance().updaterapi.getAvailableUpdates().size() - 1 ? updater.getUpdaterId() - 1 : AIRI.instance().updaterapi.getAvailableUpdates().size() - 1);
+					updater = AIRI.updaterApi().getAvailableUpdates().get(updater.getUpdaterId() > 0 && updater.getUpdaterId() < AIRI.updaterApi().getAvailableUpdates().size() - 1 ? updater.getUpdaterId() - 1 : AIRI.updaterApi().getAvailableUpdates().size() - 1);
 				}
 			});
 			if (buttonPrevious.isMouseOver())

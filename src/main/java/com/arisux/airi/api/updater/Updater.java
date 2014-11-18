@@ -43,7 +43,7 @@ public class Updater implements IInitializablePost
 
 	public Updater register()
 	{
-		AIRI.instance().updaterapi.getUpdaterRegistry().add(this);
+		AIRI.updaterApi().getUpdaterRegistry().add(this);
 		return this;
 	}
 

@@ -40,6 +40,7 @@ import org.lwjgl.util.Color;
 
 import com.arisux.airi.AIRI;
 import com.arisux.airi.engine.GuiTypeLib.GuiCustomScreen;
+import com.arisux.airi.engine.WorldEngine.Blocks;
 import com.arisux.airi.lib.compatibility.ScaledResolution;
 import com.arisux.airi.lib.util.MathUtil;
 
@@ -1300,7 +1301,7 @@ public class RenderEngine
 	public static ResourceLocation getBlockSideResourceLocation(Block block, int side)
 	{
 		IIcon icon = block.getBlockTextureFromSide(side);
-		return new ResourceLocation(BlockLib.getDomain(block).replace(":", ""), "textures/blocks/" + icon.getIconName().replace(BlockLib.getDomain(block), "") + ".png");
+		return new ResourceLocation(Blocks.getDomain(block).replace(":", ""), "textures/blocks/" + icon.getIconName().replace(Blocks.getDomain(block), "") + ".png");
 	}
 
 	/**
@@ -1339,6 +1340,18 @@ public class RenderEngine
 				}
 			}
 		}
+	}
+	
+	/** 
+	 * Returns a rotation angle that is between two other rotation angles. 'angle1' and 'angle2' are the angles between which
+	 * to interpolate, 'progress' is probably a float between 0.0 and 1.0 that determines the progress between the two angles.
+	 * Example: angle1 = 30, angle2 = 50, progress = 0.5, return = 40
+	 */
+	public static float interpolateRotation(float angle1, float angle2, float progress)
+	{
+	    float f = angle2 - angle1;
+	    f = f < -180F ? f += 360F : f;
+	    return angle1 + (progress * (f = f >= 180F ? f-= 360F : f));
 	}
 
 	/**
@@ -1422,6 +1435,39 @@ public class RenderEngine
 			{
 				return this.resource = resource;
 			}
+		}
+	}
+
+	public static class IconSet
+	{
+		public IIcon icon, top, bottom, front, back, left, right;
+		public String iconRes, topRes, bottomRes, frontRes, backRes, leftRes, rightRes;
+	
+		public IconSet(String icon)
+		{
+			this(icon, null, null, null, null, null, null);
+		}
+	
+		public IconSet(String icon, String top, String bottom, String front, String back, String left, String right)
+		{
+			this.iconRes = icon;
+			this.topRes = top;
+			this.bottomRes = bottom;
+			this.frontRes = front;
+			this.backRes = back;
+			this.leftRes = left;
+			this.rightRes = right;
+		}
+	
+		public void registerIcons(IIconRegister register)
+		{
+			this.icon = (register.registerIcon(iconRes));
+			this.top = (register.registerIcon(topRes));
+			this.bottom = (register.registerIcon(bottomRes));
+			this.front = (register.registerIcon(frontRes));
+			this.back = (register.registerIcon(backRes));
+			this.left = (register.registerIcon(leftRes));
+			this.right = (register.registerIcon(rightRes));
 		}
 	}
 }

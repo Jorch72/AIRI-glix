@@ -20,8 +20,8 @@ public class ClientSideEvents implements IInitializablePre
 	@SubscribeEvent
 	public void clientTick(ClientTickEvent event)
 	{
-		AIRI.instance().windowapi.onTick();
-		AIRI.instance().updaterapi.onTick();
+		AIRI.windowApi().onTick();
+		AIRI.updaterApi().onTick();
 
 		if (!openedInitial)
 		{
@@ -31,8 +31,8 @@ public class ClientSideEvents implements IInitializablePre
 			{
 				AIRI.logger.warning("Access transformer could not be verified. If you are in an installation environment, you are going to run into problems!");
 
-				AIRI.instance().windowapi.showWindowManager();
-				AIRI.instance().windowapi.addWindow(new WindowATWarning("WarningATNotFound"));
+				AIRI.windowApi().showWindowManager();
+				AIRI.windowApi().addWindow(new WindowATWarning("WarningATNotFound"));
 			}
 			else
 			{
@@ -46,7 +46,7 @@ public class ClientSideEvents implements IInitializablePre
 		{
 			if (Keyboard.isKeyDown(Keyboard.KEY_W))
 			{
-				AIRI.instance().windowapi.showWindowManager();
+				AIRI.windowApi().showWindowManager();
 			}
 		}
 	}
@@ -54,7 +54,7 @@ public class ClientSideEvents implements IInitializablePre
 	@SubscribeEvent
 	public void onClientPlayerLogin(final PlayerLoggedInEvent event)
 	{
-		for (Updater updater : AIRI.instance().updaterapi.getUpdaterRegistry())
+		for (Updater updater : AIRI.updaterApi().getUpdaterRegistry())
 		{
 			updater.printUpdateInformation(event.player);
 		}

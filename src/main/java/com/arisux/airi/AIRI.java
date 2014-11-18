@@ -19,23 +19,28 @@ public class AIRI
 {
 	public static boolean COREMOD_INITIALIZED = false;
 
-	public WindowAPI windowapi;
-	public UpdaterAPI updaterapi;
-	public Obj3DAPI obj3dAPI;
+	private WindowAPI windowapi;
+	private UpdaterAPI updaterapi;
+	private Obj3DAPI obj3dAPI;
+	private RemappingAPI remappingApi;
 
 	public static Logger logger = new Logger();
-	public final Properties properties = new Properties();
-	public RemappingAPI remappingApi;
+	private Properties properties = new Properties();
 	public LocalEventHandler events;
 	public Settings settings;
 	public Updater updater;
 
 	@Mod.Instance(Properties.MODID)
-	public static AIRI INSTANCE;
+	private static AIRI instance;
 
 	public static AIRI instance()
 	{
-		return INSTANCE;
+		return instance;
+	}
+	
+	public static Properties properties()
+	{
+		return AIRI.instance().properties;
 	}
 
 	public static class Logger
@@ -73,8 +78,8 @@ public class AIRI
 		event.getModMetadata().screenshots = new String[0];
 		event.getModMetadata().logoFile = "";
 
-		(settings = new Settings()).preInitialize(event);
 		(remappingApi = new RemappingAPI()).preInitialize(event);
+		(settings = new Settings()).preInitialize(event);
 		(events = new LocalEventHandler()).preInitialize(event);
 
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
@@ -109,5 +114,25 @@ public class AIRI
 	public static void setASMInitialized(boolean b)
 	{
 		COREMOD_INITIALIZED = b;
+	}
+	
+	public static RemappingAPI remappingApi()
+	{
+		return AIRI.instance().remappingApi;
+	}
+	
+	public static UpdaterAPI updaterApi()
+	{
+		return AIRI.instance().updaterapi;
+	}
+	
+	public static WindowAPI windowApi()
+	{
+		return AIRI.instance().windowapi;
+	}
+	
+	public static Obj3DAPI obj3dApi()
+	{
+		return AIRI.instance().obj3dAPI;
 	}
 }

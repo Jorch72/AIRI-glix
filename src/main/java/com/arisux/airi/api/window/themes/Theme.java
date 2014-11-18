@@ -18,6 +18,7 @@ public class Theme implements ITheme
 		this.themeName = name;
 	}
 
+	@Override
 	public void drawWindow(Window window, int mouseX, int mouseY)
 	{
 		this.drawBackground(window, mouseX, mouseY);
@@ -26,16 +27,19 @@ public class Theme implements ITheme
 		this.drawContents(window, mouseX, mouseY);
 	}
 
+	@Override
 	public void drawBackground(Window window, int mouseX, int mouseY)
 	{
 		;
 	}
 
+	@Override
 	public void drawTitleBar(Window window, int mouseX, int mouseY)
 	{
 		;
 	}
 
+	@Override
 	public void drawCloseButton(Window window, int mouseX, int mouseY)
 	{
 		;
@@ -79,6 +83,6 @@ public class Theme implements ITheme
 
 	public WindowManager getWindowManager()
 	{
-		return AIRI.instance().windowapi.getWindowManager();
+		return AIRI.windowApi().getWindowManager();
 	}
 }

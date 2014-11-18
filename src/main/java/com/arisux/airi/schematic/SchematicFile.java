@@ -10,14 +10,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import com.arisux.airi.engine.*;
-import com.arisux.airi.engine.BlockLib.CoordData;
-import com.arisux.airi.engine.BlockLib.CoordSelection;
+import com.arisux.airi.engine.WorldEngine.Blocks;
+import com.arisux.airi.engine.WorldEngine.TileEntities;
 
 public class SchematicFile
 {
 	public short width, height, length;
-	public CoordData weOrigin;
+	public Blocks.CoordData weOrigin;
 	public Block[] blocks;
 	public byte[] metadatas;
 	public List<NBTTagCompound> tileEntityCompounds = new ArrayList<>();
@@ -35,7 +34,7 @@ public class SchematicFile
 		this.height = tagCompound.getShort("Height");
 		this.length = tagCompound.getShort("Length");
 
-		this.weOrigin = new CoordData(tagCompound.getShort("WEOriginX"), tagCompound.getShort("WEOriginY"), tagCompound.getShort("WEOriginZ"));
+		this.weOrigin = new Blocks.CoordData(tagCompound.getShort("WEOriginX"), tagCompound.getShort("WEOriginY"), tagCompound.getShort("WEOriginZ"));
 
 		this.metadatas = tagCompound.getByteArray("Data");
 		byte[] blockIDs = tagCompound.getByteArray("Blocks");
@@ -64,9 +63,9 @@ public class SchematicFile
 		}
 	}
 
-	public void generate(World world, CoordData data)
+	public void generate(World world, Blocks.CoordData data)
 	{
-		Map<CoordData, TileEntity> tileEntities = new HashMap<>();
+		Map<Blocks.CoordData, TileEntity> tileEntities = new HashMap<>();
 
 		for (NBTTagCompound tileTagCompound : tileEntityCompounds)
 		{
@@ -74,15 +73,15 @@ public class SchematicFile
 
 			if (tileEntity != null)
 			{
-				tileEntities.put(new CoordData(tileEntity), tileEntity);
+				tileEntities.put(new Blocks.CoordData(tileEntity), tileEntity);
 			}
 		}
 
-		CoordSelection blockArea = CoordSelection.areaFromSize(new CoordData(0, 0, 0), new int[] { width, height, length });
+		Blocks.CoordSelection blockArea = Blocks.CoordSelection.areaFromSize(new Blocks.CoordData(0, 0, 0), new int[] { width, height, length });
 
 		for (int pass = 0; pass < 2; pass++)
 		{
-			for (CoordData srcCoord : blockArea)
+			for (Blocks.CoordData srcCoord : blockArea)
 			{
 				int index = srcCoord.posX + (srcCoord.posY * length + srcCoord.posZ) * width;
 				Block block = blocks[index];
@@ -90,7 +89,7 @@ public class SchematicFile
 
 				if (block != null && getPass(block, meta) == pass)
 				{
-					CoordData pos = new CoordData(data.posX + srcCoord.posX, data.posY + srcCoord.posY, data.posZ + srcCoord.posZ, block, meta);
+					Blocks.CoordData pos = new Blocks.CoordData(data.posX + srcCoord.posX, data.posY + srcCoord.posY, data.posZ + srcCoord.posZ, block, meta);
 					world.setBlock(pos.posX, pos.posY, pos.posZ, pos.block, pos.meta, 3);
 
 					TileEntity tileEntity = tileEntities.get(srcCoord);
@@ -99,7 +98,7 @@ public class SchematicFile
 					{
 						world.setBlockMetadataWithNotify(pos.posX, pos.posY, pos.posZ, meta, 2);
 
-						WorldEngine.setTileEntityPosition(tileEntity, pos);
+						TileEntities.setTileEntityPosition(tileEntity, pos);
 						world.setTileEntity(pos.posX, pos.posY, pos.posZ, tileEntity);
 						tileEntity.updateContainingBlockInfo();
 					}

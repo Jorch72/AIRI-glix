@@ -1,10 +1,11 @@
 package com.arisux.airi.engine;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.settings.KeyBinding;
@@ -15,16 +16,16 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Level;
 
 import com.arisux.airi.AIRI;
 import com.arisux.airi.engine.BlockTypeLib.HookedBlock;
-import com.arisux.airi.lib.util.ModProperties;
-import com.arisux.airi.lib.util.interfaces.IStandardMod;
+import com.arisux.airi.lib.util.interfaces.ModController;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.ModContainer;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.*;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -36,19 +37,24 @@ public class ModEngine
 	 */
 	public static abstract class IBHandler
 	{
-		public IStandardMod mod;
+		private ModController modController;
 		private ArrayList<Object> objectList = new ArrayList<Object>();
-		
-		public IBHandler(IStandardMod mod)
+
+		public IBHandler(ModController modController)
 		{
-			this.mod = mod;
+			this.modController = modController;
 		}
-		
+
 		public ArrayList<Object> getHandledObjects()
 		{
 			return objectList;
 		}
-		
+
+		public ModController getModController()
+		{
+			return modController;
+		}
+
 		/**
 		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
 		 * registration of Blocks. Using this method will result in the Block being automatically assigned
@@ -84,7 +90,7 @@ public class ModEngine
 		{
 			return registerBlock(block, reference, null, visibleOnTab);
 		}
-		
+
 		/**
 		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
 		 * registration of Blocks. Using this method will result in the Block being automatically assigned
@@ -102,7 +108,7 @@ public class ModEngine
 		{
 			return registerBlock(block, reference, texture, true);
 		}
-		
+
 		/**
 		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
 		 * registration of Blocks. Using this method will result in the Block being automatically assigned
@@ -187,7 +193,7 @@ public class ModEngine
 		{
 			return ModEngine.registerItem(item, reference, this, visibleOnPrimaryTab, tab);
 		}
-		
+
 		/**
 		 * Wrapper method for the registerItem method found in ModEngine. Allows for simplified
 		 * registration of Items. Using this method will result in the Item being automatically assigned
@@ -210,7 +216,7 @@ public class ModEngine
 			return ModEngine.registerItem(item, reference, this, visibleOnPrimaryTab, null);
 		}
 	}
-	
+
 	/**
 	 * Wrapper method for the registerBlock method found in GameRegistry. Allows for simplified
 	 * registration of Blocks. Using this method will result in the Block being automatically assigned
@@ -229,7 +235,7 @@ public class ModEngine
 	 */
 	public static Block registerBlock(Block block, String reference, String texture, IBHandler handler, boolean visibleOnTab)
 	{
-		block.setBlockName(handler.mod.getModProperties().getDomain() + reference);
+		block.setBlockName(handler.getModController().domain() + reference);
 
 		if (texture == null)
 		{
@@ -240,9 +246,9 @@ public class ModEngine
 			block.setBlockTextureName(texture);
 		}
 
-		if (handler.mod.getCreativeTab() != null && visibleOnTab)
+		if (handler.getModController().getCreativeTab() != null && visibleOnTab)
 		{
-			block.setCreativeTab(handler.mod.getCreativeTab());
+			block.setCreativeTab(handler.getModController().getCreativeTab());
 		}
 
 		if (handler.getHandledObjects() != null)
@@ -279,12 +285,12 @@ public class ModEngine
 	{
 		GameRegistry.registerItem(item, reference);
 
-		item.setUnlocalizedName(handler.mod.getModProperties().getDomain() + reference);
+		item.setUnlocalizedName(handler.getModController().domain() + reference);
 		item.setTextureName((item.getUnlocalizedName()).replace("item.", ""));
 
-		if (handler.mod.getCreativeTab() != null && visibleOnPrimaryTab)
+		if (handler.modController.getCreativeTab() != null && visibleOnPrimaryTab)
 		{
-			item.setCreativeTab(handler.mod.getCreativeTab());
+			item.setCreativeTab(handler.modController.getCreativeTab());
 		}
 		else if (tab != null)
 		{
@@ -295,7 +301,7 @@ public class ModEngine
 		{
 			handler.getHandledObjects().add(item);
 		}
-		
+
 		return item;
 	}
 
@@ -315,7 +321,7 @@ public class ModEngine
 		ClientRegistry.registerKeyBinding(keybind);
 		return keybind;
 	}
-	
+
 	/**
 	 * Finds the first IRecipe instance registered to a specific Item or Block instance.
 	 * 
@@ -341,7 +347,7 @@ public class ModEngine
 
 		return null;
 	}
-	
+
 	/**
 	 * Finds all IRecipe instances registered to a specific Item or Block instance.
 	 * 
@@ -368,7 +374,7 @@ public class ModEngine
 
 		return foundRecipes;
 	}
-	
+
 	/**
 	 * Returns if the current Minecraft installation is running 
 	 * in a development environment or normal environment.
@@ -415,25 +421,68 @@ public class ModEngine
 
 		return null;
 	}
-
-	/**
-	 * Sets the mod metadata from the specified IProperties instance.
-	 * 
-	 * @param event - The FMLPreInitializationEvent from the mod in which you are setting the mod metadata.
-	 * @param properties - The class implementing IProperties which contains the data being set to the mod metadata.
-	 */
-	public static void setModMetadataFromProperties(FMLPreInitializationEvent event, ModProperties properties)
+	
+	public static JsonElement parseJsonFromFile(File pathToJson)
 	{
-		event.getModMetadata().autogenerated = false;
-		event.getModMetadata().modId = properties.getId();
-		event.getModMetadata().name = properties.getName();
-		event.getModMetadata().version = properties.getVersion();
-		event.getModMetadata().credits = properties.getCredits();
-		event.getModMetadata().authorList = properties.getAuthors();
-		event.getModMetadata().description = properties.getDescription();
-		event.getModMetadata().url = properties.getUrl();
-		event.getModMetadata().updateUrl = properties.getUpdateStringUrl();
-		event.getModMetadata().screenshots = new String[0];
-		event.getModMetadata().logoFile = "";
+		try
+		{
+			FileInputStream inputStream = new FileInputStream(pathToJson);
+			InputStreamReader reader = new InputStreamReader(inputStream);
+			JsonParser parser = new JsonParser();
+			JsonElement rootElement = parser.parse(reader);
+
+			if (rootElement.isJsonArray())
+			{
+				for (JsonElement json : rootElement.getAsJsonArray())
+				{
+					 return json;
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			FMLLog.log(Level.ERROR, e, "The file in %s could not be parsed as valid JSON. It will be ignored.", pathToJson.getPath());
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static final String getAnnotatedModId(Class<?> clazz)
+	{
+		if (clazz.isAnnotationPresent(Mod.class))
+		{
+			Mod mod = clazz.getAnnotation(Mod.class);
+
+			return mod.modid();
+		}
+
+		return null;
+	}
+
+	public static class Jars
+	{
+		public static ArrayList<JarEntry> getZipEntriesInJar(JarFile jar)
+		{
+			return Collections.list(jar.entries());
+		}
+
+		public static FileInputStream getFileInputStreamFromJar(JarFile jar, File pathToFile)
+		{
+			try
+			{
+				ZipEntry zipEntry = jar.getEntry(pathToFile.toString());
+
+				if (zipEntry != null)
+				{
+					return (FileInputStream) jar.getInputStream(zipEntry);
+				}
+			}
+			catch (Exception e)
+			{
+				FMLLog.log(Level.WARN, e, "Jar %s failed to read properly, it will be ignored", jar.getName());
+			}
+
+			return null;
+		}
 	}
 }

@@ -8,8 +8,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.engine.RenderEngine;
 import com.arisux.airi.engine.GuiTypeLib.GuiCustomButton;
+import com.arisux.airi.engine.RenderEngine;
 import com.arisux.airi.lib.util.BasicMarkupParser;
 
 public abstract class Window implements IWindow
@@ -25,7 +25,7 @@ public abstract class Window implements IWindow
 
 	public Window(String id, String title, int xPos, int yPos, int width, int height)
 	{
-		this.manager = AIRI.instance().windowapi.getWindowManager();
+		this.manager = AIRI.windowApi().getWindowManager();
 		this.id = id;
 		this.title = title;
 		this.xPos = xPos;
@@ -43,9 +43,10 @@ public abstract class Window implements IWindow
 
 	}
 
+	@Override
 	public void draw(int mouseX, int mouseY)
 	{
-		AIRI.INSTANCE.windowapi.setCurrentTheme(WindowAPI.themeDefault);
+		AIRI.windowApi().setCurrentTheme(WindowAPI.themeDefault);
 		
 		if (this.isOffScreen())
 		{
@@ -76,10 +77,13 @@ public abstract class Window implements IWindow
 		this.previousText = defaultText;
 	}
 
+	@Override
 	public abstract void onButtonPress(GuiButton button);
 
+	@Override
 	public abstract void keyTyped(char c, int id);
 
+	@Override
 	public void close()
 	{
 		this.manager.getWindowAPI().getWindowsRegistry().remove(this);
