@@ -5,7 +5,6 @@ import java.util.HashMap;
 import net.minecraft.entity.player.EntityPlayer;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.Settings;
 import com.arisux.airi.engine.WorldEngine;
 import com.arisux.airi.lib.util.NetworkUtil;
 import com.arisux.airi.lib.util.interfaces.IInitializablePost;
@@ -35,10 +34,7 @@ public class Updater implements IInitializablePost
 	@Override
 	public void postInitialize(FMLPostInitializationEvent event)
 	{
-		if (AIRI.instance().settings.propertyList.get(Settings.Setting.NETWORKING).getBoolean())
-		{
-			downloadVersionInformation();
-		}
+		downloadVersionInformation();
 	}
 
 	public Updater register()
@@ -88,7 +84,8 @@ public class Updater implements IInitializablePost
 			getVersionData().put("MODVER", parsed[1]);
 			getVersionData().put("FORGEVER", parsed[2]);
 			getVersionData().put("MODID", parsed[3]);
-		} else
+		}
+		else
 		{
 			this.printConnectionError();
 		}
@@ -105,12 +102,14 @@ public class Updater implements IInitializablePost
 				if (preParsedChangelog != null)
 				{
 					changelog = new Changelog(preParsedChangelog);
-				} else
+				}
+				else
 				{
 					printConnectionError();
 				}
 			}
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}

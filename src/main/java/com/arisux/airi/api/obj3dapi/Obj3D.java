@@ -1,28 +1,30 @@
 package com.arisux.airi.api.obj3dapi;
 
-import com.arisux.airi.AIRI;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.opengl.GL11;
+
+import com.arisux.airi.AIRI;
+import com.arisux.airi.engine.RenderEngine.UV;
+import com.arisux.airi.engine.RenderEngine.Vertex;
 
 public class Obj3D
 {
 	String pathName, mtlName, mod, directory;
 
 	ArrayList<Vertex> vertex = new ArrayList<Vertex>();
-	ArrayList<Uv> uv = new ArrayList<Uv>();
+	ArrayList<UV> uv = new ArrayList<UV>();
 	Hashtable<String, String> nameToStringHash = new Hashtable<String, String>();
 	Hashtable<String, Obj3DPart> nameToPartHash = new Hashtable<String, Obj3DPart>();
 
 	public float xDim, yDim, zDim;
-	public float xMin = 0, yMin = 0, zMin = 0;
-	public float xMax = 0, yMax = 0, zMax = 0;
+	public float xMin, yMin, zMin;
+	public float xMax, yMax, zMax;
 	public float dimMax, dimMaxInv;
 
 	public Obj3D()
@@ -49,7 +51,8 @@ public class Obj3D
 			{
 				bindTexture();
 				drawNoBind();
-			} else
+			}
+			else
 			{
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
 				drawNoBind();
@@ -59,7 +62,6 @@ public class Obj3D
 
 		private void drawVertex()
 		{
-
 			int mode = 0;
 
 			for (Face f : face)
@@ -78,10 +80,10 @@ public class Obj3D
 							GL11.glBegin(GL11.GL_QUADS);
 							break;
 						case 6:
-							//GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+							GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 							break;
 						case 8:
-							//GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+							GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 							break;
 					}
 
@@ -92,7 +94,9 @@ public class Obj3D
 				for (int idx = 0; idx < mode; idx++)
 				{
 					if (f.uv[idx] != null)
+					{
 						GL11.glTexCoord2f(f.uv[idx].u, f.uv[idx].v);
+					}
 					GL11.glVertex3f(f.vertex[idx].x, f.vertex[idx].y, f.vertex[idx].z);
 				}
 			}
@@ -123,10 +127,10 @@ public class Obj3D
 	public class Obj3DPart
 	{
 		ArrayList<Vertex> vertex;
-		ArrayList<Uv> uv;
+		ArrayList<UV> uv;
 
-		public float xMin = 0, yMin = 0, zMin = 0;
-		public float xMax = 0, yMax = 0, zMax = 0;
+		public double xMin, yMin, zMin;
+		public double xMax, yMax, zMax;
 		private float ox, oy, oz;
 		private float ox2, oy2, oz2;
 
@@ -144,7 +148,7 @@ public class Obj3D
 		ArrayList<FaceGroup> faceGroup = new ArrayList<FaceGroup>();
 		Hashtable<String, Float> nameToFloatHash = new Hashtable<String, Float>();
 
-		public Obj3DPart(ArrayList<Vertex> vertex, ArrayList<Uv> uv)
+		public Obj3DPart(ArrayList<Vertex> vertex, ArrayList<UV> uv)
 		{
 			this.vertex = vertex;
 			this.uv = uv;
@@ -212,42 +216,6 @@ public class Obj3D
 		}
 	}
 
-	public class Vertex
-	{
-		public float x, y, z;
-
-		public Vertex(float x, float y, float z)
-		{
-			this.x = x;
-			this.y = y;
-			this.z = z;
-		}
-
-		public Vertex(String[] value)
-		{
-			x = Float.parseFloat(value[0]);
-			y = Float.parseFloat(value[1]);
-			z = Float.parseFloat(value[2]);
-		}
-	}
-
-	public class Uv
-	{
-		public float u, v;
-
-		public Uv(float u, float v)
-		{
-			this.u = u;
-			this.v = v;
-		}
-
-		public Uv(String[] value)
-		{
-			u = Float.parseFloat(value[0]);
-			v = Float.parseFloat(value[1]);
-		}
-	}
-
 	public class Normal
 	{
 		public float x, y, z;
@@ -291,11 +259,11 @@ public class Obj3D
 	public class Face
 	{
 		public Vertex[] vertex;
-		public Uv[] uv;
+		public UV[] uv;
 		private Normal normal;
 		public int vertexNbr;
 
-		public Face(Vertex[] vertex, Uv[] uv, Normal normal)
+		public Face(Vertex[] vertex, UV[] uv, Normal normal)
 		{
 			this.vertex = vertex;
 			this.uv = uv;
@@ -323,7 +291,7 @@ public class Obj3D
 		{
 			{
 				String assetsPath = "/assets/" + modId + directory + pathName;
-				InputStream stream = AIRI.class.getResourceAsStream(assetsPath);//TODO: Resource loading problem
+				InputStream stream = AIRI.class.getResourceAsStream(assetsPath);// TODO: Resource loading problem
 
 				if (stream == null)
 				{
@@ -344,13 +312,14 @@ public class Obj3D
 					{
 						part = new Obj3DPart(vertex, uv);
 						nameToPartHash.put(words[1], part);
-					} else if (words[0].equals("v"))
+					}
+					else if (words[0].equals("v"))
 					{
 						Vertex v;
 						part.addVertex(v = new Vertex(Float.parseFloat(words[1]),
-								Float.parseFloat(words[2]),
-								Float.parseFloat(words[3])
-						));
+							Float.parseFloat(words[2]),
+							Float.parseFloat(words[3])
+							));
 
 						xMin = Math.min(xMin, v.x);
 						yMin = Math.min(yMin, v.y);
@@ -359,18 +328,20 @@ public class Obj3D
 						yMax = Math.max(yMax, v.y);
 						zMax = Math.max(zMax, v.z);
 
-					} else if (words[0].equals("vt"))
+					}
+					else if (words[0].equals("vt"))
 					{
-						part.uv.add(new Uv(Float.parseFloat(words[1]),
-								1 - Float.parseFloat(words[2])
-						));
-					} else if (words[0].equals("f"))
+						part.uv.add(new UV(Float.parseFloat(words[1]),
+							1 - Float.parseFloat(words[2])
+							));
+					}
+					else if (words[0].equals("f"))
 					{
 						int vertexNbr = words.length - 1;
 						if (vertexNbr == 3)
 						{
 							Vertex[] verticeId = new Vertex[vertexNbr];
-							Uv[] uvId = new Uv[vertexNbr];
+							UV[] uvId = new UV[vertexNbr];
 							for (int idx = 0; idx < vertexNbr; idx++)
 							{
 								String[] id = words[idx + 1].split("/");
@@ -379,7 +350,8 @@ public class Obj3D
 								if (id.length > 1 && !id[1].equals(""))
 								{
 									uvId[idx] = part.uv.get(Integer.parseInt(id[1]) - 1);
-								} else
+								}
+								else
 								{
 									uvId[idx] = null;
 								}
@@ -387,10 +359,12 @@ public class Obj3D
 
 							fg.face.add(new Face(verticeId, uvId, new Normal(verticeId[0], verticeId[1], verticeId[2])));
 						}
-					} else if (words[0].equals("mtllib"))
+					}
+					else if (words[0].equals("mtllib"))
 					{
 						mtlName = words[1];
-					} else if (words[0].equals("usemtl"))
+					}
+					else if (words[0].equals("usemtl"))
 					{
 						fg = new FaceGroup();
 						fg.mtlName = words[1];
@@ -418,7 +392,8 @@ public class Obj3D
 					{
 						mtlName = words[1];
 
-					} else if (words[0].equals("map_Kd"))
+					}
+					else if (words[0].equals("map_Kd"))
 					{
 						for (Obj3DPart partPtr : nameToPartHash.values())
 						{
@@ -434,8 +409,8 @@ public class Obj3D
 
 				}
 			}
-
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			AIRI.logger.bug(e.toString());
 			return false;
@@ -459,38 +434,47 @@ public class Obj3D
 					if (words[0].equals("o"))
 					{
 						part = nameToPartHash.get(words[1]);
-					} else if (words[0].equals("f"))
+					}
+					else if (words[0].equals("f"))
 					{
 						if (words[1].equals("originX"))
 						{
 							part.ox = Float.valueOf(words[2]);
-						} else if (words[1].equals("originY"))
+						}
+						else if (words[1].equals("originY"))
 						{
 							part.oy = Float.valueOf(words[2]);
-						} else if (words[1].equals("originZ"))
+						}
+						else if (words[1].equals("originZ"))
 						{
 							part.oz = Float.valueOf(words[2]);
-						} else if (words[1].equals("originX2"))
+						}
+						else if (words[1].equals("originX2"))
 						{
 							part.ox2 = Float.valueOf(words[2]);
-						} else if (words[1].equals("originY2"))
+						}
+						else if (words[1].equals("originY2"))
 						{
 							part.oy2 = Float.valueOf(words[2]);
-						} else if (words[1].equals("originZ2"))
+						}
+						else if (words[1].equals("originZ2"))
 						{
 							part.oz2 = Float.valueOf(words[2]);
-						} else
+						}
+						else
 						{
 							part.nameToFloatHash.put(words[1], Float.valueOf(words[2]));
 						}
-					} else if (words[0].equals("s"))
+					}
+					else if (words[0].equals("s"))
 					{
 						nameToStringHash.put(words[1], words[2]);
 					}
 				}
 			}
 
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}

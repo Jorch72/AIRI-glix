@@ -84,17 +84,19 @@ public class BlockTypeLib
 		@Override
 		public void registerBlockIcons(IIconRegister iconRegister)
 		{
-			if (!disableIcon)
+			if (disableIcon)
 			{
-				if (this.iconSet != null)
-				{
-					this.iconSet.registerIcons(iconRegister);
-					this.blockIcon = iconRegister.registerIcon(iconSet.frontRes);
-				}
-				else
-				{
-					super.registerBlockIcons(iconRegister);
-				}
+				return;
+			}
+			
+			if (this.iconSet != null)
+			{
+				this.iconSet.registerIcons(iconRegister);
+				this.blockIcon = iconRegister.registerIcon(iconSet.frontRes);
+			}
+			else
+			{
+				super.registerBlockIcons(iconRegister);
 			}
 		}
 
@@ -125,7 +127,7 @@ public class BlockTypeLib
 				}
 			}
 			
-			return this.blockIcon;
+			return super.getIcon(side, meta);
 		}
 
 		public Block disableIcon()

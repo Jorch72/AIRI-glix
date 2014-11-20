@@ -36,7 +36,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.util.Color;
 
 import com.arisux.airi.AIRI;
 import com.arisux.airi.engine.GuiTypeLib.GuiCustomScreen;
@@ -61,6 +60,51 @@ public class RenderEngine
 		{
 			this.mode = mode;
 			this.value = value;
+		}
+	}
+
+	public static class Color
+	{
+		public float r, g, b, a;
+
+		public Color(float r, float g, float b, float a)
+		{
+			this.r = r;
+			this.g = g;
+			this.b = b;
+			this.a = a;
+		}
+	}
+
+	public static class Vertex
+	{
+		public float x, y, z;
+
+		public Vertex(float x, float y, float z)
+		{
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+
+		public Vertex smooth()
+		{
+			float sq = (float) Math.sqrt(x * x + y * y + z * z);
+			x = x / sq;
+			y = y / sq;
+			z = z / sq;
+			return this;
+		}
+	}
+
+	public static class UV
+	{
+		public float u, v;
+
+		public UV(float u, float v)
+		{
+			this.u = u;
+			this.v = v;
 		}
 	}
 
@@ -175,7 +219,7 @@ public class RenderEngine
 	 */
 	public static int createHexRGBA(int alpha, int red, int green, int blue)
 	{
-		Color color = new Color(alpha, red, green, blue);
+		org.lwjgl.util.Color color = new org.lwjgl.util.Color(alpha, red, green, blue);
 		ByteBuffer dest = ByteBuffer.allocate(4);
 
 		color.writeRGBA(dest);
@@ -1341,7 +1385,7 @@ public class RenderEngine
 			}
 		}
 	}
-	
+
 	/** 
 	 * Returns a rotation angle that is between two other rotation angles. 'angle1' and 'angle2' are the angles between which
 	 * to interpolate, 'progress' is probably a float between 0.0 and 1.0 that determines the progress between the two angles.
@@ -1349,9 +1393,9 @@ public class RenderEngine
 	 */
 	public static float interpolateRotation(float angle1, float angle2, float progress)
 	{
-	    float f = angle2 - angle1;
-	    f = f < -180F ? f += 360F : f;
-	    return angle1 + (progress * (f = f >= 180F ? f-= 360F : f));
+		float f = angle2 - angle1;
+		f = f < -180F ? f += 360F : f;
+		return angle1 + (progress * (f = f >= 180F ? f -= 360F : f));
 	}
 
 	/**
@@ -1442,12 +1486,12 @@ public class RenderEngine
 	{
 		public IIcon icon, top, bottom, front, back, left, right;
 		public String iconRes, topRes, bottomRes, frontRes, backRes, leftRes, rightRes;
-	
+
 		public IconSet(String icon)
 		{
 			this(icon, null, null, null, null, null, null);
 		}
-	
+
 		public IconSet(String icon, String top, String bottom, String front, String back, String left, String right)
 		{
 			this.iconRes = icon;
@@ -1458,7 +1502,7 @@ public class RenderEngine
 			this.leftRes = left;
 			this.rightRes = right;
 		}
-	
+
 		public void registerIcons(IIconRegister register)
 		{
 			this.icon = (register.registerIcon(iconRes));
