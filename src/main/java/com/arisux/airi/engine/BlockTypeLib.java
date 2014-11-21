@@ -251,7 +251,6 @@ public class BlockTypeLib
 		public GhostBlock(Block parentBlock)
 		{
 			super(parentBlock.getMaterial());
-			this.disableIcon(true);
 			this.parentBlock = parentBlock;
 		}
 

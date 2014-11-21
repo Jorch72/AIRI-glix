@@ -86,6 +86,16 @@ public class RenderEngine
 			this.y = y;
 			this.z = z;
 		}
+		
+		public Vertex(double x, double y, double z)
+		{
+			this((float) x, (float) y, (float) z);
+		}
+		
+		public Vertex(int x, int y, int z)
+		{
+			this((float) x, (float) y, (float) z);
+		}
 
 		public Vertex smooth()
 		{
@@ -93,6 +103,24 @@ public class RenderEngine
 			x = x / sq;
 			y = y / sq;
 			z = z / sq;
+			return this;
+		}
+
+		public Vertex tessellate(Tessellator tessellator)
+		{
+			return this.tessellateWithUV(tessellator, null);
+		}
+
+		public Vertex tessellateWithUV(Tessellator tessellator, UV uv)
+		{
+			if (uv == null)
+			{
+				tessellator.addVertex(x, y, z);
+			}
+			else
+			{
+				tessellator.addVertexWithUV(x, y, z, uv.u, uv.v);
+			}
 			return this;
 		}
 	}
