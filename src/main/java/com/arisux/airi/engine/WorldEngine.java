@@ -786,6 +786,51 @@ public class WorldEngine
 		public static class Players
 		{
 			/**
+			 * @param player - The EntityPlayer to check for XP.
+			 * @return the amount of XP required to reach the next level.
+			 */
+			public static float getXPToNextLevel(EntityPlayer player)
+			{
+				return getXPCurrentLevelMax(player) - getXPCurrentLevel(player);
+			}
+			
+			/**
+			 * @param player - The EntityPlayer to check for XP of the current level.
+			 * @return the amount of XP the player has on the current level.
+			 */
+			public static float getXPCurrentLevel(EntityPlayer player)
+			{
+				return player.experience;
+			}
+			
+			/**
+			 * @param player - The EntityPlayer to check for XP.
+			 * @return the max amount of XP required for this level.
+			 */
+			public static float getXPCurrentLevelMax(EntityPlayer player)
+			{
+				return player.xpBarCap();
+			}
+			
+			/**
+			 * @param player - The EntityPlayer to check for XP totals.
+			 * @return the total amount of XP gained through all the player's levels.
+			 */
+			public static float getXPTotal(EntityPlayer player)
+			{
+				return player.experienceTotal;
+			}
+			
+			/**
+			 * @param player - The EntityPlayer to check the level of.
+			 * @return the player's level.
+			 */
+			public static float getXPLevel(EntityPlayer player)
+			{
+				return player.experienceLevel;
+			}
+			
+			/**
 			 * @param player - Instance of the receiving player
 			 * @param message - The string to be sent to the player
 			 */
