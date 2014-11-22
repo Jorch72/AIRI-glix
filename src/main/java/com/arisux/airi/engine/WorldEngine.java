@@ -800,7 +800,7 @@ public class WorldEngine
 			 */
 			public static float getXPCurrentLevel(EntityPlayer player)
 			{
-				return player.experience;
+				return player.experience * getXPCurrentLevelMax(player);
 			}
 			
 			/**
