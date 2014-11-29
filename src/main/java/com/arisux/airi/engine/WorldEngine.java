@@ -885,6 +885,25 @@ public class WorldEngine
 			
 			public static class Inventories
 			{
+				/**
+				 * @param items - List of Items to choose a random Item from.
+				 * @return an ItemStack instance instantaniated from a random Item chosen from the provided Item Array.
+				 */
+				public static ItemStack randomItemStackFromArray(Item[] items)
+				{
+					return randomItemStackFromArray(items, new Random());
+				}
+				
+				/**
+				 * @param items - List of Items to choose a random Item from.
+				 * @param rand - Random instance to use
+				 * @return an ItemStack instance instantaniated from a random Item chosen from the provided Item Array.
+				 */
+				public static ItemStack randomItemStackFromArray(Item[] items, Random rand)
+				{
+					return newStack(items[rand.nextInt(items.length)]);
+				}
+				
 				/** 
 				 * @param obj - Item or Block instance 
 				 * @return A new ItemStack instance of the specified Object
