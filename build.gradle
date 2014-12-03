@@ -30,7 +30,7 @@ tasks.withType(JavaCompile) {
 jar {
 	manifest {
 		attributes 'FMLAT' : 'airi_at.cfg'
-		attributes 'FMLCorePlugin' : 'com.arisux.airi.coremod.AIRIFMLPlugin'
+		attributes 'FMLCorePlugin' : 'com.arisux.airi.coremod.FMLPlugin'
 		attributes 'FMLCorePluginContainsFMLMod' : 'true'
 	}
 }
