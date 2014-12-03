@@ -50,7 +50,7 @@ public abstract class ModController implements IInitializablePre, IInitializable
 	
 	public boolean isBetaRelease()
 	{
-		return Boolean.parseBoolean(this.beta == null ? this.beta = String.valueOf(JsonUtils.getJsonElementAsJsonObject(this.getModInfoJson(), "beta").get("beta").getAsBoolean()) : this.beta);
+		return Boolean.parseBoolean(this.beta == null ? this.getModInfoJson() != null ? this.beta = String.valueOf(JsonUtils.getJsonElementAsJsonObject(this.getModInfoJson(), "beta").get("beta").getAsBoolean()) : "true" : this.beta);
 	}
 	
 	public JsonElement getModInfoJson()
