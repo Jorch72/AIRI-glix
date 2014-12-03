@@ -1,7 +1,5 @@
 package com.arisux.airi.lib.util.interfaces;
 
-import java.io.File;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.util.JsonUtils;
 
@@ -57,18 +55,7 @@ public abstract class ModController implements IInitializablePre, IInitializable
 	{
 		if (this.modInfoJson == null)
 		{
-			String filename = "/mcmod.info";
-			File jsonFile = null;
-			
-			if (getClass().getResource(filename) != null)
-			{
-				jsonFile = new File(getClass().getResource(filename).getFile());
-			}
-			else
-			{
-				jsonFile = new File(getClass().getClassLoader().getResource(filename).getFile());
-			}
-			return this.modInfoJson = ModEngine.parseJsonFromFile(jsonFile);
+			return this.modInfoJson = ModEngine.parseJsonFromStream(getClass().getResourceAsStream("/mcmod.info"));
 		}
 		return this.modInfoJson;
 	}

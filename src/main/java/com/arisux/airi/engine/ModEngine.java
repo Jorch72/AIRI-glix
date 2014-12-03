@@ -426,8 +426,20 @@ public class ModEngine
 	{
 		try
 		{
-			FileInputStream inputStream = new FileInputStream(pathToJson);
-			InputStreamReader reader = new InputStreamReader(inputStream);
+			return parseJsonFromStream(new FileInputStream(pathToJson));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public static JsonElement parseJsonFromStream(InputStream stream)
+	{
+		try
+		{
+			InputStreamReader reader = new InputStreamReader(stream);
 			JsonParser parser = new JsonParser();
 			JsonElement rootElement = parser.parse(reader);
 
@@ -441,7 +453,7 @@ public class ModEngine
 		}
 		catch (Exception e)
 		{
-			FMLLog.log(Level.ERROR, e, "The file in %s could not be parsed as valid JSON. It will be ignored.", pathToJson.getPath());
+			FMLLog.log(Level.ERROR, e, "The stream could not be parsed as valid JSON.");
 			e.printStackTrace();
 		}
 		return null;
