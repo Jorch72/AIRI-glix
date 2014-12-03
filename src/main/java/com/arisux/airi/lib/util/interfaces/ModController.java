@@ -45,7 +45,7 @@ public abstract class ModController implements IInitializablePre, IInitializable
 	
 	public String changelogUrl()
 	{
-		return this.changelogUrl == null ? this.changelogUrl = JsonUtils.getJsonElementAsJsonObject(this.getModInfoJson(), "changelogUrl").get("changelogUrl").getAsString() : this.changelogUrl;
+		return this.changelogUrl == null ? this.getModInfoJson() != null ? this.changelogUrl = JsonUtils.getJsonElementAsJsonObject(this.getModInfoJson(), "changelogUrl").get("changelogUrl").getAsString() : "" : this.changelogUrl;
 	}
 	
 	public boolean isBetaRelease()
