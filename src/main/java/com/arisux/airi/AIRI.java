@@ -2,7 +2,6 @@ package com.arisux.airi;
 
 import java.util.Arrays;
 
-import com.arisux.airi.Settings.Setting;
 import com.arisux.airi.api.obj3dapi.Obj3DAPI;
 import com.arisux.airi.api.remapping.RemappingAPI;
 import com.arisux.airi.api.updater.Updater;
@@ -40,7 +39,12 @@ public class AIRI
 	
 	public static Properties properties()
 	{
-		return AIRI.instance().properties;
+		return instance().properties;
+	}
+	
+	public static Settings settings()
+	{
+		return instance().settings;
 	}
 
 	public static class Logger
@@ -107,8 +111,8 @@ public class AIRI
 
 	public void disableNetworking(String reason)
 	{
-		AIRI.logger.warning("Networking was automatically disabled. " + reason);
-		AIRI.instance().settings.propertyList.get(Setting.NETWORKING).set(false);
+		AIRI.logger.warning("Networking was disabled. " + reason);
+		AIRI.settings().setNetworking(false);
 	}
 
 	public static void setASMInitialized(boolean b)

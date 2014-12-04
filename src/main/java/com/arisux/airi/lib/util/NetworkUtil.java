@@ -4,8 +4,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.arisux.airi.*;
-import com.arisux.airi.Settings.Setting;
+import com.arisux.airi.AIRI;
 
 public class NetworkUtil
 {
@@ -31,7 +30,7 @@ public class NetworkUtil
 	 */
 	public static String getURLContents(String url, boolean insertNewLines)
 	{
-		if (AIRI.instance().settings.propertyList.get(Settings.Setting.NETWORKING).getBoolean())
+		if (AIRI.settings().isNetworkingEnabled())
 		{
 			HttpURLConnection connection = null;
 
@@ -93,7 +92,7 @@ public class NetworkUtil
 	 */
 	public static void downloadFile(String fileUrl, String saveLocation) throws IOException
 	{
-		if (AIRI.instance().settings.propertyList.get(Setting.NETWORKING).getBoolean())
+		if (AIRI.settings().isNetworkingEnabled())
 		{
 			AIRI.logger.info("Downloading file from '" + fileUrl + "' and saving it to '" + saveLocation + "'");
 			InputStream is = (new URL(fileUrl)).openStream();

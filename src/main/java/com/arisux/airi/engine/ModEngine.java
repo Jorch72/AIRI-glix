@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Level;
 
 import com.arisux.airi.AIRI;
 import com.arisux.airi.engine.BlockTypeLib.HookedBlock;
-import com.arisux.airi.lib.util.interfaces.ModController;
+import com.arisux.airi.lib.util.interfaces.IMod;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -37,12 +37,12 @@ public class ModEngine
 	 */
 	public static abstract class IBHandler
 	{
-		private ModController modController;
+		private IMod mod;
 		private ArrayList<Object> objectList = new ArrayList<Object>();
 
-		public IBHandler(ModController modController)
+		public IBHandler(IMod mod)
 		{
-			this.modController = modController;
+			this.mod = mod;
 		}
 
 		public ArrayList<Object> getHandledObjects()
@@ -50,9 +50,9 @@ public class ModEngine
 			return objectList;
 		}
 
-		public ModController getModController()
+		public IMod getMod()
 		{
-			return modController;
+			return mod;
 		}
 
 		/**
@@ -235,7 +235,7 @@ public class ModEngine
 	 */
 	public static Block registerBlock(Block block, String reference, String texture, IBHandler handler, boolean visibleOnTab)
 	{
-		block.setBlockName(handler.getModController().domain() + reference);
+		block.setBlockName(handler.getMod().domain() + reference);
 
 		if (texture == null)
 		{
@@ -246,9 +246,9 @@ public class ModEngine
 			block.setBlockTextureName(texture);
 		}
 
-		if (handler.getModController().getCreativeTab() != null && visibleOnTab)
+		if (handler.getMod().tab() != null && visibleOnTab)
 		{
-			block.setCreativeTab(handler.getModController().getCreativeTab());
+			block.setCreativeTab(handler.getMod().tab());
 		}
 
 		if (handler.getHandledObjects() != null)
@@ -285,12 +285,12 @@ public class ModEngine
 	{
 		GameRegistry.registerItem(item, reference);
 
-		item.setUnlocalizedName(handler.getModController().domain() + reference);
+		item.setUnlocalizedName(handler.getMod().domain() + reference);
 		item.setTextureName((item.getUnlocalizedName()).replace("item.", ""));
 
-		if (handler.modController.getCreativeTab() != null && visibleOnPrimaryTab)
+		if (handler.mod.tab() != null && visibleOnPrimaryTab)
 		{
-			item.setCreativeTab(handler.modController.getCreativeTab());
+			item.setCreativeTab(handler.mod.tab());
 		}
 		else if (tab != null)
 		{

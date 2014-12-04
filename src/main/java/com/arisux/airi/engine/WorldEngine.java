@@ -16,7 +16,6 @@ import net.minecraft.util.*;
 import net.minecraft.world.*;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.Settings;
 import com.arisux.airi.lib.util.NetworkUtil;
 import com.arisux.airi.lib.world.CustomExplosion;
 
@@ -849,7 +848,7 @@ public class WorldEngine
 			public static String getUUID(String username)
 			{
 				String retrieved = NetworkUtil.getURLContents(String.format(AIRI.properties().URL_RETRIEVE_UUID, username));
-				return AIRI.instance().settings.propertyList.get(Settings.Setting.NETWORKING).getBoolean() ? retrieved != null && retrieved.length() >= 32 ? retrieved : username : username;
+				return AIRI.settings().isNetworkingEnabled() ? retrieved != null && retrieved.length() >= 32 ? retrieved : username : username;
 			}
 
 			/**

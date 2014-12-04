@@ -7,11 +7,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.Settings;
 import com.arisux.airi.api.window.Window;
 import com.arisux.airi.api.window.WindowManager;
 import com.arisux.airi.api.window.windows.WindowUpdates;
-import com.arisux.airi.lib.util.interfaces.ModController;
+import com.arisux.airi.lib.util.interfaces.IMod;
 
 public class UpdaterAPI
 {
@@ -27,7 +26,7 @@ public class UpdaterAPI
 
 	public void onTick()
 	{
-		if (AIRI.instance().settings.propertyList.get(Settings.Setting.NETWORKING).getBoolean())
+		if (AIRI.settings().isNetworkingEnabled())
 		{
 			if (AIRI.updaterApi().isUpdateAvailable())
 			{
@@ -83,9 +82,9 @@ public class UpdaterAPI
 		}
 	}
 
-	public Updater createNewUpdater(ModController modController)
+	public Updater createNewUpdater(IMod mod, String changelogUrl)
 	{
-		return createNewUpdater(modController.id(), modController.container().getMetadata().version, modController.container().getMetadata().updateUrl, modController.container().getMetadata().url, modController.changelogUrl());
+		return createNewUpdater(mod.container().getModId(), mod.container().getMetadata().version, mod.container().getMetadata().updateUrl, mod.container().getMetadata().url, changelogUrl);
 	}
 	
 	public Updater createNewUpdater(String modId, String curVer, String updateUrl, String downloadUrl, String changelogUrl)

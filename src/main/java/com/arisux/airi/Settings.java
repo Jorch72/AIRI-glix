@@ -1,10 +1,8 @@
 package com.arisux.airi;
 
-import java.util.HashMap;
-
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 
+import com.arisux.airi.engine.ModEngine;
 import com.arisux.airi.lib.util.interfaces.IInitializablePre;
 
 import cpw.mods.fml.common.Mod;
@@ -12,38 +10,41 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class Settings implements IInitializablePre
 {
-	public Configuration config;
-	public HashMap<Setting, Property> propertyList = new HashMap<Setting, Property>();
-
-	public enum Setting
-	{
-		NETWORKING(),
-		MAX_MOBS(),
-		MAX_ANIMALS(),
-		MAX_AQUATIC();
-
-		public static String get(Setting field)
-		{
-			return field.toString();
-		}
-	}
+	private final String CATEGORY_URLS = "URLS";
+	private String serverMain;
+	private String serverDev;
+	private boolean networking;
 
 	@Override
 	@Mod.EventHandler
 	public void preInitialize(FMLPreInitializationEvent event)
 	{
-		config = new Configuration(event.getSuggestedConfigurationFile());
+		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		try
 		{
 			config.load();
 
-			propertyList.put(Setting.NETWORKING, config.get(Configuration.CATEGORY_GENERAL, Setting.get(Setting.NETWORKING), true, "Toggles all networking for mods developed with AIRI."));
-			propertyList.put(Setting.MAX_MOBS, config.get(Configuration.CATEGORY_GENERAL, Setting.get(Setting.MAX_MOBS), 130, "Maximum amount of monsters that can spawn using the AIRI spawn system."));
-			propertyList.put(Setting.MAX_ANIMALS, config.get(Configuration.CATEGORY_GENERAL, Setting.get(Setting.MAX_ANIMALS), 50, "Maximum amount of animals that can spawn using the AIRI spawn system."));
-			propertyList.put(Setting.MAX_AQUATIC, config.get(Configuration.CATEGORY_GENERAL, Setting.get(Setting.MAX_AQUATIC), 50, "Maximum amount of aquatic mobs that can spawn using the AIRI spawn system."));
+			serverMain = config.get(CATEGORY_URLS, "SERVER_MAIN", "http://arisux.x10.mx", "").getString();
+			serverDev = config.get(CATEGORY_URLS, "SERVER_DEV", "http://localhost:8080", "").getString();
+			networking = config.get(Configuration.CATEGORY_GENERAL, "NETWORKING", true, "Toggles networking for mods that route external network access through AIRI.").getBoolean();
 		} finally
 		{
 			config.save();
 		}
+	}
+	
+	public String getServer()
+	{
+		return ModEngine.isDevEnvironment() ? serverDev : serverMain;
+	}
+	
+	public boolean isNetworkingEnabled()
+	{
+		return networking;
+	}
+	
+	public void setNetworking(boolean networking)
+	{
+		this.networking = networking;
 	}
 }
