@@ -1,4 +1,4 @@
-package com.arisux.airi.lib.util;
+package com.arisux.airi.lib;
 
 public class MathUtil
 {

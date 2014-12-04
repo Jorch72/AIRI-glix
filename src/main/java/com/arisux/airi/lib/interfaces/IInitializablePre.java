@@ -1,4 +1,4 @@
-package com.arisux.airi.lib.util.interfaces;
+package com.arisux.airi.lib.interfaces;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;

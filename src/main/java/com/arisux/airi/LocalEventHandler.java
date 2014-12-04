@@ -1,6 +1,6 @@
 package com.arisux.airi;
 
-import com.arisux.airi.lib.util.interfaces.IInitializablePre;
+import com.arisux.airi.lib.interfaces.IInitializablePre;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;

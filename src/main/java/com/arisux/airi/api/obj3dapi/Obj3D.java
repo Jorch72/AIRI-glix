@@ -10,8 +10,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.engine.RenderEngine.UV;
-import com.arisux.airi.engine.RenderEngine.Vertex;
+import com.arisux.airi.lib.RenderUtil.UV;
+import com.arisux.airi.lib.RenderUtil.Vertex;
 
 public class Obj3D
 {

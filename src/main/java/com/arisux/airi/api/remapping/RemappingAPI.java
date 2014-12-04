@@ -6,7 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.util.interfaces.IInitializablePre;
+import com.arisux.airi.lib.interfaces.IInitializablePre;
 
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent.MissingMapping;

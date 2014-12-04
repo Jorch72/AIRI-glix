@@ -1,4 +1,4 @@
-package com.arisux.airi.engine;
+package com.arisux.airi.lib;
 
 import java.io.*;
 import java.util.*;
@@ -16,13 +16,12 @@ import net.minecraft.util.*;
 import net.minecraft.world.*;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.util.NetworkUtil;
 import com.arisux.airi.lib.world.CustomExplosion;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
-public class WorldEngine
+public class WorldUtil
 {
 	/**
 	 * Create an explosion in the specified world, at the specified coordinates, with the specified effects.
@@ -582,7 +581,7 @@ public class WorldEngine
 		 */
 		public static void moveTileEntity(TileEntity tileEntity, Blocks.CoordData coord)
 		{
-			WorldEngine.TileEntities.setTileEntityPosition(tileEntity, (new Blocks.CoordData(tileEntity)).add(coord));
+			WorldUtil.TileEntities.setTileEntityPosition(tileEntity, (new Blocks.CoordData(tileEntity)).add(coord));
 		}
 		
 	}
@@ -847,7 +846,7 @@ public class WorldEngine
 			 */
 			public static String getUUID(String username)
 			{
-				String retrieved = NetworkUtil.getURLContents(String.format(AIRI.properties().URL_RETRIEVE_UUID, username));
+				String retrieved = NetworkUtil.getURLContents(String.format(AIRI.settings().getServer() + "/login/auth-functions.php?function=uuid&user=%s", username));
 				return AIRI.settings().isNetworkingEnabled() ? retrieved != null && retrieved.length() >= 32 ? retrieved : username : username;
 			}
 

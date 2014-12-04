@@ -1,4 +1,4 @@
-package com.arisux.airi.engine;
+package com.arisux.airi.lib;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ItemTypeLib
+public class ItemTypes
 {
 	public static class HookedItem extends Item
 	{

@@ -4,8 +4,8 @@ import org.lwjgl.input.Keyboard;
 
 import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.window.windows.WindowATWarning;
-import com.arisux.airi.engine.ModEngine;
-import com.arisux.airi.lib.util.interfaces.IInitializablePre;
+import com.arisux.airi.lib.ModUtil;
+import com.arisux.airi.lib.interfaces.IInitializablePre;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -27,7 +27,7 @@ public class ClientSideEvents implements IInitializablePre
 		{
 			AIRI.logger.info("Verifying access transformer...");
 
-			if (!AIRI.COREMOD_INITIALIZED && !ModEngine.isDevEnvironment())
+			if (!AIRI.COREMOD_INITIALIZED && !ModUtil.isDevEnvironment())
 			{
 				AIRI.logger.warning("Access transformer could not be verified. If you are in an installation environment, you are going to run into problems!");
 

@@ -1,4 +1,4 @@
-package com.arisux.airi.lib.util;
+package com.arisux.airi.lib.render;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.util.ResourceLocation;

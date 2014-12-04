@@ -1,4 +1,4 @@
-package com.arisux.airi.engine;
+package com.arisux.airi.lib;
 
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -8,14 +8,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-import com.arisux.airi.engine.RenderEngine.IconSet;
-import com.arisux.airi.lib.util.enums.IconSides;
+import com.arisux.airi.lib.RenderUtil.IconSet;
+import com.arisux.airi.lib.enums.IconSides;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockTypeLib
+public class BlockTypes
 {
 	public static class HookedBlock extends Block
 	{
@@ -23,7 +23,7 @@ public class BlockTypeLib
 		protected boolean isOpaque;
 		private boolean disableIcon;
 		private ISimpleBlockRenderingHandler renderType;
-		private RenderEngine.IconSet iconSet;
+		private RenderUtil.IconSet iconSet;
 
 		public HookedBlock(Material material)
 		{

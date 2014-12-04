@@ -8,7 +8,7 @@ import scala.tools.asm.ClassWriter;
 import scala.tools.asm.tree.*;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.engine.ModEngine;
+import com.arisux.airi.lib.ModUtil;
 
 public class AIRIClassTransformer implements IClassTransformer
 {
@@ -22,7 +22,7 @@ public class AIRIClassTransformer implements IClassTransformer
 	{
 		if (className.equals("net.minecraft.client.renderer.EntityRenderer"))
 		{
-			return this.patchClassASM(className, ModEngine.isDevEnvironment() ? "updateLightmap" : "func_78472_g", "(F)V", bytes);
+			return this.patchClassASM(className, ModUtil.isDevEnvironment() ? "updateLightmap" : "func_78472_g", "(F)V", bytes);
 		}
 
 		return bytes;

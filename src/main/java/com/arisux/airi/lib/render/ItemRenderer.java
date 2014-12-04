@@ -5,16 +5,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 
-import com.arisux.airi.engine.RenderEngine.PlayerResourceManager;
+import com.arisux.airi.lib.RenderUtil.PlayerResourceManager;
 
-public abstract class ItemRenderer3D implements IItemRenderer
+public abstract class ItemRenderer implements IItemRenderer
 {
 	protected PlayerResourceManager resourceManager;
 	protected ResourceLocation resource;
 	protected ModelBase model;
 	private boolean rendersInFirstPerson, rendersInThirdPerson, rendersInInventory, rendersInWorld;
 
-	public ItemRenderer3D(ModelBase model, ResourceLocation resource)
+	public ItemRenderer(ModelBase model, ResourceLocation resource)
 	{
 		this.resourceManager = new PlayerResourceManager();
 		this.model = model;
@@ -96,25 +96,25 @@ public abstract class ItemRenderer3D implements IItemRenderer
 		;
 	}
 
-	public ItemRenderer3D setRendersInThirdPerson(boolean rendersInThirdPerson)
+	public ItemRenderer setRendersInThirdPerson(boolean rendersInThirdPerson)
 	{
 		this.rendersInThirdPerson = rendersInThirdPerson;
 		return this;
 	}
 
-	public ItemRenderer3D setRendersInFirstPerson(boolean rendersInFirstPerson)
+	public ItemRenderer setRendersInFirstPerson(boolean rendersInFirstPerson)
 	{
 		this.rendersInFirstPerson = rendersInFirstPerson;
 		return this;
 	}
 
-	public ItemRenderer3D setRendersInInventory(boolean rendersInInventory)
+	public ItemRenderer setRendersInInventory(boolean rendersInInventory)
 	{
 		this.rendersInInventory = rendersInInventory;
 		return this;
 	}
 
-	public ItemRenderer3D setRendersInWorld(boolean rendersInWorld)
+	public ItemRenderer setRendersInWorld(boolean rendersInWorld)
 	{
 		this.rendersInWorld = rendersInWorld;
 		return this;

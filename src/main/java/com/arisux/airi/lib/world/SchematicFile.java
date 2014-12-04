@@ -1,4 +1,4 @@
-package com.arisux.airi.schematic;
+package com.arisux.airi.lib.world;
 
 import java.util.*;
 
@@ -10,8 +10,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import com.arisux.airi.engine.WorldEngine.Blocks;
-import com.arisux.airi.engine.WorldEngine.TileEntities;
+import com.arisux.airi.lib.WorldUtil.Blocks;
+import com.arisux.airi.lib.WorldUtil.TileEntities;
 
 public class SchematicFile
 {

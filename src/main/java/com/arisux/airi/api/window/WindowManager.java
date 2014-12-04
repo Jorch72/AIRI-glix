@@ -10,8 +10,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import com.arisux.airi.engine.RenderEngine;
-import com.arisux.airi.engine.GuiTypeLib.GuiCustomScreen;
+import com.arisux.airi.lib.RenderUtil;
+import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -121,7 +121,7 @@ public class WindowManager extends GuiCustomScreen
 			parentScreen.drawScreen(mouseX, mouseY, par3);
 		}
 
-		RenderEngine.drawGradientRect(0, 0, RenderEngine.scaledDisplayResolution().getScaledWidth(), RenderEngine.scaledDisplayResolution().getScaledHeight(), 0xDD000000, 0x66000000);
+		RenderUtil.drawGradientRect(0, 0, RenderUtil.scaledDisplayResolution().getScaledWidth(), RenderUtil.scaledDisplayResolution().getScaledHeight(), 0xDD000000, 0x66000000);
 
 		GL11.glPushMatrix();
 		{

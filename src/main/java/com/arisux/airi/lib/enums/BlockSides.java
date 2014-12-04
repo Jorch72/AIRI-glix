@@ -1,4 +1,4 @@
-package com.arisux.airi.lib.util.enums;
+package com.arisux.airi.lib.enums;
 
 public enum BlockSides
 {

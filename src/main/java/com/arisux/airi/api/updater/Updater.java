@@ -5,9 +5,9 @@ import java.util.HashMap;
 import net.minecraft.entity.player.EntityPlayer;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.engine.WorldEngine;
-import com.arisux.airi.lib.util.NetworkUtil;
-import com.arisux.airi.lib.util.interfaces.IInitializablePost;
+import com.arisux.airi.lib.NetworkUtil;
+import com.arisux.airi.lib.WorldUtil;
+import com.arisux.airi.lib.interfaces.IInitializablePost;
 
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -50,7 +50,7 @@ public class Updater implements IInitializablePost
 		{
 			String updateString = "Update: " + getVersionData().get("MODID") + " " + getVersionData().get("MODVER") + " for Minecraft " + getVersionData().get("MCVER");
 			AIRI.logger.info(updateString);
-			WorldEngine.Entities.Players.sendToChat(thePlayer, updateString);
+			WorldUtil.Entities.Players.sendToChat(thePlayer, updateString);
 		}
 	}
 

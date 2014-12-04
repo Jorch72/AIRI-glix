@@ -1,4 +1,4 @@
-package com.arisux.airi.coremod;
+package com.arisux.airi.lib;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -6,7 +6,7 @@ import net.minecraft.util.Session;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class AccessHandler
+public class AccessWrapper
 {
 	@SideOnly(Side.CLIENT)
 	public static float getEquippedProgress()

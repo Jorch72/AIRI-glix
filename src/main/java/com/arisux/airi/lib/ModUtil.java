@@ -1,4 +1,4 @@
-package com.arisux.airi.engine;
+package com.arisux.airi.lib;
 
 import java.io.*;
 import java.net.URL;
@@ -19,8 +19,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.engine.BlockTypeLib.HookedBlock;
-import com.arisux.airi.lib.util.interfaces.IMod;
+import com.arisux.airi.lib.BlockTypes.HookedBlock;
+import com.arisux.airi.lib.interfaces.IMod;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -30,7 +30,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class ModEngine
+public class ModUtil
 {
 	/**
 	 * Used for easier management of large quantities of Item and Block instances.
@@ -148,7 +148,7 @@ public class ModEngine
 		 */
 		public Block registerBlock(Block block, String reference, String texture, boolean visibleOnTab)
 		{
-			return ModEngine.registerBlock(block, reference, texture, this, visibleOnTab);
+			return ModUtil.registerBlock(block, reference, texture, this, visibleOnTab);
 		}
 
 		/**
@@ -191,7 +191,7 @@ public class ModEngine
 		 */
 		public Item registerItem(Item item, String reference, boolean visibleOnPrimaryTab, CreativeTabs tab)
 		{
-			return ModEngine.registerItem(item, reference, this, visibleOnPrimaryTab, tab);
+			return ModUtil.registerItem(item, reference, this, visibleOnPrimaryTab, tab);
 		}
 
 		/**
@@ -213,7 +213,7 @@ public class ModEngine
 		 */
 		public Item registerItem(Item item, String reference, boolean visibleOnPrimaryTab)
 		{
-			return ModEngine.registerItem(item, reference, this, visibleOnPrimaryTab, null);
+			return ModUtil.registerItem(item, reference, this, visibleOnPrimaryTab, null);
 		}
 	}
 
@@ -331,7 +331,7 @@ public class ModEngine
 	@SuppressWarnings("unchecked")
 	public static IRecipe getRecipe(Object obj)
 	{
-		ItemStack stack = WorldEngine.Entities.Players.Inventories.newStack(obj);
+		ItemStack stack = WorldUtil.Entities.Players.Inventories.newStack(obj);
 		List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
 
 		if (stack != null)
@@ -357,7 +357,7 @@ public class ModEngine
 	@SuppressWarnings("unchecked")
 	public static List<IRecipe> getRecipes(Object obj)
 	{
-		ItemStack stack = WorldEngine.Entities.Players.Inventories.newStack(obj);
+		ItemStack stack = WorldUtil.Entities.Players.Inventories.newStack(obj);
 		List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
 		List<IRecipe> foundRecipes = new ArrayList<IRecipe>();
 

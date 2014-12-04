@@ -1,9 +1,8 @@
-package com.arisux.airi.lib.util;
+package com.arisux.airi.lib;
 
 import java.lang.reflect.Field;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.engine.ModEngine;
 
 public class ReflectionUtil
 {
@@ -44,7 +43,7 @@ public class ReflectionUtil
 	
 	public static void set(Object obj, String deobfName, String obfName, Object value)
 	{
-		String fieldName = ModEngine.isDevEnvironment() ? deobfName : obfName;
+		String fieldName = ModUtil.isDevEnvironment() ? deobfName : obfName;
 
 		try
 		{
@@ -60,7 +59,7 @@ public class ReflectionUtil
 	
 	public static Object get(Object obj, String deobfName, String obfName)
 	{
-		String fieldName = ModEngine.isDevEnvironment() ? deobfName : obfName;
+		String fieldName = ModUtil.isDevEnvironment() ? deobfName : obfName;
 		
 		try
 		{

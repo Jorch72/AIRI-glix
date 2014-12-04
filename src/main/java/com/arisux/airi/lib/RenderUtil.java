@@ -1,4 +1,4 @@
-package com.arisux.airi.engine;
+package com.arisux.airi.lib;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -38,12 +38,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.engine.GuiTypeLib.GuiCustomScreen;
-import com.arisux.airi.engine.WorldEngine.Blocks;
-import com.arisux.airi.lib.compatibility.ScaledResolution;
-import com.arisux.airi.lib.util.MathUtil;
+import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
+import com.arisux.airi.lib.WorldUtil.Blocks;
+import com.arisux.airi.lib.render.ScaledResolution;
 
-public class RenderEngine
+public class RenderUtil
 {
 	public static final GuiCustomScreen guiHook = new GuiCustomScreen();
 	public static boolean lightmapTexUnitTextureEnable;
@@ -583,10 +582,10 @@ public class RenderEngine
 	 * Compatibility version of the ScaledResolution class. Returns the current game display resolution.
 	 * @return Returns an instance of the compatibility version of ScaledResolution.
 	 */
-	public static com.arisux.airi.lib.compatibility.ScaledResolution scaledDisplayResolution()
+	public static com.arisux.airi.lib.render.ScaledResolution scaledDisplayResolution()
 	{
 		Minecraft mc = Minecraft.getMinecraft();
-		return new com.arisux.airi.lib.compatibility.ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+		return new com.arisux.airi.lib.render.ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 	}
 
 	/**
@@ -1388,7 +1387,7 @@ public class RenderEngine
 	 */
 	public static void drawRecipe(Object obj, int x, int y, int size, int slotPadding, int backgroundColor)
 	{
-		IRecipe recipe = obj instanceof Item ? (ModEngine.getRecipe(obj)) : obj instanceof Block ? (ModEngine.getRecipe(obj)) : null;
+		IRecipe recipe = obj instanceof Item ? (ModUtil.getRecipe(obj)) : obj instanceof Block ? (ModUtil.getRecipe(obj)) : null;
 
 		if (recipe == null)
 		{
@@ -1399,7 +1398,7 @@ public class RenderEngine
 		{
 			for (int gY = 0; gY < 3; ++gY)
 			{
-				RenderEngine.drawRect(x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size, backgroundColor);
+				RenderUtil.drawRect(x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size, backgroundColor);
 
 				if (recipe instanceof ShapedRecipes)
 				{
@@ -1407,7 +1406,7 @@ public class RenderEngine
 
 					if (slotStack != null)
 					{
-						RenderEngine.drawItemIcon(slotStack.getItem(), x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size);
+						RenderUtil.drawItemIcon(slotStack.getItem(), x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size);
 					}
 				}
 			}
@@ -1482,7 +1481,7 @@ public class RenderEngine
 					public void run()
 					{
 						super.run();
-						uuid = WorldEngine.Entities.Players.getUUID(name);
+						uuid = WorldUtil.Entities.Players.getUUID(name);
 					}
 				};
 				uuidThread.start();

@@ -2,8 +2,8 @@ package com.arisux.airi;
 
 import net.minecraftforge.common.config.Configuration;
 
-import com.arisux.airi.engine.ModEngine;
-import com.arisux.airi.lib.util.interfaces.IInitializablePre;
+import com.arisux.airi.lib.ModUtil;
+import com.arisux.airi.lib.interfaces.IInitializablePre;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -35,7 +35,7 @@ public class Settings implements IInitializablePre
 	
 	public String getServer()
 	{
-		return ModEngine.isDevEnvironment() ? serverDev : serverMain;
+		return ModUtil.isDevEnvironment() ? serverDev : serverMain;
 	}
 	
 	public boolean isNetworkingEnabled()

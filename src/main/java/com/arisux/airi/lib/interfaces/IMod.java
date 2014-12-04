@@ -1,4 +1,4 @@
-package com.arisux.airi.lib.util.interfaces;
+package com.arisux.airi.lib.interfaces;
 
 import net.minecraft.creativetab.CreativeTabs;
 import cpw.mods.fml.common.ModContainer;

@@ -10,7 +10,7 @@ import com.arisux.airi.AIRI;
 import com.arisux.airi.api.window.Window;
 import com.arisux.airi.api.window.WindowManager;
 import com.arisux.airi.api.window.windows.WindowUpdates;
-import com.arisux.airi.lib.util.interfaces.IMod;
+import com.arisux.airi.lib.interfaces.IMod;
 
 public class UpdaterAPI
 {

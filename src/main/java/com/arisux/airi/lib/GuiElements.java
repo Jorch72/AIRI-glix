@@ -1,4 +1,4 @@
-package com.arisux.airi.engine;
+package com.arisux.airi.lib;
 
 import java.util.ArrayList;
 
@@ -14,12 +14,12 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import com.arisux.airi.lib.util.interfaces.IActionPerformed;
+import com.arisux.airi.lib.interfaces.IActionPerformed;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class GuiTypeLib
+public class GuiElements
 {
 	@SideOnly(Side.CLIENT)
 	public static class GuiCustomButton extends GuiButton
@@ -64,7 +64,7 @@ public class GuiTypeLib
 
 		public void drawButton()
 		{
-			this.drawButton(Minecraft.getMinecraft(), (int) RenderEngine.scaledMousePosition().x, (int) RenderEngine.scaledMousePosition().y);
+			this.drawButton(Minecraft.getMinecraft(), (int) RenderUtil.scaledMousePosition().x, (int) RenderUtil.scaledMousePosition().y);
 		}
 
 		@Override
@@ -79,15 +79,15 @@ public class GuiTypeLib
 
 				int overlayColor = k == 2 ? (Mouse.isButtonDown(0) ? overlayColorPressed : overlayColorHover) : overlayColorNormal;
 
-				RenderEngine.drawRect(this.xPosition, this.yPosition, this.width, this.height, baseColor);
-				RenderEngine.drawRect(this.xPosition, this.yPosition, this.width, this.height, overlayColor);
+				RenderUtil.drawRect(this.xPosition, this.yPosition, this.width, this.height, baseColor);
+				RenderUtil.drawRect(this.xPosition, this.yPosition, this.width, this.height, overlayColor);
 
 				this.mouseDragged(mc, mouseX, mouseY);
 				this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
 			
 				if (this.isMouseOver() && !tooltip.equalsIgnoreCase(""))
 				{
-					RenderEngine.drawToolTip((int) RenderEngine.scaledMousePosition().x + 10, (int) RenderEngine.scaledMousePosition().y, tooltip);
+					RenderUtil.drawToolTip((int) RenderUtil.scaledMousePosition().x + 10, (int) RenderUtil.scaledMousePosition().y, tooltip);
 				}
 			}
 		}
@@ -113,7 +113,7 @@ public class GuiTypeLib
 		{
 			if (this.isMouseOver())
 			{
-				GuiTypeLib.handleMouseInputForCustomButton(this);
+				GuiElements.handleMouseInputForCustomButton(this);
 			}
 		}
 
@@ -162,8 +162,8 @@ public class GuiTypeLib
 
 		public boolean isMouseInside()
 		{
-			int mouseX = (int) RenderEngine.scaledMousePosition().x;
-			int mouseY = (int) RenderEngine.scaledMousePosition().y;
+			int mouseX = (int) RenderUtil.scaledMousePosition().x;
+			int mouseY = (int) RenderUtil.scaledMousePosition().y;
 			return mouseX >= (xPosition) && mouseX <= (xPosition + width) && mouseY >= (yPosition) && mouseY <= (yPosition + height);
 		}
 
@@ -239,8 +239,8 @@ public class GuiTypeLib
 			
 			if (this.visible)
 			{
-				RenderEngine.drawRectWithOutline(this.xPosition - 1, this.yPosition - 1, this.width + 2, this.height + 2, 1, 0x00000000, 0xAAFFFFFF);
-				RenderEngine.drawRect(this.xPosition + (int) (this.sliderValue * (float) (this.width - 8)), this.yPosition, 8, this.height, sliderButtonColor);
+				RenderUtil.drawRectWithOutline(this.xPosition - 1, this.yPosition - 1, this.width + 2, this.height + 2, 1, 0x00000000, 0xAAFFFFFF);
+				RenderUtil.drawRect(this.xPosition + (int) (this.sliderValue * (float) (this.width - 8)), this.yPosition, 8, this.height, sliderButtonColor);
 			}
 		}
 
@@ -329,7 +329,7 @@ public class GuiTypeLib
 	{
 		if (Mouse.isCreated())
 		{
-			Vector2d mousePosition = RenderEngine.scaledMousePosition();
+			Vector2d mousePosition = RenderUtil.scaledMousePosition();
 
 			while (Mouse.next())
 			{
