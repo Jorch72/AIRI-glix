@@ -1,15 +1,10 @@
 package com.arisux.airi.lib.util;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.arisux.airi.AIRI;
-import com.arisux.airi.Settings;
+import com.arisux.airi.*;
 import com.arisux.airi.Settings.Setting;
 
 public class NetworkUtil
@@ -42,7 +37,7 @@ public class NetworkUtil
 
 			try
 			{
-				connection = (HttpURLConnection) ((HttpURLConnection) (new URL(url)).openConnection());
+				connection = ((HttpURLConnection) (new URL(url)).openConnection());
 				connection.setDoInput(true);
 				connection.setDoOutput(false);
 				connection.connect();
@@ -69,7 +64,7 @@ public class NetworkUtil
 				}
 			} catch (Exception e)
 			{
-				AIRI.logger.warning(e.toString());
+				AIRI.logger.warning(e.toString() + ": " + url);
 				
 				if (connection != null)
 				{
