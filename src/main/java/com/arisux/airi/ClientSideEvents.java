@@ -27,7 +27,7 @@ public class ClientSideEvents implements IInitializablePre
 		{
 			AIRI.logger.info("Verifying access transformer...");
 
-			if (!AIRI.COREMOD_INITIALIZED && !ModEngine.isDevelopmentEnvironment())
+			if (!AIRI.COREMOD_INITIALIZED && !ModEngine.isDevEnvironment())
 			{
 				AIRI.logger.warning("Access transformer could not be verified. If you are in an installation environment, you are going to run into problems!");
 

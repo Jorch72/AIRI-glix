@@ -381,7 +381,7 @@ public class ModEngine
 	 * 
 	 * @return Returns true if in a dev environment. Returns false if other.
 	 */
-	public static boolean isDevelopmentEnvironment()
+	public static boolean isDevEnvironment()
 	{
 		return (Boolean) net.minecraft.launchwrapper.Launch.blackboard.get("fml.deobfuscatedEnvironment");
 	}

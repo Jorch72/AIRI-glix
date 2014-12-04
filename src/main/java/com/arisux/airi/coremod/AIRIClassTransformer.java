@@ -22,7 +22,7 @@ public class AIRIClassTransformer implements IClassTransformer
 	{
 		if (className.equals("net.minecraft.client.renderer.EntityRenderer"))
 		{
-			return this.patchClassASM(className, ModEngine.isDevelopmentEnvironment() ? "updateLightmap" : "func_78472_g", "(F)V", bytes);
+			return this.patchClassASM(className, ModEngine.isDevEnvironment() ? "updateLightmap" : "func_78472_g", "(F)V", bytes);
 		}
 
 		return bytes;
