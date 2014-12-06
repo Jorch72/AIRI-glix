@@ -46,6 +46,7 @@ public class RenderUtil
 {
 	public static final GuiCustomScreen guiHook = new GuiCustomScreen();
 	public static boolean lightmapTexUnitTextureEnable;
+	public static final float DEFAULT_BOX_TRANSLATION = 0.0625F;
 
 	public static final DPI DPI1 = new DPI(1, 1.0F);
 	public static final DPI DPI2 = new DPI(2, 0.5F);

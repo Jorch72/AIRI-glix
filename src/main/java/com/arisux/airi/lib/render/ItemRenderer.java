@@ -1,6 +1,8 @@
 package com.arisux.airi.lib.render;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
+import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -141,5 +143,10 @@ public abstract class ItemRenderer implements IItemRenderer
 	public void setResourceLocation(ResourceLocation resource)
 	{
 		this.resource = resource;
+	}
+	
+	public boolean firstPersonRenderCheck(Object o)
+	{
+		return o == mc.renderViewEntity && mc.gameSettings.thirdPersonView == 0 && (!(mc.currentScreen instanceof GuiInventory) && !(mc.currentScreen instanceof GuiContainerCreative));
 	}
 }
