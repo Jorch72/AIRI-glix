@@ -2,6 +2,7 @@ package com.arisux.airi.lib;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Session;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -96,5 +97,11 @@ public class AccessWrapper
 	public static void setLightmapUpdateNeeded(boolean value)
 	{
 		Minecraft.getMinecraft().entityRenderer.lightmapUpdateNeeded = value;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static ResourceLocation getParticleTextures()
+	{
+		return (ResourceLocation) ReflectionUtil.get(Minecraft.getMinecraft().effectRenderer, "particleTextures", "field_110737_b");
 	}
 }

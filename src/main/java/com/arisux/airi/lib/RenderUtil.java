@@ -621,16 +621,6 @@ public class RenderUtil
 
 	/**
 	 * Binds a texture to OpenGL using Minecraft's render engine.
-	 * @param location - The path to the resource to be bound.
-	 */
-	@Deprecated
-	public static void bindTexture(String location)
-	{
-		bindTexture(new ResourceLocation(location));
-	}
-
-	/**
-	 * Binds a texture to OpenGL using Minecraft's render engine.
 	 * @param resource - The ResourceLocation of the resource to bind.
 	 */
 	public static void bindTexture(ResourceLocation resource)
@@ -1120,6 +1110,13 @@ public class RenderUtil
 		RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
 		glPopMatrix();
 	}
+	
+	public static void lightingHelper(Entity entity, float offset)
+	{
+		int brightness = entity.worldObj.getLightBrightnessForSkyBlocks(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posY + offset / 16.0F), MathHelper.floor_double(entity.posZ), 0);
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightness % 65536, brightness / 65536);
+		GL11.glColor3f(1.0F, 1.0F, 1.0F);
+	}
 
 	/**
 	 * Draw the player's face with the specified username. Requires a network
@@ -1300,9 +1297,10 @@ public class RenderUtil
 	 */
 	public static void drawParticle(int particleId, int x, int y, int width, int height)
 	{
+		ResourceLocation resource = AccessWrapper.getParticleTextures();
 		float u = (particleId % 16) / 16.0f;
 		float v = (particleId / 16) / 16.0f;
-		bindTexture("textures/particle/particles.png");
+		bindTexture(resource);
 		drawQuad(x, y, width, height, 0, u, u + 0.0624375F, v, v + 0.0624375F);
 	}
 
