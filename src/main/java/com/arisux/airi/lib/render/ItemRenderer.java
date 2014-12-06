@@ -1,14 +1,18 @@
 package com.arisux.airi.lib.render;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 
+import org.lwjgl.opengl.GL11;
+
 import com.arisux.airi.lib.RenderUtil.PlayerResourceManager;
 
 public abstract class ItemRenderer implements IItemRenderer
 {
+	protected Minecraft mc = Minecraft.getMinecraft();
 	protected PlayerResourceManager resourceManager;
 	protected ResourceLocation resource;
 	protected ModelBase model;
@@ -57,23 +61,27 @@ public abstract class ItemRenderer implements IItemRenderer
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data)
 	{
-		switch (type)
+		GL11.glPushMatrix();
 		{
-			case EQUIPPED:
-				this.renderThirdPerson(item, data);
-				break;
-			case EQUIPPED_FIRST_PERSON:
-				this.renderFirstPerson(item, data);
-				break;
-			case INVENTORY:
-				this.renderInInventory(item, data);
-				break;
-			case ENTITY:
-				this.renderInWorld(item, data);
-				break;
-			default:
-				break;
+			switch (type)
+			{
+				case EQUIPPED:
+					this.renderThirdPerson(item, data);
+					break;
+				case EQUIPPED_FIRST_PERSON:
+					this.renderFirstPerson(item, data);
+					break;
+				case INVENTORY:
+					this.renderInInventory(item, data);
+					break;
+				case ENTITY:
+					this.renderInWorld(item, data);
+					break;
+				default:
+					break;
+			}
 		}
+		GL11.glPopMatrix();
 	}
 
 	public void renderThirdPerson(ItemStack item, Object... data)
@@ -129,7 +137,7 @@ public abstract class ItemRenderer implements IItemRenderer
 	{
 		return resource;
 	}
-	
+
 	public void setResourceLocation(ResourceLocation resource)
 	{
 		this.resource = resource;
