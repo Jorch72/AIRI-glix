@@ -1,5 +1,7 @@
 package com.arisux.airi;
 
+import net.minecraftforge.common.MinecraftForge;
+
 import org.lwjgl.input.Keyboard;
 
 import com.arisux.airi.api.updater.Updater;
@@ -16,7 +18,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
 public class ClientSideEvents implements IInitializablePre
 {
 	private boolean openedInitial;
-	
+
 	@SubscribeEvent
 	public void clientTick(ClientTickEvent event)
 	{
@@ -49,20 +51,23 @@ public class ClientSideEvents implements IInitializablePre
 				AIRI.windowApi().showWindowManager();
 			}
 		}
+		
+		GuiElementHandler.instance().tick();
 	}
-
+	
 	@SubscribeEvent
-	public void onClientPlayerLogin(final PlayerLoggedInEvent event)
+	public void onClientPlayerLogin(PlayerLoggedInEvent event)
 	{
 		for (Updater updater : AIRI.updaterApi().getUpdaterRegistry())
 		{
 			updater.printUpdateInformation(event.player);
 		}
 	}
-	
+
 	@Override
 	public void preInitialize(FMLPreInitializationEvent event)
 	{
 		FMLCommonHandler.instance().bus().register(this);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 }

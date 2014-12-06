@@ -21,6 +21,7 @@ public class AIRI
 	public static Logger logger = new Logger();
 	private Properties properties = new Properties();
 	public LocalEventHandler events;
+	public GuiElementHandler guiElementHandler;
 	public Settings settings;
 	public Updater updater;
 	
@@ -86,6 +87,7 @@ public class AIRI
 
 		(remappingAPI = new RemappingAPI()).preInitialize(event);
 		(events = new LocalEventHandler()).preInitialize(event);
+		(guiElementHandler = new GuiElementHandler()).preInitialize(event);
 
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
 		{

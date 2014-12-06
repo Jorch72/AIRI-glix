@@ -2,18 +2,13 @@ package com.arisux.airi.lib;
 
 import java.util.ArrayList;
 
-import javax.vecmath.Vector2d;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.*;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import com.arisux.airi.GuiElementHandler;
 import com.arisux.airi.lib.interfaces.IActionPerformed;
 
 import cpw.mods.fml.relauncher.Side;
@@ -49,6 +44,7 @@ public class GuiElements
 		public GuiCustomButton(int id, int xPosition, int yPosition, int width, int height, String displayString, IActionPerformed action)
 		{
 			super(id, xPosition, yPosition, width, height, displayString);
+			GuiElementHandler.addButton(this);
 			this.width = 200;
 			this.height = 20;
 			this.enabled = true;
@@ -109,14 +105,6 @@ public class GuiElements
 			super.mouseDragged(mc, mouseX, mouseY);
 		}
 
-		public void handleInput()
-		{
-			if (this.isMouseOver())
-			{
-				GuiElements.handleMouseInputForCustomButton(this);
-			}
-		}
-
 		public boolean isMouseOver()
 		{
 			return this.field_146123_n;
@@ -148,6 +136,7 @@ public class GuiElements
 		public GuiCustomTextbox(int x, int y, int width, int height)
 		{
 			super(Minecraft.getMinecraft().fontRenderer, x, y, width, height);
+			GuiElementHandler.addTextbox(this);
 			this.xPosition = x;
 			this.yPosition = y;
 			this.width = width;
@@ -166,20 +155,6 @@ public class GuiElements
 			int mouseY = (int) RenderUtil.scaledMousePosition().y;
 			return mouseX >= (xPosition) && mouseX <= (xPosition + width) && mouseY >= (yPosition) && mouseY <= (yPosition + height);
 		}
-
-		public void handleInput()
-		{
-			if (Mouse.isButtonDown(0))
-			{
-				if (isMouseInside())
-				{
-					this.setFocused(true);
-				} else
-				{
-					this.setFocused(false);
-				}
-			}
-		}
 	}
 
 	public static class GuiCustomSlider extends GuiCustomButton
@@ -194,6 +169,7 @@ public class GuiElements
 		public GuiCustomSlider(int id, int x, int y, String label, float startingValue, float maxValue)
 		{
 			super(id, x, y, 150, 20, label, null);
+			GuiElementHandler.addSlider(this);
 			this.sliderValue = startingValue;
 			this.sliderMaxValue = maxValue;
 			this.label = label;
@@ -240,7 +216,7 @@ public class GuiElements
 			if (this.visible)
 			{
 				RenderUtil.drawRectWithOutline(this.xPosition - 1, this.yPosition - 1, this.width + 2, this.height + 2, 1, 0x00000000, 0xAAFFFFFF);
-				RenderUtil.drawRect(this.xPosition + (int) (this.sliderValue * (float) (this.width - 8)), this.yPosition, 8, this.height, sliderButtonColor);
+				RenderUtil.drawRect(this.xPosition + (int) (this.sliderValue * (this.width - 8)), this.yPosition, 8, this.height, sliderButtonColor);
 			}
 		}
 
@@ -273,17 +249,6 @@ public class GuiElements
 		public void mouseReleased(int par1, int par2)
 		{
 			this.dragging = false;
-		}
-
-		@Override
-		public void handleInput()
-		{
-			super.handleInput();
-			
-			if (!Mouse.getEventButtonState() && Mouse.getEventButton() != -1)
-			{
-				this.dragging = false;
-			}
 		}
 	}
 
@@ -322,48 +287,6 @@ public class GuiElements
 		public void incZLevel(float f)
 		{
 			this.zLevel += f;
-		}
-	}
-
-	public static int handleMouseInputForCustomButton(GuiCustomButton button)
-	{
-		if (Mouse.isCreated())
-		{
-			Vector2d mousePosition = RenderUtil.scaledMousePosition();
-
-			while (Mouse.next())
-			{
-				if (Mouse.getEventButtonState())
-				{
-					button.mousePressed(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
-				} else if (Mouse.getEventButton() != -1)
-				{
-					button.mouseReleased((int) mousePosition.x, (int) mousePosition.y);
-				}
-				
-				if (Mouse.isButtonDown(0))
-				{
-					button.mouseDragged(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
-				}
-			}
-		}
-
-		return Mouse.getEventButton();
-	}
-
-	// TODO: Broken - Manually handle input until fixed
-	public static void handleKeyboardInputForTextbox(GuiCustomTextbox textbox)
-	{
-		if (Keyboard.getEventKeyState())
-		{
-			int eventKey = Keyboard.getEventKey();
-			textbox.textboxKeyTyped(Keyboard.getEventCharacter(), eventKey);
-
-			if (eventKey == 1)
-			{
-				Minecraft.getMinecraft().displayGuiScreen((GuiScreen) null);
-				Minecraft.getMinecraft().setIngameFocus();
-			}
 		}
 	}
 }
