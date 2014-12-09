@@ -86,12 +86,12 @@ public class RenderUtil
 			this.y = y;
 			this.z = z;
 		}
-		
+
 		public Vertex(double x, double y, double z)
 		{
 			this((float) x, (float) y, (float) z);
 		}
-		
+
 		public Vertex(int x, int y, int z)
 		{
 			this((float) x, (float) y, (float) z);
@@ -1089,29 +1089,28 @@ public class RenderUtil
 	{
 		glEnable(GL_COLOR_MATERIAL);
 		glPushMatrix();
-		glTranslatef(x, y, 0.0F);
-		glScalef(-scale, scale, scale);
-		glRotatef(yaw, 0F, 1F, 0F);
-		glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
-		glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
-		glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
-		glRotatef(-((float) Math.atan(pitch / 40.0F)) * 20.0F, 1.0F, 0.0F, 0.0F);
-		entity.rotationYaw = (float) Math.atan(yaw / 40.0F) * 40.0F;
-		entity.rotationPitch = -((float) Math.atan(pitch / 40.0F)) * 20.0F;
-
-		if (entity instanceof EntityLivingBase)
 		{
-			((EntityLivingBase) entity).renderYawOffset = (float) Math.atan(yaw / 40.0F) * 20.0F;
-			((EntityLivingBase) entity).rotationYawHead = entity.rotationYaw;
-			((EntityLivingBase) entity).prevRotationYawHead = entity.rotationYaw;
-		}
+			glTranslatef(x, y, 100.0F);
+			glScalef(-scale, scale, scale);
+			glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+			glRotatef(yaw, 0.0F, 1.0F, 0.0F);
+			glRotatef(pitch, 1.0F, 0.0F, 0.0F);
 
-		glTranslatef(0.0F, entity.yOffset, 0.0F);
-		RenderManager.instance.playerViewY = 180.0F;
-		RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
+			if (entity instanceof EntityLivingBase)
+			{
+				((EntityLivingBase) entity).renderYawOffset = (float) Math.atan(yaw / 40.0F) * 20.0F;
+				((EntityLivingBase) entity).rotationYawHead = entity.rotationYaw;
+				((EntityLivingBase) entity).prevRotationYawHead = entity.rotationYaw;
+			}
+
+			glTranslatef(0.0F, entity.yOffset, 0.0F);
+			RenderManager.instance.playerViewY = 180.0F;
+			RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
+			glEnableLightMapping();
+		}
 		glPopMatrix();
 	}
-	
+
 	public static void lightingHelper(Entity entity, float offset)
 	{
 		int brightness = entity.worldObj.getLightBrightnessForSkyBlocks(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posY + offset / 16.0F), MathHelper.floor_double(entity.posZ), 0);
