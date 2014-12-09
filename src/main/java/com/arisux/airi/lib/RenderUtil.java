@@ -24,7 +24,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.*;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -1095,16 +1094,6 @@ public class RenderUtil
 			glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
 			glRotatef(yaw, 0.0F, 1.0F, 0.0F);
 			glRotatef(pitch, 1.0F, 0.0F, 0.0F);
-
-			if (entity instanceof EntityLivingBase)
-			{
-				((EntityLivingBase) entity).renderYawOffset = (float) Math.atan(yaw / 40.0F) * 20.0F;
-				((EntityLivingBase) entity).rotationYawHead = entity.rotationYaw;
-				((EntityLivingBase) entity).prevRotationYawHead = entity.rotationYaw;
-			}
-
-			glTranslatef(0.0F, entity.yOffset, 0.0F);
-			RenderManager.instance.playerViewY = 180.0F;
 			RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
 			glEnableLightMapping();
 		}
