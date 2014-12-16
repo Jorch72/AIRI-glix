@@ -5,12 +5,27 @@ import net.minecraft.util.ResourceLocation;
 
 public class ModelTexMap
 {
-	public ResourceLocation resourceLocation;
-	public ModelBase modelBase;
+	private ResourceLocation resourceLocation;
+	private ModelBase model;
 	
-	public ModelTexMap(ModelBase modelBase, ResourceLocation resourceLocation)
+	public ModelTexMap(ModelBase model, ResourceLocation resourceLocation)
 	{
-		this.modelBase = modelBase;
+		this.model = model;
 		this.resourceLocation = resourceLocation;
+	}
+	
+	public ModelBase asModelBase()
+	{
+		return this.model;
+	}
+	
+	public ModelBaseExtension asModelBaseExtension()
+	{
+		return (ModelBaseExtension) this.model;
+	}
+	
+	public ResourceLocation asResourceLocation()
+	{
+		return this.resourceLocation;
 	}
 }
