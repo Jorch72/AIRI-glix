@@ -778,7 +778,17 @@ public class WorldUtil
 		 */
 		public static boolean canEntityBeSeenBy(Entity entity, Entity entityLooking)
 		{
-			return entity.worldObj.rayTraceBlocks(Vec3.createVectorHelper(entity.posX, entity.posY + (entity.height / 2), entity.posZ), Vec3.createVectorHelper(entityLooking.posX, entityLooking.posY + entityLooking.getEyeHeight(), entityLooking.posZ)) == null;
+			return rayTrace(entity, entityLooking) == null;
+		}
+		
+		/**
+		 * @param entity - The entity that entityLooking is looking for.
+		 * @param entityLooking - The entity that is looking for the first entity.
+		 * @return Returns the MovingObjectPosition hit by the rayTrace.
+		 */
+		public static MovingObjectPosition rayTrace(Entity entity, Entity entityLooking)
+		{
+			return entity != null && entityLooking != null && entity.worldObj != null ? entity.worldObj.rayTraceBlocks(Vec3.createVectorHelper(entity.posX, entity.posY + (entity.height / 2), entity.posZ), Vec3.createVectorHelper(entityLooking.posX, entityLooking.posY + entityLooking.getEyeHeight(), entityLooking.posZ)) : null;
 		}
 
 		/**

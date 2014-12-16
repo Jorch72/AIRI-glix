@@ -39,7 +39,7 @@ import org.lwjgl.opengl.GL12;
 import com.arisux.airi.AIRI;
 import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
 import com.arisux.airi.lib.WorldUtil.Blocks;
-import com.arisux.airi.lib.render.ScaledResolution;
+import com.arisux.airi.lib.client.ScaledResolution;
 
 public class RenderUtil
 {
@@ -582,10 +582,10 @@ public class RenderUtil
 	 * Compatibility version of the ScaledResolution class. Returns the current game display resolution.
 	 * @return Returns an instance of the compatibility version of ScaledResolution.
 	 */
-	public static com.arisux.airi.lib.render.ScaledResolution scaledDisplayResolution()
+	public static com.arisux.airi.lib.client.ScaledResolution scaledDisplayResolution()
 	{
 		Minecraft mc = Minecraft.getMinecraft();
-		return new com.arisux.airi.lib.render.ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+		return new com.arisux.airi.lib.client.ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 	}
 
 	/**

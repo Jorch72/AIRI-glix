@@ -8,9 +8,9 @@ import net.minecraft.client.Minecraft;
 
 import org.lwjgl.input.Mouse;
 
-import com.arisux.airi.lib.GuiElements.GuiCustomButton;
 import com.arisux.airi.lib.GuiElements.GuiCustomSlider;
 import com.arisux.airi.lib.GuiElements.GuiCustomTextbox;
+import com.arisux.airi.lib.GuiElements.IGuiElement;
 import com.arisux.airi.lib.*;
 import com.arisux.airi.lib.interfaces.IInitializablePre;
 
@@ -19,48 +19,76 @@ import cpw.mods.fml.common.gameevent.InputEvent.MouseInputEvent;
 
 public class GuiElementHandler implements IInitializablePre
 {
-	private ArrayList<GuiCustomButton> customButtons = new ArrayList<GuiCustomButton>();
-	private ArrayList<GuiCustomTextbox> customTextboxes = new ArrayList<GuiCustomTextbox>();
-	private ArrayList<GuiCustomSlider> customSliders = new ArrayList<GuiCustomSlider>();
+	private ArrayList<IGuiElement> guiElements = new ArrayList<IGuiElement>();
 
 	public static GuiElementHandler instance()
 	{
 		return AIRI.instance().guiElementHandler;
 	}
-	
+
 	@Override
 	public void preInitialize(FMLPreInitializationEvent event)
 	{
 		;
 	}
-	
+
 	public void tick()
 	{
 		Vector2d mousePosition = RenderUtil.scaledMousePosition();
 
-		for (GuiCustomButton button : customButtons)
+		for (int x = 0; x < guiElements.size(); x++)
 		{
-			handleButtonInput(null, button, mousePosition);
-		}
+			IGuiElement element = guiElements.get(x);
 
-		for (GuiCustomTextbox textbox : customTextboxes)
-		{
-			if (Mouse.isButtonDown(0))
+			if (element != null)
 			{
-				if (textbox.isMouseInside())
+				handleButtonInput(null, element, mousePosition);
+				
+				if (element instanceof GuiCustomTextbox)
 				{
-					textbox.setFocused(true);
-				}
-				else
-				{
-					textbox.setFocused(false);
+					GuiCustomTextbox textbox = (GuiCustomTextbox) element;
+					
+					if (textbox != null && Mouse.isButtonDown(0))
+					{
+						if (textbox.isMouseOver())
+						{
+							textbox.setFocused(true);
+						}
+						else
+						{
+							textbox.setFocused(false);
+						}
+					}
 				}
 			}
 		}
+	}
 
-		for (GuiCustomSlider slider : customSliders)
+	private static void handleButtonInput(MouseInputEvent event, IGuiElement element, Vector2d mousePosition)
+	{
+		if (!Minecraft.getMinecraft().inGameHasFocus && element.isMouseOver())
 		{
-			handleButtonInput(null, slider, mousePosition);
+			if (Mouse.getEventButton() == 0)
+			{
+				if (Mouse.getEventButtonState())
+				{
+					element.mousePressed(mousePosition);
+				}
+				else if (Mouse.isButtonDown(0))
+				{
+					element.mouseReleased(mousePosition);
+				}
+			}
+
+			if (Mouse.isButtonDown(0))
+			{
+				element.mouseDragged(mousePosition);
+			}
+		}
+		
+		if (element instanceof GuiCustomSlider)
+		{
+			GuiCustomSlider slider = (GuiCustomSlider) element;
 
 			if (!Mouse.getEventButtonState() && Mouse.getEventButton() != -1)
 			{
@@ -68,57 +96,22 @@ public class GuiElementHandler implements IInitializablePre
 			}
 		}
 	}
-	
-	private static void handleButtonInput(MouseInputEvent event, GuiCustomButton button, Vector2d mousePosition)
-	{
-		if (button.isMouseOver())
-		{
-			if (Mouse.getEventButton() == 0)
-			{
-				if (Mouse.getEventButtonState())
-				{
-					button.mousePressed(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
-				}
-				else if (Mouse.isButtonDown(0))
-				{
-					button.mouseReleased((int) mousePosition.x, (int) mousePosition.y);
-				}
-			}
 
-			if (Mouse.isButtonDown(0))
-			{
-				button.mouseDragged(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
-			}
+	public void add(IGuiElement element)
+	{
+		this.remove(element);
+
+		if (!guiElements.contains(element))
+		{
+			guiElements.add(element);
 		}
 	}
-	
-	public static void addButton(GuiCustomButton button)
-	{
-		instance().customButtons.add(button);
-	}
 
-	public static void addTextbox(GuiCustomTextbox textbox)
+	public void remove(IGuiElement element)
 	{
-		instance().customTextboxes.add(textbox);
-	}
-
-	public static void addSlider(GuiCustomSlider slider)
-	{
-		instance().customSliders.add(slider);
-	}
-
-	public static void removeButton(GuiCustomButton button)
-	{
-		instance().customButtons.remove(button);
-	}
-
-	public static void removeTextbox(GuiCustomTextbox textbox)
-	{
-		instance().customTextboxes.remove(textbox);
-	}
-
-	public static void removeSlider(GuiCustomSlider slider)
-	{
-		instance().customSliders.remove(slider);
+		if (guiElements.contains(element))
+		{
+			guiElements.remove(element);
+		}
 	}
 }

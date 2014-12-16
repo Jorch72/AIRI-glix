@@ -2,6 +2,8 @@ package com.arisux.airi.lib;
 
 import java.util.ArrayList;
 
+import javax.vecmath.Vector2d;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 
@@ -16,8 +18,20 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class GuiElements
 {
+	public static interface IGuiElement
+	{
+		public void add();
+		public void remove();
+		public boolean isMouseOver();
+		public void mousePressed(Vector2d mousePosition);
+		public void mouseReleased(Vector2d mousePosition);
+		public void mouseDragged(Vector2d mousePosition);
+		public IActionPerformed getAction();
+		public IGuiElement setAction(IActionPerformed action);
+	}
+	
 	@SideOnly(Side.CLIENT)
-	public static class GuiCustomButton extends GuiButton
+	public static class GuiCustomButton extends GuiButton implements IGuiElement
 	{
 		public class ActionPerformed implements IActionPerformed
 		{
@@ -33,6 +47,7 @@ public class GuiElements
 		public int overlayColorNormal = 0x44000000;
 		public int overlayColorHover = 0x00000000;
 		public int overlayColorPressed = 0x66000000;
+		private long lastDrawTime;
 		public String tooltip = "";
 
 		public GuiCustomButton(ArrayList<GuiCustomButton> buttonList, int id, int xPosition, int yPosition, int width, int height, String displayString, IActionPerformed action)
@@ -44,7 +59,7 @@ public class GuiElements
 		public GuiCustomButton(int id, int xPosition, int yPosition, int width, int height, String displayString, IActionPerformed action)
 		{
 			super(id, xPosition, yPosition, width, height, displayString);
-			GuiElementHandler.addButton(this);
+			this.add();
 			this.width = 200;
 			this.height = 20;
 			this.enabled = true;
@@ -66,6 +81,8 @@ public class GuiElements
 		@Override
 		public void drawButton(Minecraft mc, int mouseX, int mouseY)
 		{
+			this.lastDrawTime = System.currentTimeMillis();
+			
 			if (this.visible)
 			{
 				FontRenderer fontrenderer = mc.fontRenderer;
@@ -89,42 +106,70 @@ public class GuiElements
 		}
 
 		@Override
-		public void mouseReleased(int mouseX, int mouseY)
+		public boolean isMouseOver()
 		{
-			super.mouseReleased(mouseX, mouseY);
+			return this.field_146123_n;
+		}
 
-			if (mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height)
+		@Override
+		public IActionPerformed getAction()
+		{
+			return action;
+		}
+
+		@Override
+		public IGuiElement setAction(IActionPerformed action)
+		{
+			this.action = action;
+			return this;
+		}
+		
+		public long getLastDrawTime()
+		{
+			return lastDrawTime;
+		}
+		
+		@Override
+		public void remove()
+		{
+			GuiElementHandler.instance().remove(this);
+		}
+
+		@Override
+		public void add()
+		{
+			GuiElementHandler.instance().add(this);
+		}
+
+		@Override
+		public void mousePressed(Vector2d mousePosition)
+		{
+			super.mousePressed(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
+		}
+
+		@Override
+		public void mouseReleased(Vector2d mousePosition)
+		{
+			super.mouseReleased((int) mousePosition.x, (int) mousePosition.y);
+
+			if (mousePosition.x >= this.xPosition && mousePosition.y >= this.yPosition && mousePosition.x < this.xPosition + this.width && mousePosition.y < this.yPosition + this.height)
 			{
 				this.action.actionPerformed(this);
 			}
 		}
 
 		@Override
-		public void mouseDragged(Minecraft mc, int mouseX, int mouseY)
+		public void mouseDragged(Vector2d mousePosition)
 		{
-			super.mouseDragged(mc, mouseX, mouseY);
-		}
-
-		public boolean isMouseOver()
-		{
-			return this.field_146123_n;
-		}
-
-		public IActionPerformed getAction()
-		{
-			return action;
-		}
-
-		public GuiCustomButton setAction(IActionPerformed action)
-		{
-			this.action = action;
-			return this;
+			super.mouseDragged(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
 		}
 	}
 
-	public static class GuiCustomTextbox extends GuiTextField
+	public static class GuiCustomTextbox extends GuiTextField implements IGuiElement
 	{
 		public GuiCustomScreen parentScreen;
+		private IActionPerformed action;
+		private long lastDrawTime;
 
 		public GuiCustomTextbox(GuiCustomScreen parentScreen, int x, int y, int width, int height)
 		{
@@ -136,28 +181,79 @@ public class GuiElements
 		public GuiCustomTextbox(int x, int y, int width, int height)
 		{
 			super(Minecraft.getMinecraft().fontRenderer, x, y, width, height);
-			GuiElementHandler.addTextbox(this);
+			this.add();
 			this.xPosition = x;
 			this.yPosition = y;
 			this.width = width;
 			this.height = height;
 		}
 
+		public long getLastDrawTime()
+		{
+			return lastDrawTime;
+		}
+
 		@Override
 		public void drawTextBox()
 		{
 			super.drawTextBox();
+			this.lastDrawTime = System.currentTimeMillis();
 		}
 
-		public boolean isMouseInside()
+		@Override
+		public boolean isMouseOver()
 		{
-			int mouseX = (int) RenderUtil.scaledMousePosition().x;
-			int mouseY = (int) RenderUtil.scaledMousePosition().y;
+			Vector2d mousePosition = RenderUtil.scaledMousePosition();
+			int mouseX = (int) mousePosition.x;
+			int mouseY = (int) mousePosition.y;
 			return mouseX >= (xPosition) && mouseX <= (xPosition + width) && mouseY >= (yPosition) && mouseY <= (yPosition + height);
+		}
+		
+		@Override
+		public void remove()
+		{
+			GuiElementHandler.instance().remove(this);
+		}
+
+		@Override
+		public void add()
+		{
+			GuiElementHandler.instance().add(this);
+		}
+
+		@Override
+		public void mousePressed(Vector2d mousePosition)
+		{
+			;
+		}
+
+		@Override
+		public void mouseReleased(Vector2d mousePosition)
+		{
+			;
+		}
+
+		@Override
+		public void mouseDragged(Vector2d mousePosition)
+		{
+			;
+		}
+
+		@Override
+		public IActionPerformed getAction()
+		{
+			return action;
+		}
+
+		@Override
+		public IGuiElement setAction(IActionPerformed action)
+		{
+			this.action = action;
+			return this;
 		}
 	}
 
-	public static class GuiCustomSlider extends GuiCustomButton
+	public static class GuiCustomSlider extends GuiCustomButton implements IGuiElement
 	{
 		public String label;
 		public float sliderValue = 1.0F;
@@ -169,7 +265,6 @@ public class GuiElements
 		public GuiCustomSlider(int id, int x, int y, String label, float startingValue, float maxValue)
 		{
 			super(id, x, y, 150, 20, label, null);
-			GuiElementHandler.addSlider(this);
 			this.sliderValue = startingValue;
 			this.sliderMaxValue = maxValue;
 			this.label = label;
@@ -182,16 +277,16 @@ public class GuiElements
 		}
 
 		@Override
-		public void mouseDragged(Minecraft par1Minecraft, int par2, int par3)
+		public void mouseDragged(Minecraft minecraft, int mouseX, int mouseY)
 		{
-			super.mouseDragged(Minecraft.getMinecraft(), par2, par3);
+			super.mouseDragged(minecraft, mouseX, mouseY);
 			
 			if (this.visible)
 			{
 				if (this.dragging)
 				{
 					this.displayString = label + ": " + (int) (sliderValue * sliderMaxValue);
-					this.sliderValue = (float) (par2 - (this.xPosition + 4)) / (float) (this.width - 8);
+					this.sliderValue = (float) (mouseX - (this.xPosition + 4)) / (float) (this.width - 8);
 
 					if (this.sliderValue < 0.0F)
 					{
@@ -221,11 +316,11 @@ public class GuiElements
 		}
 
 		@Override
-		public boolean mousePressed(Minecraft par1Minecraft, int par2, int par3)
+		public boolean mousePressed(Minecraft minecraft, int mouseX, int mouseY)
 		{
-			if (super.mousePressed(par1Minecraft, par2, par3))
+			if (super.mousePressed(minecraft, mouseX, mouseY))
 			{
-				this.sliderValue = (float) (par2 - (this.xPosition + 4)) / (float) (this.width - 8);
+				this.sliderValue = (float) (mouseX - (this.xPosition + 4)) / (float) (this.width - 8);
 
 				if (this.sliderValue < 0.0F)
 				{
@@ -246,9 +341,27 @@ public class GuiElements
 		}
 
 		@Override
-		public void mouseReleased(int par1, int par2)
+		public void mouseReleased(int mouseX, int mouseY)
 		{
 			this.dragging = false;
+		}
+		
+		@Override
+		public void mousePressed(Vector2d mousePosition)
+		{
+			this.mousePressed(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
+		}
+		
+		@Override
+		public void mouseReleased(Vector2d mousePosition)
+		{
+			this.mouseReleased((int) mousePosition.x, (int) mousePosition.y);
+		}
+		
+		@Override
+		public void mouseDragged(Vector2d mousePosition)
+		{
+			this.mouseDragged(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
 		}
 	}
 

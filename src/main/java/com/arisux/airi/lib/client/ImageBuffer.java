@@ -1,4 +1,4 @@
-package com.arisux.airi.lib.render;
+package com.arisux.airi.lib.client;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;

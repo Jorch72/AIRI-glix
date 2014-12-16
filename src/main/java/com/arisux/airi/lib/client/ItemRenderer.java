@@ -1,4 +1,4 @@
-package com.arisux.airi.lib.render;
+package com.arisux.airi.lib.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
