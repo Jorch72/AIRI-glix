@@ -4,6 +4,8 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 
+import com.arisux.airi.lib.RenderUtil;
+
 public abstract class ModelBaseExtension extends ModelBase
 {
 	/**
@@ -35,6 +37,14 @@ public abstract class ModelBaseExtension extends ModelBase
 	public void render(float boxTranslation)
 	{
 		;
+	}
+	
+	/**
+	 * A standard rendering argument. Does not call any super class methods.
+	 */
+	public void render()
+	{
+		this.render(RenderUtil.DEFAULT_BOX_TRANSLATION);
 	}
 	
 	/**
