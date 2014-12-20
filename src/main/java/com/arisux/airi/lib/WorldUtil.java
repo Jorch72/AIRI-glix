@@ -875,6 +875,43 @@ public class WorldUtil
 			float newRotation = MathHelper.wrapAngleTo180_float(targetRotation - currentRotation);
 			return currentRotation + (newRotation > maxChange ? maxChange : newRotation < -maxChange ? -maxChange : maxChange);
 		}
+		
+		/**
+		 * Apply a block collision for the provided Entity instance.
+		 * @param entity - The entity to apply a collision for
+		 */
+		public static void applyCollision(Entity entity)
+		{
+			int minX = MathHelper.floor_double(entity.boundingBox.minX + 0.001D);
+	        int minY = MathHelper.floor_double(entity.boundingBox.minY + 0.001D);
+	        int minZ = MathHelper.floor_double(entity.boundingBox.minZ + 0.001D);
+	        int maxX = MathHelper.floor_double(entity.boundingBox.maxX - 0.001D);
+	        int maxY = MathHelper.floor_double(entity.boundingBox.maxY - 0.001D);
+	        int maxZ = MathHelper.floor_double(entity.boundingBox.maxZ - 0.001D);
+
+	        if (entity.worldObj.checkChunksExist(minX, minY, minZ, maxX, maxY, maxZ))
+	        {
+	            for (int x = minX; x <= maxX; ++x)
+	            {
+	                for (int y = minY; y <= maxY; ++y)
+	                {
+	                    for (int z = minZ; z <= maxZ; ++z)
+	                    {
+	                        Block block = entity.worldObj.getBlock(x, y, z);
+
+	                        try
+	                        {
+	                            block.onEntityCollidedWithBlock(entity.worldObj, x, y, z, entity);
+	                        }
+	                        catch (Throwable throwable)
+	                        {
+	                            AIRI.logger.bug("Exception while handling entity collision with block.");
+	                        }
+	                    }
+	                }
+	            }
+	        }
+		}
 
 		public static class Players
 		{
