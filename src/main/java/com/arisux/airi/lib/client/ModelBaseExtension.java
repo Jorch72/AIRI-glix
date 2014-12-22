@@ -6,6 +6,10 @@ import net.minecraft.entity.Entity;
 
 import com.arisux.airi.lib.RenderUtil;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public abstract class ModelBaseExtension extends ModelBase
 {
 	/**

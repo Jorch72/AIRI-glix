@@ -39,6 +39,7 @@ import org.lwjgl.opengl.GL12;
 import com.arisux.airi.AIRI;
 import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
 import com.arisux.airi.lib.WorldUtil.Blocks;
+import com.arisux.airi.lib.client.ModelBaseExtension;
 import com.arisux.airi.lib.client.ScaledResolution;
 
 public class RenderUtil
@@ -261,7 +262,28 @@ public class RenderUtil
 	 * @param modelClass - A class extending ModelBase which will be instantaniated. 
 	 * @return Instance of the class specified in the modelClass parameter.
 	 */
-	public static ModelBase createModel(Class<? extends ModelBase> modelClass)
+	public static ModelBase createModelBase(Class<? extends ModelBase> modelClass)
+	{
+		try
+		{
+			return (modelClass.getConstructor()).newInstance(new Object[] {});
+		}
+		catch (Exception e)
+		{
+			AIRI.logger.bug("Error creating new model instance.");
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
+	/**
+	 * Constructs a ModelBaseExtension instance from the specified class.
+	 * 
+	 * @param modelClass - A class extending ModelBaseExtension which will be instantaniated. 
+	 * @return Instance of the class specified in the modelClass parameter.
+	 */
+	public static ModelBaseExtension createModelBaseExtended(Class<? extends ModelBaseExtension> modelClass)
 	{
 		try
 		{

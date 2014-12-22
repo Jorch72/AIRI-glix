@@ -3,7 +3,6 @@ package com.arisux.airi.lib.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
@@ -17,10 +16,10 @@ public abstract class ItemRenderer implements IItemRenderer
 	protected Minecraft mc = Minecraft.getMinecraft();
 	protected PlayerResourceManager resourceManager;
 	protected ResourceLocation resource;
-	protected ModelBase model;
+	protected ModelBaseExtension model;
 	private boolean rendersInFirstPerson, rendersInThirdPerson, rendersInInventory, rendersInWorld;
 
-	public ItemRenderer(ModelBase model, ResourceLocation resource)
+	public ItemRenderer(ModelBaseExtension model, ResourceLocation resource)
 	{
 		this.resourceManager = new PlayerResourceManager();
 		this.model = model;
@@ -130,7 +129,7 @@ public abstract class ItemRenderer implements IItemRenderer
 		return this;
 	}
 
-	public ModelBase getModel()
+	public ModelBaseExtension getModel()
 	{
 		return model;
 	}
