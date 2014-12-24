@@ -17,6 +17,7 @@ public abstract class ItemRenderer implements IItemRenderer
 	protected PlayerResourceManager resourceManager;
 	protected ResourceLocation resource;
 	protected ModelBaseExtension model;
+	protected float rotation;
 	private boolean rendersInFirstPerson, rendersInThirdPerson, rendersInInventory, rendersInWorld;
 
 	public ItemRenderer(ModelBaseExtension model, ResourceLocation resource)
@@ -24,6 +25,7 @@ public abstract class ItemRenderer implements IItemRenderer
 		this.resourceManager = new PlayerResourceManager();
 		this.model = model;
 		this.resource = resource;
+		this.rotation = 0F;
 
 		this.rendersInFirstPerson = true;
 		this.rendersInThirdPerson = true;
@@ -62,6 +64,8 @@ public abstract class ItemRenderer implements IItemRenderer
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data)
 	{
+		this.rotation = rotation > 360F ? rotation = 0F : (rotation = rotation + 0.6F);
+		
 		GL11.glPushMatrix();
 		{
 			switch (type)

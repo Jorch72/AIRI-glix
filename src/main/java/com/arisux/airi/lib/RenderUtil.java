@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.util.*;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
@@ -41,6 +42,8 @@ import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
 import com.arisux.airi.lib.WorldUtil.Blocks;
 import com.arisux.airi.lib.client.ModelBaseExtension;
 import com.arisux.airi.lib.client.ScaledResolution;
+
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class RenderUtil
 {
@@ -276,7 +279,7 @@ public class RenderUtil
 
 		return null;
 	}
-	
+
 	/**
 	 * Constructs a ModelBaseExtension instance from the specified class.
 	 * 
@@ -1396,9 +1399,9 @@ public class RenderUtil
 	 */
 	public static void drawRecipe(Object obj, int x, int y, int size, int slotPadding, int backgroundColor)
 	{
-		IRecipe recipe = obj instanceof Item ? (ModUtil.getRecipe(obj)) : obj instanceof Block ? (ModUtil.getRecipe(obj)) : null;
+		IRecipe irecipe = obj instanceof Item ? (ModUtil.getRecipe(obj)) : obj instanceof Block ? (ModUtil.getRecipe(obj)) : null;
 
-		if (recipe == null)
+		if (irecipe == null)
 		{
 			return;
 		}
@@ -1409,13 +1412,53 @@ public class RenderUtil
 			{
 				RenderUtil.drawRect(x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size, backgroundColor);
 
-				if (recipe instanceof ShapedRecipes)
+				if (irecipe instanceof ShapedRecipes)
 				{
-					ItemStack slotStack = ((ShapedRecipes) recipe).recipeItems[gX + gY * 3];
+					ItemStack slotStack = ((ShapedRecipes) irecipe).recipeItems[gX + gY * 3];
 
 					if (slotStack != null)
 					{
 						RenderUtil.drawItemIcon(slotStack.getItem(), x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size);
+					}
+				}
+
+				if (irecipe instanceof ShapedOreRecipe)
+				{
+					ShapedOreRecipe recipe = (ShapedOreRecipe) irecipe;
+
+					for (Object o : recipe.getInput())
+					{
+						try
+						{
+							Class<?> unmodifiableArrayList = Class.forName("net.minecraftforge.oredict.OreDictionary$UnmodifiableArrayList");
+
+							if (unmodifiableArrayList.isInstance(o))
+							{
+								String domain = o.toString().contains("item.") ? o.toString().substring(o.toString().indexOf("x") + 1, o.toString().indexOf("item.")).equalsIgnoreCase("") ? "minecraft" : o.toString().substring(o.toString().indexOf("x") + 1, o.toString().indexOf("item.")) : "null";
+								Item item = GameRegistry.findItem(domain, o.toString().substring(o.toString().indexOf(".") + 1, o.toString().indexOf("@")));
+								
+								if (item != null)
+								{
+									RenderUtil.drawItemIcon(item, x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size);
+								}
+							}
+							else if ((gX + gY * 3) < recipe.getInput().length)
+							{
+								if (recipe.getInput()[gX + gY * 3] instanceof ItemStack)
+								{
+									ItemStack slotStack = (ItemStack) recipe.getInput()[gX + gY * 3];
+
+									if (slotStack != null)
+									{
+										RenderUtil.drawItemIcon(slotStack.getItem(), x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size);
+									}
+								}
+							}
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
+						}
 					}
 				}
 			}
