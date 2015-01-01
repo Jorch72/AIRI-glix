@@ -1187,6 +1187,16 @@ public class RenderUtil
 
 		return resource;
 	}
+	
+	/**
+	 * Get the full path of the specified ResourceLocation. Format: domain:path/to/resource.png
+	 * @param resource - The ResourceLocation to retrieve a path of.
+	 * @return The full path of the resource, including the domain.
+	 */
+	public static String getResourcePath(ResourceLocation resource)
+	{
+		return String.format("%s:%s", resource.getResourceDomain(), resource.getResourcePath());
+	}
 
 	/**
 	 * Draw the specified ResourceLocation at the specified coordinates and dimensions.
