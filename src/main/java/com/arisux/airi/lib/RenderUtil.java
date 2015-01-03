@@ -472,10 +472,10 @@ public class RenderUtil
 	{
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(x + 0, y + h, z, minU, minV);
-		tessellator.addVertexWithUV(x + w, y + h, z, maxU, minV);
-		tessellator.addVertexWithUV(x + w, y + 0, z, maxU, maxV);
-		tessellator.addVertexWithUV(x + 0, y + 0, z, minU, maxV);
+		tessellator.addVertexWithUV(x + 0, y + h, z, minU, maxV);
+		tessellator.addVertexWithUV(x + w, y + h, z, maxU, maxV);
+		tessellator.addVertexWithUV(x + w, y + 0, z, maxU, minV);
+		tessellator.addVertexWithUV(x + 0, y + 0, z, minU, minV);
 		tessellator.draw();
 	}
 
@@ -1382,7 +1382,7 @@ public class RenderUtil
 		if (icon != null)
 		{
 			bindTexture(getBlockSideResourceLocation(block, side));
-			drawQuad(x, y, width, height, 0, 0, -u, 0, -v);
+			drawQuad(x, y, width, height, 0, 0, u, 0, v);
 		}
 	}
 

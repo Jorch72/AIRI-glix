@@ -2,7 +2,10 @@ package com.arisux.airi.lib.client;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.util.ResourceLocation;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class ModelTexMap
 {
 	private ResourceLocation resourceLocation;
