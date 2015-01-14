@@ -31,6 +31,7 @@ public class BlockTypes
 			this.renderNormal = true;
 			this.isOpaque = true;
 			this.disableIcon = false;
+			this.setLightOpacity(255);
 		}
 
 		@SideOnly(Side.CLIENT)
@@ -154,10 +155,14 @@ public class BlockTypes
 
 	public static class HookedBlockSlab extends BlockSlab
 	{
+		private boolean isOpaque, rendersNormal;
+		
 		public HookedBlockSlab(Material material)
 		{
 			super(false, material);
 			this.setBlockName(getLocalizedName() + "Slab");
+			this.isOpaque = false;
+			this.rendersNormal = false;
 		}
 
 		@Override
@@ -169,13 +174,25 @@ public class BlockTypes
 		@Override
 		public boolean renderAsNormalBlock()
 		{
-			return false;
+			return rendersNormal;
 		}
 
 		@Override
 		public boolean isOpaqueCube()
 		{
-			return false;
+			return isOpaque;
+		}
+		
+		public HookedBlockSlab setOpaque(boolean isOpaque)
+		{
+			this.isOpaque = isOpaque;
+			return this;
+		}
+		
+		public HookedBlockSlab setRendersNormal(boolean rendersNormal)
+		{
+			this.rendersNormal = rendersNormal;
+			return this;
 		}
 
 		/**
@@ -191,24 +208,40 @@ public class BlockTypes
 
 	public static class HookedBlockStairs extends BlockStairs
 	{
+		private boolean isOpaque, rendersNormal;
+		
 		public HookedBlockStairs(Block parentBlock)
 		{
 			super(parentBlock, 0);
 			this.setHardness(3.0F);
 			this.setResistance(3.0F);
 			this.setStepSound(parentBlock.stepSound);
-		}
-
-		@Override
-		public boolean isOpaqueCube()
-		{
-			return false;
+			this.isOpaque = false;
+			this.rendersNormal = false;
 		}
 
 		@Override
 		public boolean renderAsNormalBlock()
 		{
-			return false;
+			return rendersNormal;
+		}
+
+		@Override
+		public boolean isOpaqueCube()
+		{
+			return isOpaque;
+		}
+		
+		public HookedBlockStairs setOpaque(boolean isOpaque)
+		{
+			this.isOpaque = isOpaque;
+			return this;
+		}
+		
+		public HookedBlockStairs setRendersNormal(boolean rendersNormal)
+		{
+			this.rendersNormal = rendersNormal;
+			return this;
 		}
 
 		@Override
