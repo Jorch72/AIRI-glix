@@ -24,7 +24,7 @@ import com.arisux.airi.lib.world.CustomExplosion;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
-
+@SuppressWarnings("all")
 public class WorldUtil
 {
 	/**
@@ -1211,6 +1211,11 @@ public class WorldUtil
 				{
 					return player.inventory.armorItemInSlot(0);
 				}
+			}
+
+			public static List<EntityPlayer> getPlayersInWorld(World world)
+			{
+				return world.playerEntities;
 			}
 		}
 	}
