@@ -2,20 +2,27 @@ package com.arisux.airi;
 
 import java.util.Arrays;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
+
 import com.arisux.airi.api.obj3dapi.Obj3DAPI;
 import com.arisux.airi.api.remapping.RemappingAPI;
 import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.updater.UpdaterAPI;
 import com.arisux.airi.api.window.WindowAPI;
+import com.arisux.airi.lib.BlockTypes.HookedBlock;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod(modid = Properties.MODID, name = Properties.MODID, version = Properties.VERSION)
 public class AIRI
 {
+	public static final Block WORLDGEN_GHOST = (new HookedBlock(Material.air)).setCreativeTab(CreativeTabs.tabAllSearch);
 	public static boolean COREMOD_INITIALIZED = false;
 
 	public static Logger logger = new Logger();
@@ -95,6 +102,8 @@ public class AIRI
 			this.updaterAPI = new UpdaterAPI();
 			this.obj3dAPI = new Obj3DAPI();
 		}
+		
+		GameRegistry.registerBlock(WORLDGEN_GHOST, "wgghost");
 	}
 
 	@Mod.EventHandler

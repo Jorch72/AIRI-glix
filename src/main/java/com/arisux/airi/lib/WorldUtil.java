@@ -580,6 +580,12 @@ public class WorldUtil
 			{
 				return new CoordData(nbt.getInteger(labelX), nbt.getInteger(labelY), nbt.getInteger(labelZ), nbt.getString(labelId));
 			}
+			
+			@Override
+			public String toString()
+			{
+				return String.format("CoordData/Coords[%s, %s, %s]/Block[%s:%s]/Object[%s]", this.posX, this.posY, this.posZ, this.block, this.meta, this);
+			}
 		}
 
 		public static class CoordSelection implements Iterable<CoordData>

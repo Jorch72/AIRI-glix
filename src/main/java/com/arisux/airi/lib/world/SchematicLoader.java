@@ -11,7 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 
 public class SchematicLoader
 {
-    public static SchematicFile loadSchematicByName(String name) throws SchematicFile.UnsupportedSchematicFormatException
+    public static Schematic loadSchematic(String name) throws Schematic.UnsupportedSchematicFormatException
     {
         if (FilenameUtils.getExtension(name).length() == 0)
         {
@@ -22,14 +22,14 @@ public class SchematicLoader
         {
             if (file.getPath().endsWith(name) && name.endsWith(file.getName()))
             {
-                return loadSchematicFromFile(file);
+                return loadSchematic(file);
             }
         }
 
         return null;
     }
 
-    public static SchematicFile loadSchematicFromFile(File file) throws SchematicFile.UnsupportedSchematicFormatException
+    public static Schematic loadSchematic(File file) throws Schematic.UnsupportedSchematicFormatException
     {
         NBTTagCompound compound = null;
 
@@ -44,7 +44,7 @@ public class SchematicLoader
 
         if (compound != null)
         {
-            return new SchematicFile(compound);
+            return new Schematic(compound);
         }
 
         return null;
