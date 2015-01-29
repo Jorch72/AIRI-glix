@@ -1,6 +1,7 @@
 package com.arisux.airi.lib.world;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Collection;
 
 import net.minecraft.nbt.CompressedStreamTools;
@@ -9,8 +10,34 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
+import com.arisux.airi.AIRI;
+import com.arisux.airi.lib.world.Schematic.UnsupportedSchematicFormatException;
+
 public class SchematicLoader
 {
+	public static Schematic extractAndLoadSchematic(File extractionPath, InputStream resourceToExtract) throws UnsupportedSchematicFormatException
+	{
+		if (!getSchematicsDirectory().exists())
+		{
+			getSchematicsDirectory().mkdirs();
+		}
+		
+		if (!extractionPath.exists())
+		{
+			try
+			{
+				Files.copy(resourceToExtract, extractionPath.getAbsoluteFile().toPath());
+				AIRI.logger.info("Extracted %s", extractionPath.getAbsoluteFile().toPath());
+			}
+			catch (Exception e)
+			{
+				AIRI.logger.info("Error while extracting %s: %s", extractionPath, e);
+			}
+		}
+		
+		return loadSchematic(extractionPath);
+	}
+	
     public static Schematic loadSchematic(String name) throws Schematic.UnsupportedSchematicFormatException
     {
         if (FilenameUtils.getExtension(name).length() == 0)
@@ -29,11 +56,11 @@ public class SchematicLoader
         return null;
     }
 
-    public static Schematic loadSchematic(File file) throws Schematic.UnsupportedSchematicFormatException
+    public static Schematic loadSchematic(File extractionPath) throws Schematic.UnsupportedSchematicFormatException
     {
         NBTTagCompound compound = null;
 
-        try (FileInputStream fileInputStream = new FileInputStream(file))
+        try (FileInputStream fileInputStream = new FileInputStream(extractionPath))
         {
             compound = CompressedStreamTools.readCompressed(fileInputStream);
         }
