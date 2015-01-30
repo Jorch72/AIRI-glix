@@ -41,7 +41,7 @@ public class BlockTypes
 			return this;
 		}
 
-		public Block setRenderNormal(boolean renderNormal)
+		public HookedBlock setRenderNormal(boolean renderNormal)
 		{
 			this.renderNormal = renderNormal;
 			return this;
@@ -58,7 +58,7 @@ public class BlockTypes
 			return renderNormal;
 		}
 
-		public Block setOpaque(boolean opaque)
+		public HookedBlock setOpaque(boolean opaque)
 		{
 			this.isOpaque = opaque;
 			return this;

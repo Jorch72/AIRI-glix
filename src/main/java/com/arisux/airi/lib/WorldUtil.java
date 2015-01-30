@@ -788,7 +788,7 @@ public class WorldUtil
 		{
 			List<? extends Entity> entities = getEntitiesInCoordsRange(worldObj, entityClass, data, range, height);
 
-			return entities.size() >= 1 ? (Entity) entities.get(0) : null;
+			return entities.size() >= 1 ? (Entity) entities.get(worldObj.rand.nextInt(entities.size())) : null;
 		}
 
 		/**
