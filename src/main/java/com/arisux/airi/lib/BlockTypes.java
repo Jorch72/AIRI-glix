@@ -5,7 +5,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Facing;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import com.arisux.airi.lib.RenderUtil.IconSet;
@@ -21,6 +23,7 @@ public class BlockTypes
 	{
 		protected boolean renderNormal;
 		protected boolean isOpaque;
+		protected boolean renderAdvanced;
 		private boolean disableIcon;
 		private ISimpleBlockRenderingHandler renderType;
 		private RenderUtil.IconSet iconSet;
@@ -32,12 +35,19 @@ public class BlockTypes
 			this.isOpaque = true;
 			this.disableIcon = false;
 			this.setLightOpacity(255);
+			this.renderAdvanced = true;
 		}
 
 		@SideOnly(Side.CLIENT)
 		public Block setRenderType(ISimpleBlockRenderingHandler renderType)
 		{
 			this.renderType = renderType;
+			return this;
+		}
+
+		public HookedBlock setRenderAdvanced(boolean renderAdvanced)
+		{
+			this.renderAdvanced = renderAdvanced;
 			return this;
 		}
 
@@ -75,7 +85,7 @@ public class BlockTypes
 		{
 			return isOpaque;
 		}
-		
+
 		public Block setIconSet(IconSet iconSet)
 		{
 			this.iconSet = iconSet;
@@ -89,7 +99,7 @@ public class BlockTypes
 			{
 				return;
 			}
-			
+
 			if (this.iconSet != null)
 			{
 				this.iconSet.registerIcons(iconRegister);
@@ -127,7 +137,7 @@ public class BlockTypes
 						return iconSet.front;
 				}
 			}
-			
+
 			return super.getIcon(side, meta);
 		}
 
@@ -135,7 +145,7 @@ public class BlockTypes
 		{
 			return this.disableIcon(true);
 		}
-		
+
 		public Block disableIcon(boolean disableIcon)
 		{
 			this.disableIcon = disableIcon;
@@ -151,12 +161,31 @@ public class BlockTypes
 		{
 			return this.blockResistance;
 		}
+
+		@Override
+		@SideOnly(Side.CLIENT)
+		public boolean shouldSideBeRendered(IBlockAccess blockaccess, int posX, int posY, int posZ, int side)
+		{
+			Block block = blockaccess.getBlock(posX, posY, posZ);
+
+			if (blockaccess.getBlockMetadata(posX, posY, posZ) != blockaccess.getBlockMetadata(posX - Facing.offsetsXForSide[side], posY - Facing.offsetsYForSide[side], posZ - Facing.offsetsZForSide[side]))
+			{
+				return true;
+			}
+
+			if (block == this)
+			{
+				return false;
+			}
+
+			return this.renderAdvanced && block == this ? false : super.shouldSideBeRendered(blockaccess, posX, posY, posZ, side);
+		}
 	}
 
 	public static class HookedBlockSlab extends BlockSlab
 	{
 		private boolean isOpaque, rendersNormal;
-		
+
 		public HookedBlockSlab(Material material)
 		{
 			super(false, material);
@@ -182,13 +211,13 @@ public class BlockTypes
 		{
 			return isOpaque;
 		}
-		
+
 		public HookedBlockSlab setOpaque(boolean isOpaque)
 		{
 			this.isOpaque = isOpaque;
 			return this;
 		}
-		
+
 		public HookedBlockSlab setRendersNormal(boolean rendersNormal)
 		{
 			this.rendersNormal = rendersNormal;
@@ -209,7 +238,7 @@ public class BlockTypes
 	public static class HookedBlockStairs extends BlockStairs
 	{
 		private boolean isOpaque, rendersNormal;
-		
+
 		public HookedBlockStairs(Block parentBlock)
 		{
 			super(parentBlock, 0);
@@ -231,13 +260,13 @@ public class BlockTypes
 		{
 			return isOpaque;
 		}
-		
+
 		public HookedBlockStairs setOpaque(boolean isOpaque)
 		{
 			this.isOpaque = isOpaque;
 			return this;
 		}
-		
+
 		public HookedBlockStairs setRendersNormal(boolean rendersNormal)
 		{
 			this.rendersNormal = rendersNormal;
