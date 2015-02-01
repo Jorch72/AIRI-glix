@@ -81,6 +81,17 @@ public class RenderUtil
 
 	public static class Vertex
 	{
+		public static Vertex unitX = new Vertex(1, 0, 0);
+		public static Vertex unitY = new Vertex(0, 1, 0);
+		public static Vertex unitZ = new Vertex(0, 0, 1);
+		public static Vertex unitNX = new Vertex(-1, 0, 0);
+		public static Vertex unitNY = new Vertex(0, -1, 0);
+		public static Vertex unitNZ = new Vertex(0, 0, -1);
+		public static Vertex unitPYNZ = new Vertex(0, 0.707, -0.707);
+		public static Vertex unitPXPY = new Vertex(0.707, 0.707, 0);
+		public static Vertex unitPYPZ = new Vertex(0, 0.707, 0.707);
+		public static Vertex unitNXPY = new Vertex(-0.707, 0.707, 0);
+		
 		public float x, y, z;
 
 		public Vertex(float x, float y, float z)
@@ -125,6 +136,69 @@ public class RenderUtil
 				tessellator.addVertexWithUV(x, y, z, uv.u, uv.v);
 			}
 			return this;
+		}
+		
+		public Vertex add(double x, double y, double z)
+		{
+			return new Vertex(this.x + x, this.y + y, this.z + z);
+		}
+
+		public Vertex add(Vertex v)
+		{
+			return add(v.x, v.y, v.z);
+		}
+
+		public Vertex mul(double c)
+		{
+			return new Vertex(c * x, c * y, c * z);
+		}
+		
+		@Override
+		public String toString()
+		{
+			return String.format("Vertex(%s, %s, %s)", this.x, this.y, this.z);
+		}
+	}
+	
+	public static class Matrix3
+	{
+		public static Matrix3[] rotations = { Matrix3.rotY(0), Matrix3.rotY(90), Matrix3.rotY(180), Matrix3.rotY(270) };
+
+		public double m[][] = new double[][] {
+			{ 1, 0, 0 },
+			{ 0, 1, 0 },
+			{ 0, 0, 1 }
+		};
+
+		public static Matrix3 rot(double deg, int i, int j)
+		{
+			Matrix3 matrix = new Matrix3();
+			double a = Math.toRadians(deg);
+			double s = Math.sin(a);
+			double c = Math.cos(a);
+			matrix.m[i][i] = c;
+			matrix.m[i][j] = -s;
+			matrix.m[j][i] = s;
+			matrix.m[j][j] = c;
+			return matrix;
+		}
+
+		public static Matrix3 rotY(double degrees)
+		{
+			return rot(degrees, 2, 0);
+		}
+
+		public Vertex mul(double x, double y, double z)
+		{
+			return new Vertex(
+				x * m[0][0] + y * m[1][0] + z * m[2][0],
+				x * m[0][1] + y * m[1][1] + z * m[2][1],
+				x * m[0][2] + y * m[1][2] + z * m[2][2]);
+		}
+
+		public Vertex mul(Vertex v)
+		{
+			return mul(v.x, v.y, v.z);
 		}
 	}
 

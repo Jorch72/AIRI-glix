@@ -218,7 +218,7 @@ public class BlockTypes
 			return this;
 		}
 
-		public HookedBlockSlab setRendersNormal(boolean rendersNormal)
+		public HookedBlockSlab setRenderNormal(boolean rendersNormal)
 		{
 			this.rendersNormal = rendersNormal;
 			return this;
@@ -267,7 +267,7 @@ public class BlockTypes
 			return this;
 		}
 
-		public HookedBlockStairs setRendersNormal(boolean rendersNormal)
+		public HookedBlockStairs setRenderNormal(boolean rendersNormal)
 		{
 			this.rendersNormal = rendersNormal;
 			return this;
