@@ -22,7 +22,7 @@ import cpw.mods.fml.relauncher.Side;
 @Mod(modid = Properties.MODID, name = Properties.MODID, version = Properties.VERSION)
 public class AIRI
 {
-	public static final Block WORLDGEN_GHOST = (new HookedBlock(Material.air)).setCreativeTab(CreativeTabs.tabAllSearch);
+	public static Block WORLDGEN_GHOST;
 	public static boolean COREMOD_INITIALIZED;
 
 	public static Logger logger = new Logger();
@@ -102,8 +102,6 @@ public class AIRI
 			this.updaterAPI = new UpdaterAPI();
 			this.obj3dAPI = new Obj3DAPI();
 		}
-		
-		GameRegistry.registerBlock(WORLDGEN_GHOST, "wgghost");
 	}
 
 	@Mod.EventHandler
@@ -113,6 +111,8 @@ public class AIRI
 		{
 			(updater = updaterAPI.createNewUpdater(Properties.MODID, Properties.VERSION, settings.getServer() + "/page/mods/airi/latest.txt", settings.getServer() + "/page/mods/airi/", settings.getServer() + "/page/mods/airi/changelog.txt")).postInitialize(event);
 		}
+		
+		GameRegistry.registerBlock(WORLDGEN_GHOST = (new HookedBlock(Material.air)).setCreativeTab(CreativeTabs.tabAllSearch), "airi.wgghost");
 	}
 
 	@Mod.EventHandler
