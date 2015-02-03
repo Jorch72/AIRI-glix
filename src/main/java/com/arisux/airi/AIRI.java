@@ -23,7 +23,7 @@ import cpw.mods.fml.relauncher.Side;
 public class AIRI
 {
 	public static final Block WORLDGEN_GHOST = (new HookedBlock(Material.air)).setCreativeTab(CreativeTabs.tabAllSearch);
-	public static boolean COREMOD_INITIALIZED = false;
+	public static boolean COREMOD_INITIALIZED;
 
 	public static Logger logger = new Logger();
 	private Properties properties = new Properties();
