@@ -8,4 +8,5 @@ public interface IWindow
     public void close();
     public void onButtonPress(GuiButton button);
     public void keyTyped(char c, int id);
+    public void onActivated();
 }

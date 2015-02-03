@@ -72,6 +72,9 @@ public class Updater implements IInitializablePost
 
 	public void downloadVersionInformation()
 	{
+		System.out.println("Checking for updates for mod with ID " + this.modId);
+		
+		this.clearCaches();
 		this.isVersionDataValid();
 
 		String retrieved = NetworkUtil.getURLContents(updateUrl);
@@ -84,6 +87,7 @@ public class Updater implements IInitializablePost
 			getVersionData().put("MODVER", parsed[1]);
 			getVersionData().put("FORGEVER", parsed[2]);
 			getVersionData().put("MODID", parsed[3]);
+			System.out.println("Latest release of " + getVersionData().get("MODID") + " is version " + getVersionData().get("MODVER") + " for Minecraft " + getVersionData().get("MCVER"));
 		}
 		else
 		{
@@ -105,7 +109,7 @@ public class Updater implements IInitializablePost
 				}
 				else
 				{
-					printConnectionError();
+					System.out.println("Could not retrieve changelog for mod with ID " + this.modId);
 				}
 			}
 		}
@@ -127,13 +131,17 @@ public class Updater implements IInitializablePost
 
 	public boolean isVersionDataValid()
 	{
-		this.versionData = this.versionData == null ? new HashMap<String, String>() : this.versionData;
-		return (getVersionData() != null && getVersionData().get("MCVER") != null && getVersionData().get("MODVER") != null && getVersionData().get("FORGEVER") != null && getVersionData().get("MODID") != null);
+		if (this.versionData == null)
+		{
+			this.versionData = new HashMap<String, String>();
+		}
+		
+		return getVersionData().get("MCVER") != null && getVersionData().get("MODVER") != null && getVersionData().get("FORGEVER") != null && getVersionData().get("MODID") != null;
 	}
 
 	public boolean isUpdateAvailable()
 	{
-		return (isVersionDataValid() && getVersionData().get("MODID").toString().equalsIgnoreCase(modId) && !getVersionData().get("MODVER").toString().equalsIgnoreCase(curVer));
+		return (isVersionDataValid() && getVersionData().get("MODID").equalsIgnoreCase(modId) && !getVersionData().get("MODVER").equalsIgnoreCase(curVer));
 	}
 
 	public void printConnectionError()

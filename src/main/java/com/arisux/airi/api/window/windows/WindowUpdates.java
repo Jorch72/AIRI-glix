@@ -10,9 +10,11 @@ import com.arisux.airi.api.updater.Changelog;
 import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.window.IWindow;
 import com.arisux.airi.api.window.Window;
-import com.arisux.airi.lib.RenderUtil;
 import com.arisux.airi.lib.GuiElements.GuiCustomButton;
+import com.arisux.airi.lib.*;
 import com.arisux.airi.lib.interfaces.IActionPerformed;
+
+import cpw.mods.fml.common.ModContainer;
 
 public class WindowUpdates extends Window implements IWindow
 {
@@ -37,11 +39,12 @@ public class WindowUpdates extends Window implements IWindow
 	{
 		super.draw(mouseX, mouseY);
 
-		this.setTitle(AIRI.updaterApi().getAvailableUpdates().size() + " Updates Available - " + (updater.getUpdaterId() + 1) + " of " + AIRI.updaterApi().getAvailableUpdates().size());
-		String message = updater.getVersionData().get("MODID") + " " + updater.getVersionData().get("MODVER") + " for Minecraft " + updater.getVersionData().get("MCVER");
+		this.setTitle(AIRI.updaterApi().getAvailableUpdates().size() + " " + (AIRI.updaterApi().getAvailableUpdates().size() > 1 ? "Updates" : "Update") + " Available - " +  (AIRI.updaterApi().getAvailableUpdates().indexOf(updater) + 1) + " of " + AIRI.updaterApi().getAvailableUpdates().size());
+		ModContainer modContainer = ModUtil.getModContainerForId(updater.getVersionData().get("MODID"));
+		String message = (modContainer != null ? modContainer.getName() : updater.getModId()) + " " + updater.getVersionData().get("MODVER") + " for Minecraft " + updater.getVersionData().get("MCVER");
 
-		RenderUtil.drawStringAlignCenter(message, this.xPos + this.width / 2, this.yPos + 10, 0x00AAFF);
-		RenderUtil.drawStringAlignCenter("Minecraft Forge " + updater.getVersionData().get("FORGEVER"), this.xPos + this.width / 2, this.yPos + 20, 0xAAAAAA);
+		RenderUtil.drawStringAlignCenter(message, this.xPos + this.width / 2, this.yPos + 10, this.manager.getWindowAPI().getCurrentTheme().getButtonColor(), false);
+		RenderUtil.drawStringAlignCenter("Minecraft Forge " + updater.getVersionData().get("FORGEVER"), this.xPos + this.width / 2, this.yPos + 20, this.manager.getWindowAPI().getCurrentTheme().getTextColor(), false);
 		RenderUtil.drawRectWithOutline(this.xPos + 5, this.yPos + 35, this.width - 10, this.height - 40, 1, 0xFF000000, 0xFF111111);
 
 		GL11.glPushMatrix();
@@ -78,7 +81,7 @@ public class WindowUpdates extends Window implements IWindow
 		// notifications.next
 		{
 			buttonNext.displayString = ">";
-			buttonNext.baseColor = 0xAA00AAFF;
+			buttonNext.baseColor = this.manager.getWindowAPI().getCurrentTheme().getButtonColor();
 			buttonNext.width = 16;
 			buttonNext.height = 16;
 			buttonNext.xPosition = this.xPos + this.width - 10;
@@ -101,7 +104,7 @@ public class WindowUpdates extends Window implements IWindow
 		// notifications.previous
 		{
 			buttonPrevious.displayString = "<";
-			buttonPrevious.baseColor = 0xAA00AAFF;
+			buttonPrevious.baseColor = this.manager.getWindowAPI().getCurrentTheme().getButtonColor();
 			buttonPrevious.width = 16;
 			buttonPrevious.height = 16;
 			buttonPrevious.xPosition = this.xPos - buttonPrevious.width + 10;

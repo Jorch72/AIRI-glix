@@ -8,8 +8,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.BasicMarkupParser;
-import com.arisux.airi.lib.RenderUtil;
+import com.arisux.airi.lib.*;
 import com.arisux.airi.lib.GuiElements.GuiCustomButton;
 
 public abstract class Window implements IWindow
@@ -20,7 +19,6 @@ public abstract class Window implements IWindow
 	protected ArrayList<GuiButton> buttonList = new ArrayList<GuiButton>();
 	protected ArrayList<GuiCustomButton> customButtonList = new ArrayList<GuiCustomButton>();
 	protected int xPos, yPos, width, height;
-	private int defaultTextColor;
 	protected int padding, lineSpacing;
 
 	public Window(String id, String title, int xPos, int yPos, int width, int height)
@@ -34,20 +32,17 @@ public abstract class Window implements IWindow
 		this.height = height;
 		this.padding = 5;
 		this.lineSpacing = 10;
-		this.defaultTextColor = 0xFFFFFFFF;
 		this.defaultText = "";
 	}
 
 	public void tick()
 	{
-
+		;
 	}
 
 	@Override
 	public void draw(int mouseX, int mouseY)
 	{
-		AIRI.windowApi().setCurrentTheme(WindowAPI.themeDefault);
-		
 		if (this.isOffScreen())
 		{
 			this.setWindowCentered(true);
@@ -62,7 +57,7 @@ public abstract class Window implements IWindow
 			{
 				for (int x = 0; x < this.defaultTextLines.size(); x++)
 				{
-					int tagValue = BasicMarkupParser.parseColorTagValue(this.defaultTextLines.get(x), defaultTextColor);
+					int tagValue = BasicMarkupParser.parseColorTagValue(this.defaultTextLines.get(x), manager.getWindowAPI().getCurrentTheme().getTextColor());
 					String line = BasicMarkupParser.removeColorTag(this.defaultTextLines.get(x));
 					
 					Minecraft.getMinecraft().fontRenderer.drawSplitString(line, padding + xPos, padding + yPos + (x * lineSpacing), width - getPadding() * 2, tagValue);
@@ -71,7 +66,7 @@ public abstract class Window implements IWindow
 		}
 		else
 		{
-			Minecraft.getMinecraft().fontRenderer.drawSplitString(this.defaultText, padding + xPos, padding + yPos, width - getPadding() * 2, defaultTextColor);
+			Minecraft.getMinecraft().fontRenderer.drawSplitString(this.defaultText, padding + xPos, padding + yPos, width - getPadding() * 2, manager.getWindowAPI().getCurrentTheme().getTextColor());
 		}
 
 		this.previousText = defaultText;
@@ -95,6 +90,12 @@ public abstract class Window implements IWindow
 		{
 			button.mouseReleased(mouseX, mouseY);
 		}
+	}
+	
+	@Override
+	public void onActivated()
+	{
+		;
 	}
 
 	public void setPosition(int x, int y)
@@ -206,16 +207,6 @@ public abstract class Window implements IWindow
 	public void setDefaultText(String defaultText, boolean format)
 	{
 		this.defaultText = format ? I18n.format(defaultText) : defaultText;
-	}
-
-	public int getDefaultTextColor()
-	{
-		return this.defaultTextColor;
-	}
-
-	public void setDefaultTextColor(int defaultTextColor)
-	{
-		this.defaultTextColor = defaultTextColor;
 	}
 
 	public int getPadding()

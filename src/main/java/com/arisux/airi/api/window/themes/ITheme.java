@@ -11,4 +11,12 @@ public interface ITheme
     public void drawTitleBar(Window w, int mouseX, int mouseY);
 
     public void drawCloseButton(Window w, int mouseX, int mouseY);
+    
+    public int getTextColor();
+
+    public int getForegroundColor();
+    
+    public int getBackgroundColor();
+    
+    public int getButtonColor();
 }

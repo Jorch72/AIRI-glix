@@ -92,6 +92,11 @@ public class BlockTypes
 			return this;
 		}
 
+		public RenderUtil.IconSet getIconSet()
+		{
+			return iconSet;
+		}
+
 		@Override
 		public void registerBlockIcons(IIconRegister iconRegister)
 		{

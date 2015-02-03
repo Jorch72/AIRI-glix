@@ -4,8 +4,8 @@ import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.input.Keyboard;
 
-import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.window.windows.WindowATWarning;
+import com.arisux.airi.lib.ChatUtil;
 import com.arisux.airi.lib.ModUtil;
 import com.arisux.airi.lib.interfaces.IInitializablePre;
 
@@ -58,9 +58,9 @@ public class ClientSideEvents implements IInitializablePre
 	@SubscribeEvent
 	public void onClientPlayerLogin(PlayerLoggedInEvent event)
 	{
-		for (Updater updater : AIRI.updaterApi().getUpdaterRegistry())
+		if (AIRI.updaterApi().isUpdateAvailable())
 		{
-			updater.printUpdateInformation(event.player);
+			ChatUtil.sendTo(event.player, "&7[&aAIRI&7] &fNew updates are available. To see what updates are available, enter chat and press LEFT ALT + W.");
 		}
 	}
 

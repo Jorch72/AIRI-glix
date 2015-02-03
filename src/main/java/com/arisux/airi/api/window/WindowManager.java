@@ -10,7 +10,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import com.arisux.airi.lib.RenderUtil;
+import com.arisux.airi.lib.*;
 import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
 
 import cpw.mods.fml.relauncher.Side;
@@ -20,8 +20,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class WindowManager extends GuiCustomScreen
 {
 	private WindowAPI windowapi;
-	private Window resetWindow;
+	private Window resetWindow = null;
 	private Window draggedWindow = null;
+	private Window topWindow = null;
 	protected GuiScreen parentScreen;
 	private int mouseXLast, mouseYLast;
 
@@ -31,6 +32,7 @@ public class WindowManager extends GuiCustomScreen
 		this.parentScreen = parentScreen;
 	}
 
+	@Override
 	public void initGui()
 	{
 		this.buttonList.clear();
@@ -42,31 +44,32 @@ public class WindowManager extends GuiCustomScreen
 	}
 
 	@Override
-	protected void keyTyped(char par1, int par2)
+	protected void keyTyped(char par1, int key)
 	{
-		if (par2 == Keyboard.KEY_ESCAPE)
+		if (key == Keyboard.KEY_ESCAPE)
 		{
 			Minecraft.getMinecraft().currentScreen = parentScreen;
 		}
-		if (windowapi.getWindowsRegistry().size() > 0)
+
+		if (topWindow != null)
 		{
-			windowapi.getWindowsRegistry().get(0).keyTyped(par1, par2);
+			topWindow.keyTyped(par1, key);
 		}
 	}
 
 	public Window getTopWindow(int mouseX, int mouseY)
 	{
-		Window window = null;
+		Window top = null;
 
-		for (Window w : windowapi.getWindowsRegistry())
+		for (Window window : windowapi.getWindowsRegistry())
 		{
-			if (mouseX > w.getX() && mouseX < w.getX() + w.getWidth() && mouseY > w.getY() - 16 && mouseY < w.getY() + w.getHeight())
+			if (mouseX > window.getX() && mouseX < window.getX() + window.getWidth() && mouseY > window.getY() - 16 && mouseY < window.getY() + window.getHeight())
 			{
-				window = w;
+				top = window;
 			}
 		}
 
-		return window;
+		return top;
 	}
 
 	@Override
@@ -74,24 +77,24 @@ public class WindowManager extends GuiCustomScreen
 	{
 		super.mouseClicked(mouseX, mouseY, par3);
 
-		Window top = getTopWindow(mouseX, mouseY);
+		topWindow = getTopWindow(mouseX, mouseY);
 
-		if (top != null)
+		if (topWindow != null)
 		{
-			if (mouseX > top.getX() + top.getWidth() - 14 && mouseX < top.getX() + top.getWidth() - 2 && mouseY < top.getY() - 2 && mouseY > top.getY() - 14)
+			topWindow.onActivated();
+
+			if (mouseX > topWindow.getX() + topWindow.getWidth() - 14 && mouseX < topWindow.getX() + topWindow.getWidth() - 2 && mouseY < topWindow.getY() - 2 && mouseY > topWindow.getY() - 14)
 			{
-				top.close();
+				topWindow.close();
 			}
 		}
 
-		for (int x = 0; x < windowapi.getWindowsRegistry().size(); x++)
+		for (Window window : windowapi.getWindowsRegistry())
 		{
-			Window window = windowapi.getWindowsRegistry().get(x);
-			
-			if (top == window)
+			if (topWindow == window)
 			{
 				resetWindow = window;
-				
+
 				window.onMousePressed(mouseX, mouseY);
 
 				if (mouseX > window.getX() && mouseX < window.getX() + window.getWidth() && mouseY > window.getY() - 16 && mouseY < window.getY())
@@ -121,16 +124,35 @@ public class WindowManager extends GuiCustomScreen
 			parentScreen.drawScreen(mouseX, mouseY, par3);
 		}
 
-		RenderUtil.drawGradientRect(0, 0, RenderUtil.scaledDisplayResolution().getScaledWidth(), RenderUtil.scaledDisplayResolution().getScaledHeight(), 0xDD000000, 0x66000000);
+		RenderUtil.drawRect(0, 0, RenderUtil.scaledDisplayResolution().getScaledWidth(), RenderUtil.scaledDisplayResolution().getScaledHeight(), 0x88000000);
 
-		GL11.glPushMatrix();
+		int barHeight = 15;
+		int shadowWidth = 6;
+		for (int shadowLayer = 0; shadowLayer < shadowWidth; shadowLayer += 2)
 		{
-			if (mc.gameSettings.guiScale > 1 || mc.gameSettings.guiScale == 0)
-				GL11.glScalef(0.5F, 0.5F, 0.5F);
-			fontRendererObj.drawString("Press ESC to hide the window manager, and LEFT ALT + W to show the window manager.", 10, 11, 0xFF0088FF);
-			GL11.glColor3f(1F, 1F, 1F);
+			RenderUtil.drawRect(0 - shadowWidth + shadowLayer, 0 - 16 - shadowWidth + shadowLayer, RenderUtil.scaledDisplayResolution().getScaledWidth() + shadowWidth * 2 - shadowLayer * 2, barHeight + shadowWidth * 2 + 16 - shadowLayer * 2, 0x11000000);
 		}
-		GL11.glPopMatrix();
+		RenderUtil.drawRect(0, 0, RenderUtil.scaledDisplayResolution().getScaledWidth(), barHeight, 0xFFFFFFFF);
+
+		fontRendererObj.drawString(ChatUtil.format("&8AIRI &7Press ESC to hide. Press LEFT ALT + W to show."), 4, 4, this.getWindowAPI().getCurrentTheme().getForegroundColor());
+		GL11.glColor3f(1F, 1F, 1F);
+
+		int iconPadding = 16;
+		int index = 0;
+		int maxWindowTitleWidth = 100;
+		for (Window window : this.getWindowAPI().getWindowsRegistry())
+		{
+			if (RenderUtil.getStringRenderWidth(window.getTitle()) > maxWindowTitleWidth)
+			{
+				maxWindowTitleWidth = RenderUtil.getStringRenderWidth(window.getTitle());
+			}
+		}
+		for (Window window : this.getWindowAPI().getWindowsRegistry())
+		{
+			int y = (20 + iconPadding * index++);
+			RenderUtil.drawRect(4, y, maxWindowTitleWidth + 5, 13, 0xAA000000);
+			RenderUtil.drawString(window.getTitle(), 7, y + 3, this.getWindowAPI().getCurrentTheme().getButtonColor(), false);
+		}
 
 		if (resetWindow != null)
 		{
@@ -153,7 +175,8 @@ public class WindowManager extends GuiCustomScreen
 					mouseXLast = mouseX;
 					mouseYLast = mouseY;
 				}
-			} else
+			}
+			else
 			{
 				draggedWindow = null;
 			}

@@ -85,4 +85,29 @@ public class Theme implements ITheme
 	{
 		return AIRI.windowApi().getWindowManager();
 	}
+
+	@Override
+	public int getTextColor()
+	{
+		return 0xFFFFFFFF;
+	}
+
+	@Override
+	public int getForegroundColor()
+	{
+		return 0xFF000000;
+	}
+
+	@Override
+	public int getBackgroundColor()
+	{
+		return 0xAA000000;
+	}
+
+	@Override
+	public int getButtonColor()
+	{
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

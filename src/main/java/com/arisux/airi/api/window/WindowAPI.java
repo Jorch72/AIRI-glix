@@ -1,15 +1,12 @@
 package com.arisux.airi.api.window;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 import net.minecraft.client.Minecraft;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.api.window.themes.Theme;
-import com.arisux.airi.api.window.themes.ThemeDefault;
-import com.arisux.airi.api.window.themes.ThemeMinecraft;
+import com.arisux.airi.api.window.themes.*;
+import com.arisux.airi.lib.ModUtil;
 
 public class WindowAPI
 {
@@ -19,14 +16,16 @@ public class WindowAPI
 	private HashMap<String, Theme> themes = new HashMap<String, Theme>();
 
 	public static final Theme themeDefault = new ThemeDefault("default");
+	public static final Theme themeModern = new ThemeModern("modern");
 	public static final Theme themeMinecraft = new ThemeMinecraft("minecraft");
 
 	public WindowAPI()
 	{
 		this.windowManager = new WindowManager(this, null);
 		this.registerTheme(themeDefault);
+		this.registerTheme(themeModern);
 		this.registerTheme(themeMinecraft);
-		this.currentTheme = getThemeForName("default");
+		this.currentTheme = getThemeForName("modern");
 	}
 
 	public void onTick()
@@ -63,9 +62,9 @@ public class WindowAPI
 		{
 			this.windows.add(window);
 		}
-		else
+		else if (ModUtil.isDevEnvironment())
 		{
-			AIRI.logger.info("Tried registerring a window with an ID that already exists: " + window.getID());
+			AIRI.logger.info("Tried injecting a window with an ID that already exists: " + window.getID());
 		}
 	}
 
@@ -147,7 +146,7 @@ public class WindowAPI
 				return false;
 			}
 
-			window = (Window) iterator.next();
+			window = iterator.next();
 		}
 		while (!(window == windowObj));
 
