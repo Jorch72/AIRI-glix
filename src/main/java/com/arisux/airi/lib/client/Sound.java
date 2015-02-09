@@ -11,6 +11,11 @@ public class Sound
 	private float volume;
 	private float pitch;
 	
+	public Sound(String key)
+	{
+		this(key, 1F, 1F);
+	}
+	
 	public Sound(String key, float volume, float pitch)
 	{
 		this.key = key;

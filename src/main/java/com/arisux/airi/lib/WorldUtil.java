@@ -875,6 +875,48 @@ public class WorldUtil
 		{
 			return entity != null && entityLooking != null && entity.worldObj != null ? entity.worldObj.rayTraceBlocks(Vec3.createVectorHelper(entity.posX, entity.posY + (entity.height / 2), entity.posZ), Vec3.createVectorHelper(entityLooking.posX, entityLooking.posY + entityLooking.getEyeHeight(), entityLooking.posZ)) : null;
 		}
+		
+		public static MovingObjectPosition rayTrace(EntityLivingBase player, int reach)
+		{
+			MovingObjectPosition objMouseOver = null;
+			Vec3 entityPos = Vec3.createVectorHelper(player.posX, player.posY, player.posZ);
+			Vec3 entityLook = player.getLook(AccessWrapper.getRenderPartialTicks());
+			Vec3 entityReach = entityPos.addVector(entityLook.xCoord * reach, entityLook.yCoord * reach, entityLook.zCoord * reach);
+			Vec3 hitVec = null;
+			Entity pointedEntity = null;
+			List<Entity> entities = player.worldObj.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox.addCoord(entityLook.xCoord * reach, entityLook.yCoord * reach, entityLook.zCoord * reach).expand(1.0F, 1.0F, 1.0F));
+
+			for (Entity listEntity : entities)
+			{
+				if (listEntity.canBeCollidedWith())
+				{
+					float borderSize = listEntity.getCollisionBorderSize();
+					AxisAlignedBB axisalignedbb = listEntity.boundingBox.expand(borderSize, borderSize, borderSize);
+					MovingObjectPosition movingObjPos = axisalignedbb.calculateIntercept(entityPos, entityReach);
+
+					if (axisalignedbb.isVecInside(entityPos))
+					{
+						pointedEntity = listEntity;
+						hitVec = movingObjPos == null ? entityPos : movingObjPos.hitVec;
+					}
+					else if (movingObjPos != null)
+					{
+						if (listEntity == player.ridingEntity && !listEntity.canRiderInteract())
+						{
+							pointedEntity = listEntity;
+							hitVec = movingObjPos.hitVec;
+						}
+						else
+						{
+							pointedEntity = listEntity;
+							hitVec = movingObjPos.hitVec;
+						}
+					}
+				}
+			}
+
+			return objMouseOver = new MovingObjectPosition(pointedEntity, hitVec);
+		}
 
 		/**
 		 * Constructs a new Entity instance from the specified class name in the specified world.

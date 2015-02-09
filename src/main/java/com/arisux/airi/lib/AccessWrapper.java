@@ -2,13 +2,18 @@ package com.arisux.airi.lib;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Session;
+import net.minecraft.util.*;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class AccessWrapper
 {
+	@SideOnly(Side.CLIENT)
+	public static float getRenderPartialTicks()
+	{
+		return ((Timer) ReflectionUtil.get(Minecraft.getMinecraft(), "timer", "field_71428_T")).renderPartialTicks;
+	}
+	
 	@SideOnly(Side.CLIENT)
 	public static float getEquippedProgress()
 	{
