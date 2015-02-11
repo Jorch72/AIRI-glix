@@ -72,27 +72,33 @@ public class Updater implements IInitializablePost
 
 	public void downloadVersionInformation()
 	{
-		System.out.println("Checking for updates for mod with ID " + this.modId);
-		
-		this.clearCaches();
-		this.isVersionDataValid();
+		new Thread() {
+			@Override
+			public void run() 
+			{
+				System.out.println("Checking for updates for mod with ID " + modId);
+				
+				clearCaches();
+				isVersionDataValid();
 
-		String retrieved = NetworkUtil.getURLContents(updateUrl);
+				String retrieved = NetworkUtil.getURLContents(updateUrl);
 
-		if (retrieved != null)
-		{
-			String[] parsed = retrieved.split(":");
+				if (retrieved != null)
+				{
+					String[] parsed = retrieved.split(":");
 
-			getVersionData().put("MCVER", parsed[0]);
-			getVersionData().put("MODVER", parsed[1]);
-			getVersionData().put("FORGEVER", parsed[2]);
-			getVersionData().put("MODID", parsed[3]);
-			System.out.println("Latest release of " + getVersionData().get("MODID") + " is version " + getVersionData().get("MODVER") + " for Minecraft " + getVersionData().get("MCVER"));
-		}
-		else
-		{
-			this.printConnectionError();
-		}
+					getVersionData().put("MCVER", parsed[0]);
+					getVersionData().put("MODVER", parsed[1]);
+					getVersionData().put("FORGEVER", parsed[2]);
+					getVersionData().put("MODID", parsed[3]);
+					System.out.println("Latest release of " + getVersionData().get("MODID") + " is version " + getVersionData().get("MODVER") + " for Minecraft " + getVersionData().get("MCVER"));
+				}
+				else
+				{
+					printConnectionError();
+				}
+			}
+		}.start();
 	}
 
 	public void downloadChangelog()

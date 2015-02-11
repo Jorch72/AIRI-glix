@@ -10,7 +10,6 @@ import com.arisux.airi.AIRI;
 import com.arisux.airi.api.window.Window;
 import com.arisux.airi.api.window.WindowManager;
 import com.arisux.airi.api.window.windows.WindowUpdates;
-import com.arisux.airi.lib.ChatUtil;
 import com.arisux.airi.lib.interfaces.IMod;
 
 public class UpdaterAPI
@@ -32,12 +31,6 @@ public class UpdaterAPI
 			if (Minecraft.getMinecraft().theWorld != null && !Minecraft.getMinecraft().isGamePaused() && Minecraft.getMinecraft().theWorld.getWorldTime() % (20 * 60 * 30) == 1)
 			{
 				this.recheckUpdates = true;
-				
-				if (AIRI.updaterApi().isUpdateAvailable())
-				{
-					ChatUtil.sendTo(Minecraft.getMinecraft().thePlayer, "");
-					ChatUtil.sendTo(Minecraft.getMinecraft().thePlayer, "&7[&aAIRI&7] &fNew updates are available. To see what updates are available, enter chat and press &aLEFT ALT&f + &aW&f.");
-				}
 			}
 			
 			if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof WindowManager))
