@@ -132,9 +132,9 @@ public class WindowManager extends GuiCustomScreen
 		{
 			RenderUtil.drawRect(0 - shadowWidth + shadowLayer, 0 - 16 - shadowWidth + shadowLayer, RenderUtil.scaledDisplayResolution().getScaledWidth() + shadowWidth * 2 - shadowLayer * 2, barHeight + shadowWidth * 2 + 16 - shadowLayer * 2, 0x11000000);
 		}
-		RenderUtil.drawRect(0, 0, RenderUtil.scaledDisplayResolution().getScaledWidth(), barHeight, 0xFFFFFFFF);
+		RenderUtil.drawRect(0, 0, RenderUtil.scaledDisplayResolution().getScaledWidth(), barHeight, 0xAA000000);
 
-		fontRendererObj.drawString(ChatUtil.format("&8AIRI &7Press ESC to hide. Press LEFT ALT + W to show."), 4, 4, this.getWindowAPI().getCurrentTheme().getForegroundColor());
+		fontRendererObj.drawString(ChatUtil.format(String.format("&7AIRI %s &8Press ESC to hide. Press LEFT ALT + W to show.", ModUtil.getModContainerForId("airi").getVersion())), 4, 4, this.getWindowAPI().getCurrentTheme().getForegroundColor());
 		GL11.glColor3f(1F, 1F, 1F);
 
 		int iconPadding = 16;

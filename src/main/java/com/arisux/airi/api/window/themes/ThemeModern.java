@@ -27,21 +27,21 @@ public class ThemeModern extends Theme implements ITheme
 			RenderUtil.drawRect(window.getX() - shadowWidth + shadowLayer, window.getY() - 16 - shadowWidth + shadowLayer, window.getWidth() + shadowWidth * 2 - shadowLayer * 2, window.getHeight() + shadowWidth * 2 + 16 - shadowLayer * 2, 0x11000000);
 		}
 
-		RenderUtil.drawGradientRect(window.getX(), window.getY() - 2, window.getWidth(), window.getHeight(), 0xFFAAAAAA, this.getBackgroundColor());
+		RenderUtil.drawGradientRect(window.getX(), window.getY() - 2, window.getWidth(), window.getHeight(), 0xFF888888, this.getBackgroundColor());
 	}
 
 	@Override
 	public void drawTitleBar(Window window, int mouseX, int mouseY)
 	{
-		RenderUtil.drawRect(window.getX(), window.getY() - 16, window.getWidth() - 15, 14, 0xBBFFFFFF);
-		RenderUtil.drawString(window.getTitle(), window.getX() + 5, window.getY() - 12, 0xFF222222, false);
+		RenderUtil.drawRect(window.getX(), window.getY() - 16, window.getWidth() - 15, 14, 0xAAFFFFFF);
+		RenderUtil.drawString(window.getTitle(), window.getX() + 5, window.getY() - 12, this.getTextColor(), false);
 	}
 
 	@Override
 	public void drawCloseButton(Window window, int mouseX, int mouseY)
 	{
-		RenderUtil.drawRect(window.getX() + window.getWidth() - 15, window.getY() - 16, 15, 14, 0x44FFFFFF);
-		RenderUtil.drawString("x", window.getX() + window.getWidth() - 10, window.getY() - 14, this.getButtonColor(), false);
+		RenderUtil.drawRect(window.getX() + window.getWidth() - 15, window.getY() - 16, 15, 14, this.getButtonColor());
+		RenderUtil.drawString("x", window.getX() + window.getWidth() - 10, window.getY() - 14, 0xFFFFFFFF, false);
 	}
 
 	@Override
@@ -53,18 +53,18 @@ public class ThemeModern extends Theme implements ITheme
 	@Override
 	public int getForegroundColor()
 	{
-		return 0xFFAAAAAA;
+		return 0xFFFFFFFF;
 	}
 
 	@Override
 	public int getTextColor()
 	{
-		return 0xFF333333;
+		return 0xFF222222;
 	}
 
 	@Override
 	public int getButtonColor()
 	{
-		return 0xFFCC2222;
+		return 0xFFCC1111;
 	}
 }

@@ -34,7 +34,7 @@ public class BlockTypes
 			this.renderNormal = true;
 			this.isOpaque = true;
 			this.disableIcon = false;
-			this.setLightOpacity(1);
+			this.setLightOpacity(0);
 			this.renderAdvanced = true;
 		}
 

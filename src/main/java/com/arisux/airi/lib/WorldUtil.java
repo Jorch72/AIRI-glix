@@ -24,6 +24,7 @@ import com.arisux.airi.lib.world.CustomExplosion;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+
 @SuppressWarnings("all")
 public class WorldUtil
 {
@@ -111,7 +112,7 @@ public class WorldUtil
 	{
 		generateBlockInChunk(world, block, seed, genPerChunk, groupSize, 0, 128, chunkCoord, biomes);
 	}
-	
+
 	/**
 	 * Generate a group of the specified Block in the World, a given amount of times, in a Chunk at the given 
 	 * CoordData's X and Z coords using the specified group size and seed.
@@ -160,7 +161,7 @@ public class WorldUtil
 			}
 		}
 	}
-	
+
 	/**
 	 * Generate the specified WorldGenerator instance in the World, a given amount of times, in a Chunk at the given 
 	 * CoordData's X and Z coords using the specified seed.
@@ -191,7 +192,7 @@ public class WorldUtil
 	{
 		generateWorldGenInChunk(world, worldGen, seed, genPerChunk, 0, 128, chunkCoord, biomes);
 	}
-	
+
 	/**
 	 * Generate the specified WorldGenerator instance in the World, a given amount of times, in a Chunk at the given 
 	 * CoordData's X and Z coords using the specified seed.
@@ -208,7 +209,7 @@ public class WorldUtil
 	{
 		generateWorldGenInChunk(world, worldGen, seed, genPerChunk, 0, 128, chunkCoord, BiomeGenBase.getBiomeGenArray());
 	}
-	
+
 	/**
 	 * Generate the specified WorldGenerator instance in the World, a given amount of times, in a Chunk at the given 
 	 * CoordData's X and Z coords using the specified seed.
@@ -362,6 +363,71 @@ public class WorldUtil
 
 	public static class Blocks
 	{
+		public static ArrayList<CoordData> getCoordDataInRange(int posX, int posY, int posZ, int range)
+		{
+			ArrayList<CoordData> data = new ArrayList<CoordData>();
+
+			for (int x = posX - range; x < posX + range * 2; x++)
+			{
+				for (int y = posY - range; y < posY + range * 2; y++)
+				{
+					for (int z = posZ - range; z < posZ + range * 2; z++)
+					{
+						data.add(new CoordData(x, y, z));
+					}
+				}
+			}
+
+			return data;
+		}
+
+		public static ArrayList<CoordData> getCoordDataInRangeForBlocks(int posX, int posY, int posZ, int range, World world, Block... types)
+		{
+			ArrayList<CoordData> data = new ArrayList<CoordData>();
+
+			for (int x = posX - range; x < posX + range * 2; x++)
+			{
+				for (int y = posY - range; y < posY + range * 2; y++)
+				{
+					for (int z = posZ - range; z < posZ + range * 2; z++)
+					{
+						CoordData coordData = new CoordData(x, y, z);
+						Block block = coordData.getBlock(world);
+						
+						if (Arrays.asList(types).contains(block))
+						{
+							data.add(coordData);
+						}
+					}
+				}
+			}
+
+			return data;
+		}
+		
+		public static ArrayList<CoordData> getCoordDataInRangeForBlocksExcluding(int posX, int posY, int posZ, int range, World world, Block... types)
+		{
+			ArrayList<CoordData> data = new ArrayList<CoordData>();
+
+			for (int x = posX - range; x < posX + range * 2; x++)
+			{
+				for (int y = posY - range; y < posY + range * 2; y++)
+				{
+					for (int z = posZ - range; z < posZ + range * 2; z++)
+					{
+						CoordData coordData = new CoordData(x, y, z);
+						Block block = coordData.getBlock(world);
+
+						if (!Arrays.asList(types).contains(block))
+						{
+							data.add(coordData);
+						}
+					}
+				}
+			}
+
+			return data;
+		}
 
 		public static class CoordData
 		{
@@ -580,11 +646,23 @@ public class WorldUtil
 			{
 				return new CoordData(nbt.getInteger(labelX), nbt.getInteger(labelY), nbt.getInteger(labelZ), nbt.getString(labelId));
 			}
-			
+
 			@Override
 			public String toString()
 			{
-				return String.format("CoordData/Coords[%s, %s, %s]/Block[%s:%s]/Object[%s]", this.posX, this.posY, this.posZ, this.block, this.meta, this);
+				return String.format("CoordData/Coords[%s, %s, %s]/Block[%s:%s]/Object[%s]", this.posX, this.posY, this.posZ, this.block, this.meta, this.getClass());
+			}
+
+			public boolean isAnySurfaceVisible(World world)
+			{
+				CoordData up = this.add(0, 1, 0);
+				CoordData down = this.add(0, -1, 0);
+				CoordData left = this.add(-1, 0, 0);
+				CoordData right = this.add(1, 0, 0);
+				CoordData front = this.add(0, 0, -1);
+				CoordData back = this.add(0, 0, 1);
+
+				return up.getBlock(world) == net.minecraft.init.Blocks.air || down.getBlock(world) == net.minecraft.init.Blocks.air || left.getBlock(world) == net.minecraft.init.Blocks.air || right.getBlock(world) == net.minecraft.init.Blocks.air || front.getBlock(world) == net.minecraft.init.Blocks.air || back.getBlock(world) == net.minecraft.init.Blocks.air;
 			}
 		}
 
@@ -866,6 +944,11 @@ public class WorldUtil
 			return rayTrace(entity, entityLooking) == null;
 		}
 		
+		public static boolean canCoordBeSeenBy(Entity entity, CoordData coord)
+		{
+			return rayTrace(entity, coord) == null;
+		}
+
 		/**
 		 * @param entity - The entity that entityLooking is looking for.
 		 * @param entityLooking - The entity that is looking for the first entity.
@@ -876,6 +959,11 @@ public class WorldUtil
 			return entity != null && entityLooking != null && entity.worldObj != null ? entity.worldObj.rayTraceBlocks(Vec3.createVectorHelper(entity.posX, entity.posY + (entity.height / 2), entity.posZ), Vec3.createVectorHelper(entityLooking.posX, entityLooking.posY + entityLooking.getEyeHeight(), entityLooking.posZ)) : null;
 		}
 		
+		public static MovingObjectPosition rayTrace(Entity entity, CoordData coord)
+		{
+			return entity != null && coord != null && entity.worldObj != null ? entity.worldObj.rayTraceBlocks(Vec3.createVectorHelper(entity.posX, entity.posY + (entity.height / 2), entity.posZ), Vec3.createVectorHelper(coord.posX, coord.posY, coord.posZ)) : null;
+		}
+
 		public static MovingObjectPosition rayTrace(EntityLivingBase player, int reach)
 		{
 			MovingObjectPosition objMouseOver = null;
@@ -1002,7 +1090,7 @@ public class WorldUtil
 			float newRotation = MathHelper.wrapAngleTo180_float(targetRotation - currentRotation);
 			return currentRotation + (newRotation > maxChange ? maxChange : newRotation < -maxChange ? -maxChange : maxChange);
 		}
-		
+
 		/**
 		 * Apply a block collision for the provided Entity instance.
 		 * @param entity - The entity to apply a collision for
@@ -1010,34 +1098,34 @@ public class WorldUtil
 		public static void applyCollision(Entity entity)
 		{
 			int minX = MathHelper.floor_double(entity.boundingBox.minX + 0.001D);
-	        int minY = MathHelper.floor_double(entity.boundingBox.minY + 0.001D);
-	        int minZ = MathHelper.floor_double(entity.boundingBox.minZ + 0.001D);
-	        int maxX = MathHelper.floor_double(entity.boundingBox.maxX - 0.001D);
-	        int maxY = MathHelper.floor_double(entity.boundingBox.maxY - 0.001D);
-	        int maxZ = MathHelper.floor_double(entity.boundingBox.maxZ - 0.001D);
+			int minY = MathHelper.floor_double(entity.boundingBox.minY + 0.001D);
+			int minZ = MathHelper.floor_double(entity.boundingBox.minZ + 0.001D);
+			int maxX = MathHelper.floor_double(entity.boundingBox.maxX - 0.001D);
+			int maxY = MathHelper.floor_double(entity.boundingBox.maxY - 0.001D);
+			int maxZ = MathHelper.floor_double(entity.boundingBox.maxZ - 0.001D);
 
-	        if (entity.worldObj.checkChunksExist(minX, minY, minZ, maxX, maxY, maxZ))
-	        {
-	            for (int x = minX; x <= maxX; ++x)
-	            {
-	                for (int y = minY; y <= maxY; ++y)
-	                {
-	                    for (int z = minZ; z <= maxZ; ++z)
-	                    {
-	                        Block block = entity.worldObj.getBlock(x, y, z);
+			if (entity.worldObj.checkChunksExist(minX, minY, minZ, maxX, maxY, maxZ))
+			{
+				for (int x = minX; x <= maxX; ++x)
+				{
+					for (int y = minY; y <= maxY; ++y)
+					{
+						for (int z = minZ; z <= maxZ; ++z)
+						{
+							Block block = entity.worldObj.getBlock(x, y, z);
 
-	                        try
-	                        {
-	                            block.onEntityCollidedWithBlock(entity.worldObj, x, y, z, entity);
-	                        }
-	                        catch (Throwable throwable)
-	                        {
-	                            AIRI.logger.bug("Exception while handling entity collision with block.");
-	                        }
-	                    }
-	                }
-	            }
-	        }
+							try
+							{
+								block.onEntityCollidedWithBlock(entity.worldObj, x, y, z, entity);
+							}
+							catch (Throwable throwable)
+							{
+								AIRI.logger.bug("Exception while handling entity collision with block.");
+							}
+						}
+					}
+				}
+			}
 		}
 
 		public static class Players
