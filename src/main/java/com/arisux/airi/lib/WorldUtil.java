@@ -56,8 +56,7 @@ public class WorldUtil
 		return explosion;
 	}
 
-	// TODO: Needs work. Wait until Minecraft Forge for 1.8 Final is released.
-	public static CustomExplosion createThreadedExplosion(Entity var1, World worldObj, int posX, int posY, int posZ, float var5)
+	public static CustomExplosion createCustomExplosion(Entity var1, World worldObj, int posX, int posY, int posZ, float var5)
 	{
 		CustomExplosion explosion = new CustomExplosion(worldObj, var5, var5, var5, posX, posY, posZ, (new Random()).nextLong());
 		explosion.start();
