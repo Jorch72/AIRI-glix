@@ -392,7 +392,7 @@ public class WorldUtil
 					{
 						CoordData coordData = new CoordData(x, y, z);
 						Block block = coordData.getBlock(world);
-						
+
 						if (Arrays.asList(types).contains(block))
 						{
 							data.add(coordData);
@@ -403,7 +403,7 @@ public class WorldUtil
 
 			return data;
 		}
-		
+
 		public static ArrayList<CoordData> getCoordDataInRangeForBlocksExcluding(int posX, int posY, int posZ, int range, World world, Block... types)
 		{
 			ArrayList<CoordData> data = new ArrayList<CoordData>();
@@ -942,7 +942,7 @@ public class WorldUtil
 		{
 			return rayTrace(entity, entityLooking) == null;
 		}
-		
+
 		public static boolean canCoordBeSeenBy(Entity entity, CoordData coord)
 		{
 			return rayTrace(entity, coord) == null;
@@ -957,7 +957,7 @@ public class WorldUtil
 		{
 			return entity != null && entityLooking != null && entity.worldObj != null ? entity.worldObj.rayTraceBlocks(Vec3.createVectorHelper(entity.posX, entity.posY + (entity.height / 2), entity.posZ), Vec3.createVectorHelper(entityLooking.posX, entityLooking.posY + entityLooking.getEyeHeight(), entityLooking.posZ)) : null;
 		}
-		
+
 		public static MovingObjectPosition rayTrace(Entity entity, CoordData coord)
 		{
 			return entity != null && coord != null && entity.worldObj != null ? entity.worldObj.rayTraceBlocks(Vec3.createVectorHelper(entity.posX, entity.posY + (entity.height / 2), entity.posZ), Vec3.createVectorHelper(coord.posX, coord.posY, coord.posZ)) : null;
@@ -965,44 +965,128 @@ public class WorldUtil
 
 		public static MovingObjectPosition rayTrace(EntityLivingBase player, int reach)
 		{
-			MovingObjectPosition objMouseOver = null;
-			Vec3 entityPos = Vec3.createVectorHelper(player.posX, player.posY, player.posZ);
-			Vec3 entityLook = player.getLook(AccessWrapper.getRenderPartialTicks());
-			Vec3 entityReach = entityPos.addVector(entityLook.xCoord * reach, entityLook.yCoord * reach, entityLook.zCoord * reach);
-			Vec3 hitVec = null;
+			Vec3 pos = player.getPosition(1F);
+			Vec3 entityLook = player.getLook(1F);
+
 			Entity pointedEntity = null;
-			List<Entity> entities = player.worldObj.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox.addCoord(entityLook.xCoord * reach, entityLook.yCoord * reach, entityLook.zCoord * reach).expand(1.0F, 1.0F, 1.0F));
+			Vec3 hitVec = null;
+			Vec3 posReach = null;
 
-			for (Entity listEntity : entities)
+			if (entityLook != null)
 			{
-				if (listEntity.canBeCollidedWith())
-				{
-					float borderSize = listEntity.getCollisionBorderSize();
-					AxisAlignedBB axisalignedbb = listEntity.boundingBox.expand(borderSize, borderSize, borderSize);
-					MovingObjectPosition movingObjPos = axisalignedbb.calculateIntercept(entityPos, entityReach);
+				posReach = pos.addVector(entityLook.xCoord * reach, entityLook.yCoord * reach, entityLook.zCoord * reach);
 
-					if (axisalignedbb.isVecInside(entityPos))
+				List<Entity> entities = player.worldObj.getEntitiesWithinAABBExcludingEntity(player, player.boundingBox.addCoord(entityLook.xCoord * reach, entityLook.yCoord * reach, entityLook.zCoord * reach).expand(1.0F, 1.0F, 1.0F));
+
+				for (Entity listEntity : entities)
+				{
+					if (listEntity.canBeCollidedWith())
 					{
-						pointedEntity = listEntity;
-						hitVec = movingObjPos == null ? entityPos : movingObjPos.hitVec;
-					}
-					else if (movingObjPos != null)
-					{
-						if (listEntity == player.ridingEntity && !listEntity.canRiderInteract())
+						float borderSize = listEntity.getCollisionBorderSize();
+						AxisAlignedBB axisalignedbb = listEntity.boundingBox.expand(borderSize, borderSize, borderSize);
+						MovingObjectPosition movingObjPos = axisalignedbb.calculateIntercept(pos, posReach);
+
+						if (axisalignedbb.isVecInside(pos))
 						{
 							pointedEntity = listEntity;
-							hitVec = movingObjPos.hitVec;
+							hitVec = movingObjPos == null ? pos : movingObjPos.hitVec;
 						}
-						else
+						else if (movingObjPos != null)
 						{
-							pointedEntity = listEntity;
-							hitVec = movingObjPos.hitVec;
+							if (listEntity == player.ridingEntity && !listEntity.canRiderInteract())
+							{
+								pointedEntity = listEntity;
+								hitVec = movingObjPos.hitVec;
+							}
+							else
+							{
+								pointedEntity = listEntity;
+								hitVec = movingObjPos.hitVec;
+							}
 						}
 					}
 				}
 			}
+			
+			if (pointedEntity != null && hitVec != null)
+			{
+				return new MovingObjectPosition(pointedEntity, hitVec);
+			}
 
-			return objMouseOver = new MovingObjectPosition(pointedEntity, hitVec);
+			if (posReach != null)
+			{
+				MovingObjectPosition blockHitVec = player.worldObj.func_147447_a(pos, posReach, true, true, true);
+
+				if (blockHitVec != null)
+				{
+					return blockHitVec;
+				}
+			}
+
+			return null;
+		}
+
+		public static MovingObjectPosition rayTrace(Entity entity, int reach)
+		{
+			Vec3 pos = Vec3.createVectorHelper(entity.posX, entity.posY, entity.posZ);
+			Vec3 entityLook = entity.getLookVec();
+
+			Entity pointedEntity = null;
+			Vec3 hitVec = null;
+			Vec3 posReach = null;
+
+			if (entityLook != null)
+			{
+				posReach = pos.addVector(entityLook.xCoord * reach, entityLook.yCoord * reach, entityLook.zCoord * reach);
+
+				List<Entity> entities = entity.worldObj.getEntitiesWithinAABBExcludingEntity(entity, entity.boundingBox.addCoord(entityLook.xCoord * reach, entityLook.yCoord * reach, entityLook.zCoord * reach).expand(1.0F, 1.0F, 1.0F));
+
+				for (Entity listEntity : entities)
+				{
+					if (listEntity.canBeCollidedWith())
+					{
+						float borderSize = listEntity.getCollisionBorderSize();
+						AxisAlignedBB axisalignedbb = listEntity.boundingBox.expand(borderSize, borderSize, borderSize);
+						MovingObjectPosition movingObjPos = axisalignedbb.calculateIntercept(pos, posReach);
+
+						if (axisalignedbb.isVecInside(pos))
+						{
+							pointedEntity = listEntity;
+							hitVec = movingObjPos == null ? pos : movingObjPos.hitVec;
+						}
+						else if (movingObjPos != null)
+						{
+							if (listEntity == entity.ridingEntity && !listEntity.canRiderInteract())
+							{
+								pointedEntity = listEntity;
+								hitVec = movingObjPos.hitVec;
+							}
+							else
+							{
+								pointedEntity = listEntity;
+								hitVec = movingObjPos.hitVec;
+							}
+						}
+					}
+				}
+			}
+			
+			if (pointedEntity != null && hitVec != null)
+			{
+				return new MovingObjectPosition(pointedEntity, hitVec);
+			}
+
+			if (posReach != null)
+			{
+				MovingObjectPosition blockHitVec = entity.worldObj.func_147447_a(pos, posReach, true, true, true);
+
+				if (blockHitVec != null)
+				{
+					return blockHitVec;
+				}
+			}
+
+			return null;
 		}
 
 		/**

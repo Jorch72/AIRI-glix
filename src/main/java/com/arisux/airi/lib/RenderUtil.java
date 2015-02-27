@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.*;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -48,8 +49,9 @@ import cpw.mods.fml.common.registry.GameRegistry;
 public class RenderUtil
 {
 	public static final GuiCustomScreen guiHook = new GuiCustomScreen();
-	public static boolean lightmapTexUnitTextureEnable;
 	public static final float DEFAULT_BOX_TRANSLATION = 0.0625F;
+	public static ArrayList<Framebuffer> frameBuffers = new ArrayList<Framebuffer>();
+	public static boolean lightmapTexUnitTextureEnable;
 
 	public static final DPI DPI1 = new DPI(1, 1.0F);
 	public static final DPI DPI2 = new DPI(2, 0.5F);
@@ -91,7 +93,7 @@ public class RenderUtil
 		public static Vertex unitPXPY = new Vertex(0.707, 0.707, 0);
 		public static Vertex unitPYPZ = new Vertex(0, 0.707, 0.707);
 		public static Vertex unitNXPY = new Vertex(-0.707, 0.707, 0);
-		
+
 		public float x, y, z;
 
 		public Vertex(float x, float y, float z)
@@ -137,7 +139,7 @@ public class RenderUtil
 			}
 			return this;
 		}
-		
+
 		public Vertex add(double x, double y, double z)
 		{
 			return new Vertex(this.x + x, this.y + y, this.z + z);
@@ -152,14 +154,14 @@ public class RenderUtil
 		{
 			return new Vertex(c * x, c * y, c * z);
 		}
-		
+
 		@Override
 		public String toString()
 		{
 			return String.format("Vertex(%s, %s, %s)", this.x, this.y, this.z);
 		}
 	}
-	
+
 	public static class Matrix3
 	{
 		public static Matrix3[] rotations = { Matrix3.rotY(0), Matrix3.rotY(90), Matrix3.rotY(180), Matrix3.rotY(270) };
@@ -211,6 +213,34 @@ public class RenderUtil
 			this.u = u;
 			this.v = v;
 		}
+	}
+
+	public static void copyDownsizedRenderToResource(TextureManager renderengine, ResourceLocation copyRenderTo, int x, int y, int w, int h, int index)
+	{
+		ITextureObject textureObject = renderengine.getTexture(copyRenderTo);
+
+		if (textureObject != null)
+		{
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureObject.getGlTextureId());
+			GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, index, index, x, y, w, h);
+		}
+	}
+
+	public static Framebuffer createFramebuffer(int width, int height, boolean useDepth)
+	{
+		Framebuffer render = new Framebuffer(width, height, useDepth);
+		frameBuffers.add(render);
+		return render;
+	}
+
+	public static void deleteFrameBuffer(Framebuffer buffer)
+	{
+		glEnable(GL_DEPTH_TEST);
+		if (buffer.framebufferObject >= 0)
+		{
+			buffer.deleteFramebuffer();
+		}
+		frameBuffers.remove(buffer);
 	}
 
 	/**
@@ -271,10 +301,10 @@ public class RenderUtil
 	 */
 	public static void glAntiAlias2D()
 	{
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_CLAMP);
-		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	}
 
 	/**
@@ -289,7 +319,7 @@ public class RenderUtil
 	}
 
 	/**
-	 * Same functionality as GL11.glColor4f
+	 * Same functionality as glColor4f
 	 * @param color - Hexadecimal color value
 	 */
 	public static void glColorHexRGBA(int color)
@@ -302,7 +332,7 @@ public class RenderUtil
 	}
 
 	/**
-	 * Same functionality as GL11.glColor3f
+	 * Same functionality as glColor3f
 	 * @param color - Hexadecimal color value
 	 */
 	public static void glColorHexRGB(int color)
@@ -420,11 +450,11 @@ public class RenderUtil
 	 */
 	public static void drawGradientRect(int x, int y, int w, int h, int zLevel, int color1, int color2)
 	{
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_ALPHA_TEST);
-		OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-		GL11.glShadeModel(GL11.GL_SMOOTH);
+		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_BLEND);
+		glDisable(GL_ALPHA_TEST);
+		OpenGlHelper.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+		glShadeModel(GL_SMOOTH);
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
 		tessellator.setColorRGBA_F((color1 >> 16 & 255) / 255.0F, (color1 >> 8 & 255) / 255.0F, (color1 & 255) / 255.0F, (color1 >> 24 & 255) / 255.0F);
@@ -434,10 +464,10 @@ public class RenderUtil
 		tessellator.addVertex(x, h, zLevel);
 		tessellator.addVertex(w, h, zLevel);
 		tessellator.draw();
-		GL11.glShadeModel(GL11.GL_FLAT);
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		glShadeModel(GL_FLAT);
+		glDisable(GL_BLEND);
+		glEnable(GL_ALPHA_TEST);
+		glEnable(GL_TEXTURE_2D);
 	}
 
 	/**
@@ -1139,9 +1169,9 @@ public class RenderUtil
 	 */
 	public static void drawModel(Entity entity, ModelBase model, ResourceLocation resource, double posX, double posY, double posZ)
 	{
-		GL11.glDisable(GL11.GL_CULL_FACE);
+		glDisable(GL_CULL_FACE);
 		bindTexture(resource);
-		GL11.glTranslated(posX, posY, posZ);
+		glTranslated(posX, posY, posZ);
 		model.render(entity, 0, 0, 0, 0, 0, 0.625F);
 	}
 
@@ -1203,7 +1233,7 @@ public class RenderUtil
 	{
 		int brightness = entity.worldObj.getLightBrightnessForSkyBlocks(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posY + offset / 16.0F), MathHelper.floor_double(entity.posZ), 0);
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightness % 65536, brightness / 65536);
-		GL11.glColor3f(1.0F, 1.0F, 1.0F);
+		glColor3f(1.0F, 1.0F, 1.0F);
 	}
 
 	/**
@@ -1261,7 +1291,7 @@ public class RenderUtil
 
 		return resource;
 	}
-	
+
 	/**
 	 * Get the full path of the specified ResourceLocation. Format: domain:path/to/resource.png
 	 * @param resource - The ResourceLocation to retrieve a path of.
@@ -1520,7 +1550,7 @@ public class RenderUtil
 							{
 								String domain = o.toString().contains("item.") ? o.toString().substring(o.toString().indexOf("x") + 1, o.toString().indexOf("item.")).equalsIgnoreCase("") ? "minecraft" : o.toString().substring(o.toString().indexOf("x") + 1, o.toString().indexOf("item.")) : "null";
 								Item item = GameRegistry.findItem(domain, o.toString().substring(o.toString().indexOf(".") + 1, o.toString().indexOf("@")));
-								
+
 								if (item != null)
 								{
 									RenderUtil.drawItemIcon(item, x + slotPadding + gX * (size + slotPadding), y + slotPadding + gY * (size + slotPadding), size, size);
