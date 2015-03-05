@@ -1125,7 +1125,7 @@ public class WorldUtil
 			}
 			catch (Exception e)
 			{
-				AIRI.logger.bug("Failed to construct entity: " + c.getName());
+				AIRI.logger.bug("Failed to construct entity: " + (c != null ? c.getName() : c));
 				e.printStackTrace();
 			}
 			return null;
