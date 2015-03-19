@@ -1440,6 +1440,23 @@ public class WorldUtil
 				{
 					return player.inventory.armorItemInSlot(0);
 				}
+				
+				public static int getAmountOfItemPlayerHas(Item item, EntityPlayer player)
+				{
+					int amount = 0;
+
+					for (Object obj : player.inventory.mainInventory)
+					{
+						ItemStack stack = (ItemStack) obj;
+						
+						if (stack != null && stack.getItem() == item)
+						{
+							amount += stack.stackSize;
+						}
+					}
+
+					return amount;
+				}
 			}
 
 			public static List<EntityPlayer> getPlayersInWorld(World world)
