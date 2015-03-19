@@ -1338,7 +1338,17 @@ public class WorldUtil
 				 **/
 				public static ItemStack newStack(Object obj)
 				{
-					return obj instanceof Block ? new ItemStack((Block) obj) : obj instanceof Item ? new ItemStack((Item) obj) : null;
+					return newStack(obj, 1);
+				}
+				
+				/** 
+				 * @param obj - Item or Block instance 
+				 * @param amount - Amount of Items in this ItemStack
+				 * @return A new ItemStack instance of the specified Object
+				 **/
+				public static ItemStack newStack(Object obj, int amount)
+				{
+					return obj instanceof Block ? new ItemStack((Block) obj, amount) : obj instanceof Item ? new ItemStack((Item) obj, amount) : null;
 				}
 
 				/** 
