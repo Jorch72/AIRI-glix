@@ -1376,9 +1376,9 @@ public class WorldUtil
 				 * @param player - The player to consume an item from.
 				 * @param item - The item to consume.
 				 */
-				public static void consumeItem(EntityPlayer player, Item item)
+				public static boolean consumeItem(EntityPlayer player, Item item)
 				{
-					consumeItem(player, item, false);
+					return consumeItem(player, item, false);
 				}
 
 				/**
@@ -1389,12 +1389,14 @@ public class WorldUtil
 				 * @param item - The item to consume.
 				 * @param force - Forces an item to be consumed, regardless of gamemode.
 				 */
-				public static void consumeItem(EntityPlayer player, Item item, boolean force)
+				public static boolean consumeItem(EntityPlayer player, Item item, boolean force)
 				{
 					if (!player.capabilities.isCreativeMode || force)
 					{
-						player.inventory.consumeInventoryItem(item);
+						return player.inventory.consumeInventoryItem(item);
 					}
+					
+					return true;
 				}
 
 				/**
