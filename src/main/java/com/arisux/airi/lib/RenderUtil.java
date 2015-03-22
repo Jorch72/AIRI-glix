@@ -295,6 +295,11 @@ public class RenderUtil
 		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 		glEnable(GL_LIGHTING);
 	}
+	
+	public static void glBlendClear()
+	{
+		OpenGlHelper.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+	}
 
 	/**
 	 * Combonation of GL functions used to smooth out the rough edges of a 2D texture.
