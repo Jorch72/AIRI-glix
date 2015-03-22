@@ -43,11 +43,11 @@ public class GuiElementHandler implements IInitializablePre
 			if (element != null)
 			{
 				handleButtonInput(null, element, mousePosition);
-				
+
 				if (element instanceof GuiCustomTextbox)
 				{
 					GuiCustomTextbox textbox = (GuiCustomTextbox) element;
-					
+
 					if (textbox != null && Mouse.isButtonDown(0))
 					{
 						if (textbox.isMouseOver())
@@ -68,16 +68,13 @@ public class GuiElementHandler implements IInitializablePre
 	{
 		if (!Minecraft.getMinecraft().inGameHasFocus && element.isMouseOver())
 		{
-			if (Mouse.getEventButton() == 0)
+			if (Mouse.getEventButtonState())
 			{
-				if (Mouse.getEventButtonState())
-				{
-					element.mousePressed(mousePosition);
-				}
-				else if (Mouse.isButtonDown(0))
-				{
-					element.mouseReleased(mousePosition);
-				}
+				element.mousePressed(mousePosition);
+			}
+			else if (Mouse.isButtonDown(0))
+			{
+				element.mouseReleased(mousePosition);
 			}
 
 			if (Mouse.isButtonDown(0))
@@ -85,7 +82,7 @@ public class GuiElementHandler implements IInitializablePre
 				element.mouseDragged(mousePosition);
 			}
 		}
-		
+
 		if (element instanceof GuiCustomSlider)
 		{
 			GuiCustomSlider slider = (GuiCustomSlider) element;
