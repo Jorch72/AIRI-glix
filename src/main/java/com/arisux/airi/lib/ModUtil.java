@@ -139,6 +139,29 @@ public class ModUtil
 		 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
 		 * mod's domain. Texture names are based off of the Block's unlocalized name.
 		 * 
+		 * This method allows you to provide a parent texture block as a parameter. The block you provide this
+		 * method with will allow the block currently being registered to use the parent block's texture, but
+		 * only on the condition that the block extends HookedBlock.
+		 * 
+		 * @param block - The Block instance to register.
+		 * @param reference - The reference ID to register the block under.
+		 * @param textureBlock - The parent block of which this block will receive its texture from.
+		 * @param tab - The CreativeTabs tab instance this Block will be displayed on.
+		 * @return Returns the Block instances originally provided in the block parameter.
+		 */
+		public Block registerBlock(Block block, String reference, Block textureBlock, CreativeTabs tab)
+		{
+			return registerBlock(block, reference, (textureBlock instanceof HookedBlock ? ((HookedBlock) textureBlock).getBlockTextureName() : null), tab);
+		}
+
+		/**
+		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
+		 * registration of Blocks. Using this method will result in the Block being automatically assigned
+		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
+		 * 
+		 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
+		 * mod's domain. Texture names are based off of the Block's unlocalized name.
+		 * 
 		 * @param block - The Block instance to register.
 		 * @param reference - The reference ID to register the block under.
 		 * @param texture - The path to the texture assigned to this block.
@@ -148,7 +171,26 @@ public class ModUtil
 		 */
 		public Block registerBlock(Block block, String reference, String texture, boolean visibleOnTab)
 		{
-			return ModUtil.registerBlock(block, reference, texture, this, visibleOnTab);
+			return ModUtil.registerBlock(block, reference, texture, this, visibleOnTab, this.getMod().tab());
+		}
+
+		/**
+		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
+		 * registration of Blocks. Using this method will result in the Block being automatically assigned
+		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
+		 * 
+		 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
+		 * mod's domain. Texture names are based off of the Block's unlocalized name.
+		 * 
+		 * @param block - The Block instance to register.
+		 * @param reference - The reference ID to register the block under.
+		 * @param texture - The path to the texture assigned to this block.
+		 * @param tab - The CreativeTabs tab instance this Block will be displayed on.
+		 * @return Returns the Block instances originally provided in the block parameter.
+		 */
+		public Block registerBlock(Block block, String reference, String texture, CreativeTabs tab)
+		{
+			return ModUtil.registerBlock(block, reference, texture, this, tab != null, tab);
 		}
 
 		/**
@@ -231,9 +273,10 @@ public class ModUtil
 	 * @param handler - The IBHandler instance that is registerring this block.
 	 * @param visibleOnTab - If set true, the Block will automatically be registered to the CreativeTab
 	 * specified in the IBHandler instance this Block was registered from.
+	 * @param tab - The CreativeTabs instance this Block will be displayed on.
 	 * @return Returns the Block instances originally provided in the block parameter.
 	 */
-	public static Block registerBlock(Block block, String reference, String texture, IBHandler handler, boolean visibleOnTab)
+	public static Block registerBlock(Block block, String reference, String texture, IBHandler handler, boolean visibleOnTab, CreativeTabs tab)
 	{
 		block.setBlockName(handler.getMod().domain() + reference);
 
@@ -246,9 +289,9 @@ public class ModUtil
 			block.setBlockTextureName(texture);
 		}
 
-		if (handler.getMod().tab() != null && visibleOnTab)
+		if (tab != null && visibleOnTab)
 		{
-			block.setCreativeTab(handler.getMod().tab());
+			block.setCreativeTab(tab);
 		}
 
 		if (handler.getHandledObjects() != null)
