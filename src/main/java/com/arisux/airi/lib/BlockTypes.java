@@ -126,19 +126,19 @@ public class BlockTypes
 				switch (iconSide)
 				{
 					case BOTTOM:
-						return iconSet.top;
+						return iconSet.bottom;
 					case TOP:
 						return iconSet.top;
 					case BACK:
-						return iconSet.front;
+						return iconSet.back;
 					case FRONT:
 						return iconSet.front;
 					case LEFT:
-						return iconSet.front;
+						return iconSet.left;
 					case RIGHT:
-						return iconSet.front;
+						return iconSet.right;
 					default:
-						return iconSet.front;
+						return iconSet.bottom;
 				}
 			}
 
