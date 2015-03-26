@@ -8,32 +8,32 @@ public class ReflectionUtil
 {
 	public static double getDouble(Object obj, String deobfName, String obfName)
 	{
-		return (double) get(obj, deobfName, obfName);
+		return ((Double) get(obj, deobfName, obfName)).doubleValue();
 	}
 	
 	public static float getFloat(Object obj, String deobfName, String obfName)
 	{
-		return (float) get(obj, deobfName, obfName);
+		return ((Float) get(obj, deobfName, obfName)).floatValue();
 	}
 	
 	public static int getInt(Object obj, String deobfName, String obfName)
 	{
-		return (int) get(obj, deobfName, obfName);
+		return ((Integer) get(obj, deobfName, obfName)).intValue();
 	}
 	
 	public static boolean getBoolean(Object obj, String deobfName, String obfName)
 	{
-		return (boolean) get(obj, deobfName, obfName);
+		return ((Boolean) get(obj, deobfName, obfName)).booleanValue();
 	}
 	
 	public static long getLong(Object obj, String deobfName, String obfName)
 	{
-		return (long) get(obj, deobfName, obfName);
+		return ((Long) get(obj, deobfName, obfName)).longValue();
 	}
 	
 	public static byte getByte(Object obj, String deobfName, String obfName)
 	{
-		return (byte) get(obj, deobfName, obfName);
+		return ((Byte) get(obj, deobfName, obfName)).byteValue();
 	}
 	
 	public static String getString(Object obj, String deobfName, String obfName)

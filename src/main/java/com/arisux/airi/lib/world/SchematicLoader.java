@@ -60,8 +60,9 @@ public class SchematicLoader
     {
         NBTTagCompound compound = null;
 
-        try (FileInputStream fileInputStream = new FileInputStream(extractionPath))
+        try
         {
+            InputStream fileInputStream = new FileInputStream(extractionPath);
             compound = CompressedStreamTools.readCompressed(fileInputStream);
         }
         catch (IOException e)
