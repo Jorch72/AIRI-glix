@@ -16,6 +16,7 @@ buildscript {
 }
 
 apply plugin: 'forge'
+apply plugin: 'curseforge'
 
 version = "4.0.0.${System.env.BUILD_NUMBER}"
 group= "com.arisux"
