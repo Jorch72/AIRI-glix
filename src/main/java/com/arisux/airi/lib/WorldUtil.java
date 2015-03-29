@@ -3,6 +3,12 @@ package com.arisux.airi.lib;
 import java.io.*;
 import java.util.*;
 
+import com.arisux.airi.AIRI;
+import com.arisux.airi.lib.WorldUtil.Blocks.CoordData;
+import com.arisux.airi.lib.world.CustomExplosion;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import net.minecraft.block.Block;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -17,13 +23,6 @@ import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
-
-import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.WorldUtil.Blocks.CoordData;
-import com.arisux.airi.lib.world.CustomExplosion;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 @SuppressWarnings("all")
 public class WorldUtil
@@ -441,7 +440,7 @@ public class WorldUtil
 
 			public CoordData(TileEntity tileEntity)
 			{
-				this(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, tileEntity.getWorldObj().getBlock(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord), tileEntity.getWorldObj().getBlockMetadata(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord));
+				this(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, tileEntity.getWorldObj() != null ? tileEntity.getWorldObj().getBlock(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord) : null, tileEntity.getWorldObj() != null ? tileEntity.getWorldObj().getBlockMetadata(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord) : 0);
 			}
 
 			public CoordData(int posX, int posY, int posZ, World world)
@@ -512,15 +511,26 @@ public class WorldUtil
 				this.posZ = (int) posZ;
 			}
 
-			public boolean equals(CoordData data)
+			@Override
+			public boolean equals(Object o)
 			{
-				if (data == null || this != data || !(data instanceof CoordData) || data.posX != this.posX || data.posY != this.posY || data.posZ != this.posZ)
+				if (o == null || this != o || !(o instanceof CoordData) || o instanceof CoordData && ((CoordData) o).posX != this.posX || o instanceof CoordData && ((CoordData) o).posY != this.posY || o instanceof CoordData && ((CoordData) o).posZ != this.posZ)
 				{
 					return false;
 				}
 
 				return true;
 			}
+			
+
+		    @Override
+		    public int hashCode()
+		    {
+		        int result = this.posX;
+		        result = 31 * result + this.posY;
+		        result = 31 * result + this.posZ;
+		        return result;
+		    }
 
 			public Block getBlock()
 			{

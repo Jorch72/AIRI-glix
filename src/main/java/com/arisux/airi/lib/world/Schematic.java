@@ -1,7 +1,12 @@
 package com.arisux.airi.lib.world;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.File;
+import java.util.*;
+
+import com.arisux.airi.AIRI;
+import com.arisux.airi.lib.WorldUtil.Blocks;
+import com.arisux.airi.lib.WorldUtil.Blocks.CoordData;
+import com.arisux.airi.lib.WorldUtil.TileEntities;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -11,26 +16,25 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
-import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.WorldUtil.Blocks;
-import com.arisux.airi.lib.WorldUtil.Blocks.CoordData;
-import com.arisux.airi.lib.WorldUtil.TileEntities;
-
 public class Schematic
 {
-	public short width, height, length;
-	public CoordData origin;
-	public Block[] blocks;
-	public byte[] metadata;
-	public ArrayList<NBTTagCompound> tileEntityCompounds = new ArrayList<NBTTagCompound>();
+	private short width;
+	private short height;
+	private short length;
+	private CoordData origin;
+	private Block[] blocks;
+	private byte[] metadata;
+	private ArrayList<NBTTagCompound> tileEntityTags = new ArrayList<NBTTagCompound>();
+	private Map<Short, String> idMap;
 
-	public Schematic(NBTTagCompound tagCompound) throws UnsupportedSchematicFormatException
+	public Schematic(File file, NBTTagCompound tagCompound)
 	{
 		String materials = tagCompound.getString("Materials");
 
 		if (!materials.equals("Alpha"))
 		{
-			throw new UnsupportedSchematicFormatException(materials);
+			AIRI.logger.warning("Unsupported schematic format for: ", file);
+			return;
 		}
 
 		this.origin = new CoordData(tagCompound.getShort("WEOriginX"), tagCompound.getShort("WEOriginY"), tagCompound.getShort("WEOriginZ"));
@@ -38,42 +42,74 @@ public class Schematic
 		this.height = tagCompound.getShort("Height");
 		this.length = tagCompound.getShort("Length");
 		this.metadata = tagCompound.getByteArray("Data");
-		byte[] blockIds = tagCompound.getByteArray("Blocks");
+        byte[] blockIds = tagCompound.getByteArray("Blocks");
 		byte[] addBlocks = tagCompound.getByteArray("AddBlocks");
+        NBTTagCompound mappings = tagCompound.getCompoundTag("Mapping");
 
-		this.blocks = new Block[blockIds.length];
+        ///////////////////////////////////////////////
+        // Load Mappings
+        ///////////////////////////////////////////////
+        Map<Short, String> idMap = new HashMap<Short, String>();
+        
+        for (Object obj : mappings.func_150296_c())
+        {
+        	String alias = obj.toString();
+        	short id = mappings.getShort(alias);
+        	idMap.put(id, alias);
+        }
+        
+        if (!idMap.isEmpty())
+        {
+            System.out.println("Schematic is missing mappings: " + file);
+        }
+        
+        this.idMap = idMap;
+        
+        ///////////////////////////////////////////////
+        // Load Blocks
+        ///////////////////////////////////////////////
+        this.blocks = new Block[blockIds.length];
 
-		for (int i = 0; i < blockIds.length; i++)
-		{
-			int blockID = blockIds[i] & 0xff;
+        for (int i = 0; i < blockIds.length; i++)
+        {
+            int blockID = blockIds[i] & 0xff;
 
-			if (addBlocks.length == blockIds.length / 2)
-			{
-				blockID |= (i & 1) == 0 ? ((addBlocks[i >> 1] & 0x0F) << 8) : ((addBlocks[i >> 1] & 0xF0) << 4);
-			}
-
-			this.blocks[i] = Block.getBlockById(blockID);
+            if (addBlocks.length >= (blockIds.length + 1) / 2)
+            {
+                boolean lowerNybble = (i & 1) == 0;
+                blockID |= lowerNybble ? ((addBlocks[i >> 1] & 0x0F) << 8) : ((addBlocks[i >> 1] & 0xF0) << 4);
+            }
+			
+			String key = this.idMap.get((short) blockID);
+			Block block = null;
+			block = key != null ? Block.getBlockFromName(key) : null;
+			block = block == null ? Block.getBlockById(blockID) : block;
+			
+			this.blocks[i] = block;
 		}
 
+        ///////////////////////////////////////////////
+        // Load Tile Entities
+        ///////////////////////////////////////////////
 		NBTTagList tileEntities = tagCompound.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < tileEntities.tagCount(); i++)
 		{
-			tileEntityCompounds.add(tileEntities.getCompoundTagAt(i));
+			tileEntityTags.add(tileEntities.getCompoundTagAt(i));
 		}
 	}
 
-	public void generate(World world, CoordData data)
+	public void generate(World world, CoordData inWorld)
 	{
-		HashMap<CoordData, TileEntity> tileEntities = new HashMap<CoordData, TileEntity>();
+		HashMap<Integer, TileEntity> tileEntities = new HashMap<Integer, TileEntity>();
 
-		for (NBTTagCompound tileTagCompound : tileEntityCompounds)
+		for (NBTTagCompound tag : tileEntityTags)
 		{
-			TileEntity tileEntity = TileEntity.createAndLoadEntity(tileTagCompound);
+			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
 
 			if (tileEntity != null)
 			{
-				tileEntities.put(new CoordData(tileEntity), tileEntity);
+				tileEntities.put(new CoordData(tileEntity).hashCode(), tileEntity);
 			}
 		}
 
@@ -81,23 +117,22 @@ public class Schematic
 
 		for (int pass = 0; pass < 2; pass++)
 		{
-			for (CoordData srcCoord : blockArea)
+			for (CoordData relative : blockArea)
 			{
-				int index = srcCoord.posX + (srcCoord.posY * length + srcCoord.posZ) * width;
+				int index = relative.posX + (relative.posY * length + relative.posZ) * width;
 				Block block = blocks[index];
-				byte meta = metadata[index];
+				byte meta = this.metadata[index];
 
 				if (block != null && getPass(block, meta) == pass && block != AIRI.WORLDGEN_GHOST)
 				{
-					CoordData pos = new CoordData(data.posX + srcCoord.posX, data.posY + srcCoord.posY, data.posZ + srcCoord.posZ, block, meta);
-					world.setBlock(pos.posX, pos.posY, pos.posZ, pos.block, pos.meta, 3);
+					CoordData pos = new CoordData(inWorld.posX, inWorld.posY, inWorld.posZ, block, meta).add(relative);
+					world.setBlock(pos.posX, pos.posY, pos.posZ, block, meta, 3);
 
-					TileEntity tileEntity = tileEntities.get(srcCoord);
-
+					TileEntity tileEntity = tileEntities.get(relative.hashCode());
+					
 					if (tileEntity != null)
 					{
 						world.setBlockMetadataWithNotify(pos.posX, pos.posY, pos.posZ, meta, 2);
-
 						TileEntities.setTileEntityPosition(tileEntity, pos);
 						world.setTileEntity(pos.posX, pos.posY, pos.posZ, tileEntity);
 						tileEntity.updateContainingBlockInfo();
@@ -111,15 +146,39 @@ public class Schematic
 	{
 		return (block.isNormalCube() || block.getMaterial() == Material.air) ? 0 : 1;
 	}
-
-	public static class UnsupportedSchematicFormatException extends Exception
+	
+	public short width() 
 	{
-		private static final long serialVersionUID = -7318855261807377764L;
-		public final String format;
-
-		public UnsupportedSchematicFormatException(String format)
-		{
-			this.format = format;
-		}
-	}
+        return this.width;
+    }
+	
+	public short height() 
+	{
+        return this.height;
+    }
+	
+	public short length() 
+	{
+        return this.length;
+    }
+	
+	public Block[] blocks() 
+	{
+        return this.blocks;
+    }
+	
+	public byte[] metadata() 
+	{
+        return this.metadata;
+    }
+	
+	public CoordData origin() 
+	{
+        return this.origin;
+    }
+	
+	public ArrayList<NBTTagCompound> getTileEntities() 
+	{
+        return this.tileEntityTags;
+    }
 }

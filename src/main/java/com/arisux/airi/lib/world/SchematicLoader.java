@@ -1,51 +1,61 @@
 package com.arisux.airi.lib.world;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URL;
 import java.util.Collection;
-
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.world.Schematic.UnsupportedSchematicFormatException;
+
+import net.minecraft.nbt.CompressedStreamTools;
 
 public class SchematicLoader
 {
-	public static Schematic extractAndLoadSchematic(File extractionPath, InputStream resourceToExtract) throws UnsupportedSchematicFormatException
+	/**
+	 * Extract a schematic from the provided URL to the provided File path and then load it.
+	 * The schematic will not be extracted if it is already present in the provided path.
+	 * 
+	 * @param path - The path we are extracting to and loading the schematic from.
+	 * @param resource - The URL path we are extracting the resource from.
+	 * @return - The schematic that was loaded. Null if the schematic was not loaded.
+	 */
+	public static Schematic loadSchematic(File path, URL resource)
 	{
 		if (!getSchematicsDirectory().exists())
 		{
 			getSchematicsDirectory().mkdirs();
 		}
 		
-		if (!extractionPath.exists())
+		if (!path.exists())
 		{
 			try
 			{
-				Files.copy(resourceToExtract, extractionPath.getAbsoluteFile().toPath());
-				AIRI.logger.info("Extracted %s", extractionPath.getAbsoluteFile().toPath());
+			    FileUtils.copyURLToFile(resource, path);
+				AIRI.logger.info("Extracted %s", path.getAbsoluteFile().getPath());
 			}
 			catch (Exception e)
 			{
-				AIRI.logger.info("Error while extracting %s: %s", extractionPath, e);
+				AIRI.logger.info("Error while extracting %s: %s", path, e);
 			}
 		}
 		
-		return loadSchematic(extractionPath);
+		return loadSchematic(path);
 	}
 	
-    public static Schematic loadSchematic(String name) throws Schematic.UnsupportedSchematicFormatException
+	/**
+	 * Load a schematic from the schematics directory simply by using its name.
+	 * 
+	 * @param name - The name of the schematic we are loading.
+	 * @return - The schematic that was loaded. Null if the schematic was not loaded.
+	 */
+    public static Schematic loadSchematic(String name)
     {
-        if (FilenameUtils.getExtension(name).length() == 0)
-        {
-            name = name + ".schematic";
-        }
+    	name = FilenameUtils.getExtension(name).length() == 0 ? name + ".schematic" : name;
 
-        for (File file : getSchematicFiles())
+        for (File file : getSchematicsInDirectory())
         {
             if (file.getPath().endsWith(name) && name.endsWith(file.getName()))
             {
@@ -56,31 +66,33 @@ public class SchematicLoader
         return null;
     }
 
-    public static Schematic loadSchematic(File extractionPath) throws Schematic.UnsupportedSchematicFormatException
+    /**
+     * Load a schematic from the schematics directory by using a direct File path.
+     * 
+     * @param path - The File path we are loading the schematic from.
+     * @return - The schematic that was loaded. Null if the schematic was not loaded.
+     */
+    public static Schematic loadSchematic(File path)
     {
-        NBTTagCompound compound = null;
-
         try
         {
-            InputStream fileInputStream = new FileInputStream(extractionPath);
-            compound = CompressedStreamTools.readCompressed(fileInputStream);
+        	return new Schematic(path, CompressedStreamTools.readCompressed(new FileInputStream(path)));
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace();
-        }
-
-        if (compound != null)
-        {
-            return new Schematic(compound);
         }
 
         return null;
     }
 
-    public static String[] currentSchematicFileNames()
+    /**
+     * @return - An Array of Strings containing the names of all schematics in
+     * the schematics directory.
+     */
+    public static String[] getSchematicNames()
     {
-        Collection<File> files = getSchematicFiles();
+        Collection<File> files = getSchematicsInDirectory();
         String[] filenames = new String[files.size()];
         int i = 0;
         
@@ -92,11 +104,18 @@ public class SchematicLoader
         return filenames;
     }
 
-    public static Collection<File> getSchematicFiles()
+    /**
+     * @return - A Collection of Files containing File instances to each schematic
+     * found in the schematics directory.
+     */
+    public static Collection<File> getSchematicsInDirectory()
     {
         return FileUtils.listFiles(getSchematicsDirectory(), new String[]{"schematic"}, true);
     }
 
+    /**
+     * @return - The File instance of the schematics directory.
+     */
     public static File getSchematicsDirectory()
     {
         return new File("./", "schematics");
