@@ -17,9 +17,9 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "3.1.0"
+version = "4.0.0.${System.env.BUILD_NUMBER}"
 group= "com.arisux"
-archivesBaseName = "airi"
+archivesBaseName = "AIRI"
 
 tasks.withType(JavaCompile) {
 	sourceCompatibility = "1.6"
@@ -27,7 +27,13 @@ tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
 }
 
+minecraft {
+    version = "1.7.10-10.13.2.1291"
+    runDir = "eclipse"
+}
+
 jar {
+	archiveName = "[${minecraft.getApiVersion()}][${project.version}] ${project.archivesBaseName}.jar"
 	manifest {
 		attributes 'FMLAT' : 'airi_at.cfg'
 		attributes 'FMLCorePlugin' : 'com.arisux.airi.coremod.FMLPlugin'
@@ -35,9 +41,12 @@ jar {
 	}
 }
 
-minecraft {
-    version = "1.7.10-10.13.2.1291"
-    runDir = "eclipse"
+curse {
+    displayName = "${project.archivesBaseName} ${project.version}"
+    artifact = file("${project.buildDir}/libs/[${minecraft.getApiVersion()}][${project.version}] ${project.archivesBaseName}.jar")
+    projectId = '229003'
+    apiKey = project.curseForgeApiKey
+    releaseType = 'beta'
 }
 
 dependencies {
