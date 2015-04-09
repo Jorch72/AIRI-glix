@@ -1,27 +1,26 @@
 package com.arisux.airi.lib;
 
-import static org.lwjgl.opengl.GL11.*;
-
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.*;
-
-import javax.imageio.ImageIO;
-import javax.vecmath.Vector2d;
-
+import com.arisux.airi.AIRI;
+import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
+import com.arisux.airi.lib.WorldUtil.Blocks;
+import com.arisux.airi.lib.client.ModelBaseExtension;
+import com.arisux.airi.lib.client.ScaledResolution;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.*;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
@@ -29,22 +28,29 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
-import com.arisux.airi.lib.WorldUtil.Blocks;
-import com.arisux.airi.lib.client.ModelBaseExtension;
-import com.arisux.airi.lib.client.ScaledResolution;
+import javax.imageio.ImageIO;
+import javax.vecmath.Vector2d;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import cpw.mods.fml.common.registry.GameRegistry;
+import static org.lwjgl.opengl.GL11.*;
 
 public class RenderUtil
 {
@@ -1256,8 +1262,8 @@ public class RenderUtil
 		ResourceLocation resource = downloadResource(String.format("http://s3.amazonaws.com/MinecraftSkins/%s.png", username), AbstractClientPlayer.locationStevePng, false);
 
 		bindTexture(resource);
-		drawQuad(x, y, width, height, 90, 0.125F, 0.25F, 0.5F, 0.25F);
-		drawQuad(x, y, width, height, 90, 0.75F, 0.625F, 0.5F, 0.25F);
+		drawQuad(x, y, width, height, 90, 0.125F, 0.25F, 0.25F, 0.5F);
+		drawQuad(x, y, width, height, 90, 0.75F, 0.625F, 0.25F, 0.5F);
 	}
 
 	/**
