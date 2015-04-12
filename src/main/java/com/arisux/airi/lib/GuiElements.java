@@ -1,20 +1,19 @@
 package com.arisux.airi.lib;
 
-import java.util.ArrayList;
-
-import javax.vecmath.Vector2d;
-
+import com.arisux.airi.GuiElementHandler;
+import com.arisux.airi.lib.interfaces.IActionPerformed;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.*;
-
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import com.arisux.airi.GuiElementHandler;
-import com.arisux.airi.lib.interfaces.IActionPerformed;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import javax.vecmath.Vector2d;
+import java.util.ArrayList;
 
 public class GuiElements
 {
@@ -100,8 +99,9 @@ public class GuiElements
 			
 				if (this.isMouseOver() && !tooltip.equalsIgnoreCase(""))
 				{
-					RenderUtil.drawToolTip((int) RenderUtil.scaledMousePosition().x + 10, (int) RenderUtil.scaledMousePosition().y, tooltip);
+					RenderUtil.drawToolTip((int) RenderUtil.scaledMousePosition().x + 10, (int) RenderUtil.scaledMousePosition().y, this.tooltip);
 				}
+				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			}
 		}
 

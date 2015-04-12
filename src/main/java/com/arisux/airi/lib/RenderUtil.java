@@ -5,6 +5,8 @@ import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
 import com.arisux.airi.lib.WorldUtil.Blocks;
 import com.arisux.airi.lib.client.ModelBaseExtension;
 import com.arisux.airi.lib.client.ScaledResolution;
+import com.sun.javafx.geom.Vec2d;
+import com.sun.javafx.geom.Vec3d;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -16,6 +18,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
+import net.minecraft.client.renderer.culling.ClippingHelperImpl;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.ITextureObject;
@@ -28,10 +31,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
@@ -46,6 +46,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -210,12 +211,123 @@ public class RenderUtil
 		}
 	}
 
+	public static class Matrix4
+	{
+		private float[] matrix;
+		public static final int size = 4;
+
+		public Matrix4()
+		{
+			this.matrix = new float[size * size];
+			this.setIdentity();
+		}
+
+		public Matrix4(float[] arr)
+		{
+			int n = size*size;
+
+			if (arr.length != n)
+			{
+				throw new RuntimeException("Matrix4 constructor needs a double array of " + n + " elements");
+			}
+
+			matrix = arr;
+		}
+
+		public void clone(Matrix4 other)
+		{
+			matrix = new float[size * size];
+
+			for(int i = 0; i < matrix.length; i++)
+			{
+				matrix[i] = other.matrix[i];
+			}
+		}
+
+		public void setIdentity()
+		{
+			for (int i = 0; i < matrix.length; i++)
+			{
+				matrix[i] = 0;
+			}
+
+			for(int i = 0; i < size; i++)
+			{
+				matrix[i * size + i] = 1;
+			}
+		}
+
+		public Matrix4 mul(Matrix4 right)
+		{
+			Matrix4 result = new Matrix4();
+			int idx = 0;
+			float r;
+
+			for(int i = 0; i < size; i++)
+			{
+				for (int j = 0; j < size; j++)
+				{
+					r = 0;
+
+					for (int k = 0; k < size; k++)
+					{
+						r += this.matrix[i * size + k] * right.matrix[k * size + j];
+					}
+
+					result.matrix[idx] = r;
+					idx++;
+				}
+			}
+
+			return result;
+		}
+
+		public float get(int col, int row)
+		{
+			return matrix[row * 4 + col];
+		}
+
+		public float[] transform(float x, float y, float z, float w)
+		{
+			float[] r = new float[4];
+			float[] m = this.matrix;
+			int idx = 0;
+
+			for (int i = 0; i < r.length; ++i)
+			{
+				r[i] =    m[idx] * x
+						+ m[idx+1] * y
+						+ m[idx+2] * z
+						+ m[idx+3] * w;
+				idx += size;
+			}
+
+			return r;
+		}
+
+		public String toString()
+		{
+			String r = "[Matrix4]\n";
+			int idx = 0;
+
+			for (int i = 0; i < size; i++)
+			{
+				for (int j = 0; j < size; j++)
+				{
+					r += " " + matrix[idx++];
+				}
+				r += "\n";
+			}
+
+			return r;
+		}
+	}
+
 	public static class UV
 	{
 		public float u, v;
 
-		public UV(float u, float v)
-		{
+		public UV(float u, float v) {
 			this.u = u;
 			this.v = v;
 		}
@@ -628,7 +740,7 @@ public class RenderUtil
 
 	/**
 	 * Draw the specified String centered at the specified coordinates using the specified color.
-	 * 
+	 *
 	 * @param text - String to draw
 	 * @param x - x coordinate to draw at
 	 * @param y - y coordinate to draw at
@@ -716,6 +828,32 @@ public class RenderUtil
 	public static int getStringRenderWidth(String s)
 	{
 		return Minecraft.getMinecraft().fontRenderer.getStringWidth(EnumChatFormatting.getTextWithoutFormattingCodes(s));
+	}
+
+	@Deprecated
+	public static Vec2d getScreenPointFromWorldPoint(Vec3d vec3d)
+	{
+		FloatBuffer viewBuffer = FloatBuffer.wrap(ClippingHelperImpl.getInstance().modelviewMatrix);
+		FloatBuffer projectionBuffer = FloatBuffer.wrap(ClippingHelperImpl.getInstance().projectionMatrix);
+		glGetFloat(GL_MODELVIEW_MATRIX, viewBuffer);
+		glGetFloat(GL_PROJECTION_MATRIX, projectionBuffer);
+		Matrix4 view = new Matrix4(viewBuffer.array());
+		Matrix4 projection = new Matrix4(projectionBuffer.array());
+
+		Matrix4 matrix = new Matrix4(new float[]{(float) vec3d.x, (float) vec3d.y, (float) vec3d.z}).mul((view.mul(projection)));
+
+		Vec3d screen = new Vec3d(matrix.get(0, 0), matrix.get(0, 1), matrix.get(0, 2));
+		//vec3d.x = vec3d.x * 0.5 / vec3d.w + 0.5;
+		//vec3d.y = vec3d.y * 0.5 / vec3d.w + 0.5;
+
+
+
+		//Vec3d p = Minecraft.getMinecraft().thePlayer.getEyePosition();
+		//Vec3d t = target.getPosition();
+		//Vec3d res = p + (t - p).normalize();
+		//drawNormal3dthingynear(res);
+
+		return null;
 	}
 
 	/**
@@ -864,7 +1002,6 @@ public class RenderUtil
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL12.GL_RESCALE_NORMAL);
-		RenderHelper.enableGUIStandardItemLighting();
 	}
 
 	/**
