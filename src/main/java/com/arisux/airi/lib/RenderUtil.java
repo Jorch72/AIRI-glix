@@ -574,9 +574,6 @@ public class RenderUtil
 	public static void drawGradientRect(int x, int y, int w, int h, int zLevel, int color1, int color2)
 	{
 		glDisable(GL_TEXTURE_2D);
-		glEnable(GL_BLEND);
-		glDisable(GL_ALPHA_TEST);
-		OpenGlHelper.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
 		glShadeModel(GL_SMOOTH);
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
@@ -588,13 +585,11 @@ public class RenderUtil
 		tessellator.addVertex(w, h, zLevel);
 		tessellator.draw();
 		glShadeModel(GL_FLAT);
-		glDisable(GL_BLEND);
-		glEnable(GL_ALPHA_TEST);
 		glEnable(GL_TEXTURE_2D);
 	}
 
 	/**
-	 * Draws a quad at the specified coordinates, with the 
+	 * Draws a quad at the specified coordinates, with the
 	 * specified width and height
 	 * 
 	 * @param x - x coordinate
@@ -1111,18 +1106,11 @@ public class RenderUtil
 	 */
 	public static void drawCenteredRectWithOutline(int x, int y, int w, int h, int borderWidth, int fillColor, int borderColor)
 	{
-		int x1 = x - w / 2;
-		int y1 = y - h / 2;
-		int x2 = x + w / 2;
-		int y2 = y + h / 2;
-
-		borderWidth = borderWidth + 1;
-
-		Gui.drawRect(x1, y1, x2, y2, fillColor);
-		Gui.drawRect(x1, y1 + 1, x2, y2 - h + borderWidth + 1, borderColor);
-		Gui.drawRect(x1, y1 - 1 + h - borderWidth, x2, y2 - 1, borderColor);
-		Gui.drawRect(x1, y1 + borderWidth, x2 - w + borderWidth, y2 - borderWidth, borderColor);
-		Gui.drawRect(x1 + w - borderWidth, y1 + borderWidth, x2, y2 - borderWidth, borderColor);
+		drawRect(x - w / 2 + borderWidth, y - h / 2, w, h, fillColor);
+		drawRect(x - w / 2 + borderWidth, y - h / 2, w, borderWidth, borderColor);
+		drawRect(x - w / 2, y + h / 2, w, borderWidth, borderColor);
+		drawRect(x - w / 2, y - h / 2, borderWidth, h, borderColor);
+		drawRect(x + w / 2, y - h / 2 + borderWidth, borderWidth, h, borderColor);
 	}
 
 	/**
