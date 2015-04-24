@@ -1,16 +1,22 @@
 package com.arisux.airi.api.window;
 
-import java.util.*;
-
-import net.minecraft.client.Minecraft;
-
 import com.arisux.airi.AIRI;
-import com.arisux.airi.api.window.themes.*;
+import com.arisux.airi.api.window.gui.DesktopWindowManager;
+import com.arisux.airi.api.window.gui.windows.Window;
+import com.arisux.airi.api.window.themes.Theme;
+import com.arisux.airi.api.window.themes.ThemeDefault;
+import com.arisux.airi.api.window.themes.ThemeMinecraft;
+import com.arisux.airi.api.window.themes.ThemeModern;
 import com.arisux.airi.lib.ModUtil;
+import net.minecraft.client.Minecraft;
+import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class WindowAPI
 {
-	private WindowManager windowManager;
+	private DesktopWindowManager windowManager;
 	private Theme currentTheme;
 	private ArrayList<Window> windows = new ArrayList<Window>();
 	private HashMap<String, Theme> themes = new HashMap<String, Theme>();
@@ -21,7 +27,7 @@ public class WindowAPI
 
 	public WindowAPI()
 	{
-		this.windowManager = new WindowManager(this, null);
+		this.windowManager = new DesktopWindowManager(this, null);
 		this.registerTheme(themeDefault);
 		this.registerTheme(themeModern);
 		this.registerTheme(themeMinecraft);
@@ -30,25 +36,29 @@ public class WindowAPI
 
 	public void onTick()
 	{
-		if (getWindowsRegistry().size() <= 0 && Minecraft.getMinecraft().currentScreen instanceof WindowManager)
+		if (getWindowsRegistry().size() <= 0 && Minecraft.getMinecraft().currentScreen instanceof DesktopWindowManager)
 		{
 			Minecraft.getMinecraft().displayGuiScreen(this.getWindowManager().parentScreen);
 		}
 
-		if (this.getWindowManager().parentScreen != Minecraft.getMinecraft().currentScreen && !(Minecraft.getMinecraft().currentScreen instanceof WindowManager))
+		if (this.getWindowManager().parentScreen != Minecraft.getMinecraft().currentScreen && !(Minecraft.getMinecraft().currentScreen instanceof DesktopWindowManager))
 		{
 			this.getWindowManager().parentScreen = Minecraft.getMinecraft().currentScreen;
 		}
 	}
 
-	public WindowManager getWindowManager()
+	public DesktopWindowManager getWindowManager()
 	{
 		return windowManager;
 	}
 	
 	public void drawWindow(Window window, int mouseX, int mouseY)
 	{
-		this.getCurrentTheme().drawWindow(window, mouseX, mouseY);
+		GL11.glPushMatrix();
+		{
+			this.getCurrentTheme().draw(window, mouseX, mouseY);
+		}
+		GL11.glPopMatrix();
 	}
 
 	public void registerTheme(Theme theme)
@@ -98,29 +108,24 @@ public class WindowAPI
 		this.currentTheme = currentTheme;
 	}
 
-	/**
-	 * ReadOnly method for getting an array of values stored in the Theme Registry
-	 **/
-	public ArrayList<Theme> getThemes()
-	{
-		return new ArrayList<Theme>(this.themes.values());
-	}
-
-	/** Read/Write method for getting the Window Registry hashmap **/
 	public ArrayList<Window> getWindowsRegistry()
 	{
 		return this.windows;
 	}
 
-	/** Read/Write method for getting the Theme Registry hashmap **/
 	public HashMap<String, Theme> getThemeRegistry()
 	{
 		return this.themes;
 	}
 
+	public ArrayList<Theme> getThemes()
+	{
+		return new ArrayList<Theme>(this.themes.values());
+	}
+
 	public boolean canWindowManagerOpen()
 	{
-		return (Minecraft.getMinecraft().currentScreen != null && !(Minecraft.getMinecraft().currentScreen instanceof WindowManager));
+		return (Minecraft.getMinecraft().currentScreen != null && !(Minecraft.getMinecraft().currentScreen instanceof DesktopWindowManager));
 	}
 
 	public void showWindowManager()
@@ -136,20 +141,14 @@ public class WindowAPI
 
 	public boolean isWindowRegistered(Window windowObj)
 	{
-		Iterator<Window> iterator = this.windows.iterator();
-		Window window;
-
-		do
+		for (Window window : this.windows)
 		{
-			if (!iterator.hasNext())
+			if (window == windowObj)
 			{
-				return false;
+				return true;
 			}
-
-			window = iterator.next();
 		}
-		while (!(window == windowObj));
 
-		return true;
+		return false;
 	}
 }

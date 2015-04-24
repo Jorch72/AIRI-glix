@@ -42,12 +42,12 @@ public class GuiElements
 		}
 
 		private IActionPerformed action;
-		public int baseColor = 0xEE000000;
-		public int overlayColorNormal = 0x44000000;
-		public int overlayColorHover = 0x00000000;
-		public int overlayColorPressed = 0x66000000;
+		public int baseColor;
+		public int overlayColorNormal;
+		public int overlayColorHover;
+		public int overlayColorPressed;
 		private long lastDrawTime;
-		public String tooltip = "";
+		public String tooltip;
 
 		public GuiCustomButton(ArrayList<GuiCustomButton> buttonList, int id, int xPosition, int yPosition, int width, int height, String displayString, IActionPerformed action)
 		{
@@ -64,12 +64,17 @@ public class GuiElements
 			this.enabled = true;
 			this.visible = true;
 			this.id = id;
+			this.tooltip = "";
 			this.xPosition = xPosition;
 			this.yPosition = yPosition;
 			this.width = width;
 			this.height = height;
 			this.displayString = displayString;
 			this.action = action;
+			this.baseColor = 0xEE000000;
+			this.overlayColorNormal = 0x44000000;
+			this.overlayColorHover = 0x00000000;
+			this.overlayColorPressed = 0x66000000;
 		}
 
 		public void drawButton()
@@ -86,6 +91,7 @@ public class GuiElements
 			{
 				FontRenderer fontrenderer = mc.fontRenderer;
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+				GL11.glEnable(GL11.GL_BLEND);
 				this.field_146123_n = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
 				int k = this.getHoverState(this.field_146123_n);
 
@@ -154,7 +160,10 @@ public class GuiElements
 
 			if (mousePosition.x >= this.xPosition && mousePosition.y >= this.yPosition && mousePosition.x < this.xPosition + this.width && mousePosition.y < this.yPosition + this.height)
 			{
-				this.action.actionPerformed(this);
+				if (this.action != null)
+				{
+					this.action.actionPerformed(this);
+				}
 			}
 		}
 

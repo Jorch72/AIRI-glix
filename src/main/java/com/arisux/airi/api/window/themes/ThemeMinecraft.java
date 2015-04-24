@@ -1,9 +1,14 @@
 package com.arisux.airi.api.window.themes;
 
+import com.arisux.airi.AIRI;
+import com.arisux.airi.api.window.gui.taskbar.Taskbar;
+import com.arisux.airi.api.window.gui.taskbar.TaskbarEntry;
+import com.arisux.airi.lib.ChatUtil;
+import com.arisux.airi.lib.ModUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 
-import com.arisux.airi.api.window.Window;
+import com.arisux.airi.api.window.gui.windows.Window;
 import com.arisux.airi.lib.RenderUtil;
 
 public class ThemeMinecraft extends Theme implements ITheme
@@ -15,9 +20,9 @@ public class ThemeMinecraft extends Theme implements ITheme
 	}
 
 	@Override
-	public void drawWindow(Window window, int mouseX, int mouseY)
+	public void draw(Window window, int mouseX, int mouseY)
 	{
-		super.drawWindow(window, mouseX, mouseY);
+		super.draw(window, mouseX, mouseY);
 	}
 
 	@Override
@@ -37,5 +42,65 @@ public class ThemeMinecraft extends Theme implements ITheme
 	public void drawCloseButton(Window window, int mouseX, int mouseY)
 	{
 		RenderUtil.drawBlockSide(Blocks.tnt, 2, window.getX() + window.getWidth() - 14, window.getY() - 14, 12, 12);
+	}
+
+	@Override
+	public void drawTaskbar(Taskbar taskbar, int mouseX, int mouseY)
+	{
+		int height = 15;
+		int shadowWidth = 6;
+
+		for (int shadowLayer = 0; shadowLayer < shadowWidth; shadowLayer += 2)
+		{
+			RenderUtil.drawRect(0 - shadowWidth + shadowLayer, 0 - 16 - shadowWidth + shadowLayer, RenderUtil.scaledDisplayResolution().getScaledWidth() + shadowWidth * 2 - shadowLayer * 2, height + shadowWidth * 2 + 16 - shadowLayer * 2, 0x11000000);
+		}
+
+		RenderUtil.drawRect(0, 0, RenderUtil.scaledDisplayResolution().getScaledWidth(), height, this.getTaskbarColor());
+		RenderUtil.drawString(ChatUtil.format(String.format("&7AIRI %s &8Press ESC to hide. Press LEFT ALT + W to show.", ModUtil.getModContainerForId("airi").getVersion())), 4, 4, this.getForegroundColor());
+
+		for (TaskbarEntry taskbarEntry : taskbar.getTaskbarEntries())
+		{
+			this.drawTaskbarEntry(taskbarEntry, taskbar, mouseX, mouseY);
+		}
+	}
+
+	@Override
+	public void drawTaskbarEntry(TaskbarEntry taskbarEntry, Taskbar taskbar, int mouseX, int mouseY)
+	{
+		int iconPadding = 16;
+		int index = 0;
+		int y = (20 + iconPadding * index++);
+		RenderUtil.drawRect(4, y, 100 + 5, 13, 0xAA000000);
+		RenderUtil.drawString(taskbarEntry.getText(), 7, y + 3, AIRI.windowApi().getCurrentTheme().getButtonColor(), false);
+	}
+
+	@Override
+	public int getTextColor()
+	{
+		return 0xFFFFFFFF;
+	}
+
+	@Override
+	public int getForegroundColor()
+	{
+		return 0xFFAAAAAA;
+	}
+
+	@Override
+	public int getBackgroundColor()
+	{
+		return 0x666666;
+	}
+
+	@Override
+	public int getButtonColor()
+	{
+		return 0xFF00AAFF;
+	}
+
+	@Override
+	public int getTaskbarColor()
+	{
+		return 0xAA000000;
 	}
 }

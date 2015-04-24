@@ -6,10 +6,10 @@ import net.minecraft.client.gui.GuiButton;
 import org.lwjgl.opengl.GL11;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.api.window.Window;
-import com.arisux.airi.api.window.WindowManager;
+import com.arisux.airi.api.window.gui.windows.Window;
+import com.arisux.airi.api.window.gui.DesktopWindowManager;
 
-public class Theme implements ITheme
+public abstract class Theme implements ITheme
 {
 	private String themeName;
 
@@ -19,7 +19,7 @@ public class Theme implements ITheme
 	}
 
 	@Override
-	public void drawWindow(Window window, int mouseX, int mouseY)
+	public void draw(Window window, int mouseX, int mouseY)
 	{
 		this.drawBackground(window, mouseX, mouseY);
 		this.drawTitleBar(window, mouseX, mouseY);
@@ -81,33 +81,8 @@ public class Theme implements ITheme
 		this.themeName = themeName;
 	}
 
-	public WindowManager getWindowManager()
+	public DesktopWindowManager getWindowManager()
 	{
 		return AIRI.windowApi().getWindowManager();
-	}
-
-	@Override
-	public int getTextColor()
-	{
-		return 0xFFFFFFFF;
-	}
-
-	@Override
-	public int getForegroundColor()
-	{
-		return 0xFF000000;
-	}
-
-	@Override
-	public int getBackgroundColor()
-	{
-		return 0xAA000000;
-	}
-
-	@Override
-	public int getButtonColor()
-	{
-		// TODO Auto-generated method stub
-		return 0;
 	}
 }

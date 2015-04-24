@@ -7,9 +7,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.api.window.Window;
-import com.arisux.airi.api.window.WindowManager;
-import com.arisux.airi.api.window.windows.WindowUpdates;
+import com.arisux.airi.api.window.gui.windows.Window;
+import com.arisux.airi.api.window.gui.DesktopWindowManager;
+import com.arisux.airi.api.window.gui.windows.WindowUpdates;
 import com.arisux.airi.lib.interfaces.IMod;
 
 public class UpdaterAPI
@@ -33,7 +33,7 @@ public class UpdaterAPI
 				this.recheckUpdates = true;
 			}
 			
-			if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof WindowManager))
+			if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof DesktopWindowManager))
 			{
 				this.canRecheckForUpdates = true;
 			}
@@ -62,7 +62,7 @@ public class UpdaterAPI
 
 			for (final Updater updater : this.updaters)
 			{
-				if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof WindowManager))
+				if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof DesktopWindowManager))
 				{
 					if (updater.isUpdateAvailable())
 					{

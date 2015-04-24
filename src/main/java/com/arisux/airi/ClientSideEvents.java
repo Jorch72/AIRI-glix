@@ -4,7 +4,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.input.Keyboard;
 
-import com.arisux.airi.api.window.windows.WindowATWarning;
+import com.arisux.airi.api.window.gui.windows.WindowATWarning;
 import com.arisux.airi.lib.ChatUtil;
 import com.arisux.airi.lib.ModUtil;
 import com.arisux.airi.lib.interfaces.IInitializablePre;
