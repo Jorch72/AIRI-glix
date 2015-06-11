@@ -774,7 +774,7 @@ public class RenderUtil
 	 */
 	public static void drawStringAlignCenter(String text, int x, int y, int w, int h, int color, boolean shadow)
 	{
-		drawString(text, x + (w - getStringRenderWidth(text)) / 2, y + (h - 8) / 2, color, shadow);
+		drawString(text, x + (w - getStringRenderWidth(StatCollector.translateToLocal(text))) / 2, y + (h - 8) / 2, color, shadow);
 	}
 
 	/**
@@ -801,7 +801,7 @@ public class RenderUtil
 	 */
 	public static void drawStringAlignCenter(String text, int x, int y, int color, boolean shadow)
 	{
-		drawString(text, x - getStringRenderWidth(text) / 2, y, color, shadow);
+		drawString(text, x - getStringRenderWidth(StatCollector.translateToLocal(text)) / 2, y, color, shadow);
 	}
 
 	/**
@@ -828,7 +828,7 @@ public class RenderUtil
 	 */
 	public static void drawStringAlignRight(String text, int x, int y, int color, boolean shadow)
 	{
-		drawString(text, x - getStringRenderWidth(text), y, color, shadow);
+		drawString(text, x - getStringRenderWidth(StatCollector.translateToLocal(text)), y, color, shadow);
 	}
 
 	/**
