@@ -48,6 +48,7 @@ public class GuiElements
 		public int overlayColorPressed;
 		private long lastDrawTime;
 		public String tooltip;
+		public float scale;
 
 		public GuiCustomButton(ArrayList<GuiCustomButton> buttonList, int id, int xPosition, int yPosition, int width, int height, String displayString, IActionPerformed action)
 		{
@@ -59,6 +60,7 @@ public class GuiElements
 		{
 			super(id, xPosition, yPosition, width, height, displayString);
 			this.add();
+			this.scale = 1F;
 			this.width = 200;
 			this.height = 20;
 			this.enabled = true;
@@ -92,7 +94,7 @@ public class GuiElements
 				FontRenderer fontrenderer = mc.fontRenderer;
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 				GL11.glEnable(GL11.GL_BLEND);
-				this.field_146123_n = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+				this.field_146123_n = mouseX >= this.xPosition * scale && mouseY >= this.yPosition * scale && mouseX < (this.xPosition + this.width) * scale && mouseY < (this.yPosition + this.height) * scale;
 				int k = this.getHoverState(this.field_146123_n);
 
 				int overlayColor = k == 2 ? (Mouse.isButtonDown(0) ? overlayColorPressed : overlayColorHover) : overlayColorNormal;
@@ -158,7 +160,7 @@ public class GuiElements
 		{
 			super.mouseReleased((int) mousePosition.x, (int) mousePosition.y);
 
-			if (mousePosition.x >= this.xPosition && mousePosition.y >= this.yPosition && mousePosition.x < this.xPosition + this.width && mousePosition.y < this.yPosition + this.height)
+			if (isMouseOver())
 			{
 				if (this.action != null)
 				{
