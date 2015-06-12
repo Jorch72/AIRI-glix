@@ -104,15 +104,15 @@ public class GuiElements
 				
 				if (this.textAlignment == Alignment.CENTER)
 				{
-					this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
+					RenderUtil.drawStringAlignCenter(this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
 				}
 				else if (this.textAlignment == Alignment.LEFT)
 				{
-					RenderUtil.drawString(this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
+					RenderUtil.drawString(this.displayString, this.xPosition + 4, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
 				}
 				else if (this.textAlignment == Alignment.RIGHT)
 				{
-					RenderUtil.drawStringAlignRight(this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
+					RenderUtil.drawStringAlignRight(this.displayString, this.xPosition + this.width - 4, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
 				}
 			
 				if (this.isMouseOver() && !tooltip.equalsIgnoreCase(""))
