@@ -17,6 +17,11 @@ import java.util.ArrayList;
 
 public class GuiElements
 {
+	public static enum Alignment
+	{
+		LEFT, RIGHT, CENTER();
+	}
+	
 	public static interface IGuiElement
 	{
 		public void add();
@@ -32,15 +37,6 @@ public class GuiElements
 	@SideOnly(Side.CLIENT)
 	public static class GuiCustomButton extends GuiButton implements IGuiElement
 	{
-		public class ActionPerformed implements IActionPerformed
-		{
-			@Override
-			public void actionPerformed(GuiCustomButton button)
-			{
-				;
-			}
-		}
-
 		private IActionPerformed action;
 		public int baseColor;
 		public int overlayColorNormal;
@@ -49,6 +45,7 @@ public class GuiElements
 		private long lastDrawTime;
 		public String tooltip;
 		public float scale;
+		public Alignment textAlignment;
 
 		public GuiCustomButton(ArrayList<GuiCustomButton> buttonList, int id, int xPosition, int yPosition, int width, int height, String displayString, IActionPerformed action)
 		{
@@ -77,6 +74,7 @@ public class GuiElements
 			this.overlayColorNormal = 0x44000000;
 			this.overlayColorHover = 0x00000000;
 			this.overlayColorPressed = 0x66000000;
+			this.textAlignment = Alignment.CENTER;
 		}
 
 		public void drawButton()
@@ -103,7 +101,19 @@ public class GuiElements
 				RenderUtil.drawRect(this.xPosition, this.yPosition, this.width, this.height, overlayColor);
 
 				this.mouseDragged(mc, mouseX, mouseY);
-				this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
+				
+				if (this.textAlignment == Alignment.CENTER)
+				{
+					this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
+				}
+				else if (this.textAlignment == Alignment.LEFT)
+				{
+					RenderUtil.drawString(this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
+				}
+				else if (this.textAlignment == Alignment.RIGHT)
+				{
+					RenderUtil.drawStringAlignRight(this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
+				}
 			
 				if (this.isMouseOver() && !tooltip.equalsIgnoreCase(""))
 				{
@@ -173,6 +183,12 @@ public class GuiElements
 		public void mouseDragged(Vector2d mousePosition)
 		{
 			super.mouseDragged(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
+		}
+		
+		public GuiCustomButton setAlignment(Alignment alignment) 
+		{
+			this.textAlignment = alignment;
+			return this;
 		}
 	}
 
