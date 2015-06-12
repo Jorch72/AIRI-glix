@@ -1,19 +1,21 @@
 package com.arisux.airi.lib;
 
-import com.arisux.airi.GuiElementHandler;
-import com.arisux.airi.lib.interfaces.IActionPerformed;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
+import java.util.ArrayList;
+
+import javax.vecmath.Vector2d;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import javax.vecmath.Vector2d;
-import java.util.ArrayList;
+import com.arisux.airi.GuiElementHandler;
+import com.arisux.airi.lib.interfaces.IActionPerformed;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 
 public class GuiElements
 {
@@ -38,6 +40,7 @@ public class GuiElements
 	public static class GuiCustomButton extends GuiButton implements IGuiElement
 	{
 		private IActionPerformed action;
+		public int fontColor;
 		public int baseColor;
 		public int overlayColorNormal;
 		public int overlayColorHover;
@@ -70,6 +73,7 @@ public class GuiElements
 			this.height = height;
 			this.displayString = displayString;
 			this.action = action;
+			this.fontColor = 0xFFFFFFFF;
 			this.baseColor = 0xEE000000;
 			this.overlayColorNormal = 0x44000000;
 			this.overlayColorHover = 0x00000000;
@@ -89,7 +93,6 @@ public class GuiElements
 			
 			if (this.visible)
 			{
-				FontRenderer fontrenderer = mc.fontRenderer;
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 				GL11.glEnable(GL11.GL_BLEND);
 				this.field_146123_n = mouseX >= this.xPosition * scale && mouseY >= this.yPosition * scale && mouseX < (this.xPosition + this.width) * scale && mouseY < (this.yPosition + this.height) * scale;
@@ -104,15 +107,15 @@ public class GuiElements
 				
 				if (this.textAlignment == Alignment.CENTER)
 				{
-					RenderUtil.drawStringAlignCenter(this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
+					RenderUtil.drawStringAlignCenter(this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, fontColor);
 				}
 				else if (this.textAlignment == Alignment.LEFT)
 				{
-					RenderUtil.drawString(this.displayString, this.xPosition + 4, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
+					RenderUtil.drawString(this.displayString, this.xPosition + 4, this.yPosition + (this.height - 8) / 2, fontColor);
 				}
 				else if (this.textAlignment == Alignment.RIGHT)
 				{
-					RenderUtil.drawStringAlignRight(this.displayString, this.xPosition + this.width - 4, this.yPosition + (this.height - 8) / 2, 0xFFFFFFFF);
+					RenderUtil.drawStringAlignRight(this.displayString, this.xPosition + this.width - 4, this.yPosition + (this.height - 8) / 2, fontColor);
 				}
 			
 				if (this.isMouseOver() && !tooltip.equalsIgnoreCase(""))
