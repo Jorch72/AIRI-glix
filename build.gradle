@@ -16,48 +16,51 @@ buildscript {
 }
 
 apply plugin: 'forge'
+apply plugin: 'curseforge'
 
-version = "1.0"
-group= "com.ri5ux.arisux" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = "4.0.0.${System.env.BUILD_NUMBER}"
+group= "com.arisux"
 archivesBaseName = "AIRI"
+
+tasks.withType(JavaCompile) {
+	sourceCompatibility = "1.6"
+	targetCompatibility = "1.6"
+	options.encoding = 'UTF-8'
+}
 
 minecraft {
     version = "1.7.10-10.13.4.1472-1.7.10"
     runDir = "eclipse"
 }
 
-dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+jar {
+	archiveName = "[${minecraft.getApiVersion()}][${project.version}] ${project.archivesBaseName}.jar"
 }
 
-processResources
-{
-    // this will ensure that this task is redone when the versions change.
+curse {
+    displayName = "${project.archivesBaseName} ${project.version}"
+    artifact = file("${project.buildDir}/libs/[${minecraft.getApiVersion()}][${project.version}] ${project.archivesBaseName}.jar")
+    projectId = '221641'
+    apiKey = project.curseForgeApiKey
+    releaseType = 'beta'
+}
+
+dependencies {
+	// Define dependencies here or place them in "./libs/"
+}
+
+processResources {
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
-        // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
         
-    // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
 }
+
+idea { module { inheritOutputDirs = true } }
