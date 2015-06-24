@@ -40,7 +40,7 @@ jar {
 curse {
     displayName = "${project.archivesBaseName} ${project.version}"
     artifact = file("${project.buildDir}/libs/[${minecraft.getApiVersion()}][${project.version}] ${project.archivesBaseName}.jar")
-    projectId = '221641'
+    projectId = '229003'
     apiKey = project.curseForgeApiKey
     releaseType = 'beta'
 }
