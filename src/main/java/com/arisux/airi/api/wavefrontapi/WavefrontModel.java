@@ -369,7 +369,11 @@ public class WavefrontModel
 					{
 						fg = new FaceGroup();
 						fg.mtlName = words[1];
-						part.faceGroup.add(fg);
+						
+						if (part != null && part.faceGroup != null)
+						{
+							part.faceGroup.add(fg);
+						}
 					}
 				}
 			}
