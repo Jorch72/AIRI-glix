@@ -21,7 +21,7 @@ public class WavefrontModel
 	public ArrayList<Vertex> vertex = new ArrayList<Vertex>();
 	public ArrayList<UV> uv = new ArrayList<UV>();
 	public Hashtable<String, String> nameToStringHash = new Hashtable<String, String>();
-	public Hashtable<String, Obj3DPart> nameToPartHash = new Hashtable<String, Obj3DPart>();
+	public Hashtable<String, Part> nameToPartHash = new Hashtable<String, Part>();
 	
 	public float xDim, yDim, zDim;
 	public float xMin, yMin, zMin;
@@ -125,7 +125,7 @@ public class WavefrontModel
 
 	}
 
-	public class Obj3DPart
+	public class Part
 	{
 		ArrayList<Vertex> vertex;
 		ArrayList<UV> uv;
@@ -149,7 +149,7 @@ public class WavefrontModel
 		ArrayList<FaceGroup> faceGroup = new ArrayList<FaceGroup>();
 		Hashtable<String, Float> nameToFloatHash = new Hashtable<String, Float>();
 
-		public Obj3DPart(ArrayList<Vertex> vertex, ArrayList<UV> uv)
+		public Part(ArrayList<Vertex> vertex, ArrayList<UV> uv)
 		{
 			this.vertex = vertex;
 			this.uv = uv;
@@ -279,19 +279,19 @@ public class WavefrontModel
 		return resource;
 	}
 
-	public boolean loadFile(String modId, String path)
+	public boolean loadFile(String modid, String path)
 	{
 		int lastSlashId = path.lastIndexOf('/');
 		this.directory = path.substring(0, lastSlashId + 1);
 		this.pathName = path.substring(lastSlashId + 1, path.length());
-		Obj3DPart part = null;
+		Part part = null;
 		FaceGroup fg = null;
-		mod = modId;
+		mod = modid;
 
 		try
 		{
 			{
-				String assetsPath = "/assets/" + modId + directory + pathName;
+				String assetsPath = "/assets/" + modid + directory + pathName;
 				InputStream stream = AIRI.class.getResourceAsStream(assetsPath);// TODO: Resource loading problem
 
 				if (stream == null)
@@ -311,7 +311,7 @@ public class WavefrontModel
 
 					if (words[0].equals("o"))
 					{
-						part = new Obj3DPart(vertex, uv);
+						part = new Part(vertex, uv);
 						nameToPartHash.put(words[1], part);
 					}
 					else if (words[0].equals("v"))
@@ -373,9 +373,11 @@ public class WavefrontModel
 					}
 				}
 			}
+
 			part = null;
+			
 			{
-				InputStream stream = AIRI.class.getResourceAsStream("/assets/" + modId + directory + mtlName);
+				InputStream stream = AIRI.class.getResourceAsStream("/assets/" + modid + directory + mtlName);
 
 				if (stream == null)
 				{
@@ -396,13 +398,13 @@ public class WavefrontModel
 					}
 					else if (words[0].equals("map_Kd"))
 					{
-						for (Obj3DPart partPtr : nameToPartHash.values())
+						for (Part partPtr : nameToPartHash.values())
 						{
 							for (FaceGroup faceGroup : partPtr.faceGroup)
 							{
 								if (faceGroup.mtlName != null && faceGroup.mtlName.equals(mtlName))
 								{
-									faceGroup.resource = new ResourceLocation(modId, directory.substring(1) + words[1]);
+									faceGroup.resource = new ResourceLocation(modid, directory.substring(1) + words[1]);
 								}
 							}
 						}
@@ -421,7 +423,7 @@ public class WavefrontModel
 
 		try
 		{
-			InputStream stream = AIRI.class.getResourceAsStream("/assets/" + modId + directory + pathName.replace(".obj", ".txt").replace(".OBJ", ".txt"));
+			InputStream stream = AIRI.class.getResourceAsStream("/assets/" + modid + directory + pathName.replace(".obj", ".txt").replace(".OBJ", ".txt"));
 			if (stream != null)
 			{
 				BufferedReader bufferedReader;
@@ -489,14 +491,14 @@ public class WavefrontModel
 		return true;
 	}
 
-	public Obj3DPart getPart(String part)
+	public Part getPart(String part)
 	{
 		return nameToPartHash.get(part);
 	}
 
 	public void draw(String part)
 	{
-		Obj3DPart partPtr = getPart(part);
+		Part partPtr = getPart(part);
 
 		if (partPtr != null)
 			partPtr.draw();
