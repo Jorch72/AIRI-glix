@@ -1,6 +1,7 @@
 package com.arisux.airi.api.wavefrontapi;
 
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -17,11 +18,11 @@ public class WavefrontModel
 {
 	String pathName, mtlName, mod, directory;
 
-	ArrayList<Vertex> vertex = new ArrayList<Vertex>();
-	ArrayList<UV> uv = new ArrayList<UV>();
-	Hashtable<String, String> nameToStringHash = new Hashtable<String, String>();
-	Hashtable<String, Obj3DPart> nameToPartHash = new Hashtable<String, Obj3DPart>();
-
+	public ArrayList<Vertex> vertex = new ArrayList<Vertex>();
+	public ArrayList<UV> uv = new ArrayList<UV>();
+	public Hashtable<String, String> nameToStringHash = new Hashtable<String, String>();
+	public Hashtable<String, Obj3DPart> nameToPartHash = new Hashtable<String, Obj3DPart>();
+	
 	public float xDim, yDim, zDim;
 	public float xMin, yMin, zMin;
 	public float xMax, yMax, zMax;

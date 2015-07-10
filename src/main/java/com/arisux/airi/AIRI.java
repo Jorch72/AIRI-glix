@@ -34,7 +34,7 @@ public class AIRI
 	
 	private WindowAPI windowAPI;
 	private UpdaterAPI updaterAPI;
-	private WavefrontAPI obj3dAPI;
+	private WavefrontAPI wavefrontAPI;
 	private RemappingAPI remappingAPI;
 
 	@Mod.Instance(Properties.MODID)
@@ -100,7 +100,7 @@ public class AIRI
 		{
 			this.windowAPI = new WindowAPI();
 			this.updaterAPI = new UpdaterAPI();
-			this.obj3dAPI = new WavefrontAPI();
+			this.wavefrontAPI = new WavefrontAPI();
 		}
 	}
 
@@ -147,8 +147,8 @@ public class AIRI
 		return AIRI.instance().windowAPI;
 	}
 	
-	public static WavefrontAPI obj3dApi()
+	public static WavefrontAPI wavefrontAPI()
 	{
-		return AIRI.instance().obj3dAPI;
+		return AIRI.instance().wavefrontAPI;
 	}
 }
