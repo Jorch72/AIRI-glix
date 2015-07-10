@@ -5,8 +5,7 @@ import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
 import com.arisux.airi.lib.WorldUtil.Blocks;
 import com.arisux.airi.lib.client.ModelBaseExtension;
 import com.arisux.airi.lib.client.ScaledResolution;
-import com.sun.javafx.geom.Vec2d;
-import com.sun.javafx.geom.Vec3d;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -33,6 +32,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.util.*;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -42,6 +42,8 @@ import org.lwjgl.util.vector.Matrix3f;
 
 import javax.imageio.ImageIO;
 import javax.vecmath.Vector2d;
+import javax.vecmath.Vector3d;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -851,32 +853,6 @@ public class RenderUtil
 	public static int getStringRenderWidth(String s)
 	{
 		return Minecraft.getMinecraft().fontRenderer.getStringWidth(EnumChatFormatting.getTextWithoutFormattingCodes(s));
-	}
-
-	@Deprecated
-	public static Vec2d getScreenPointFromWorldPoint(Vec3d vec3d)
-	{
-		FloatBuffer viewBuffer = FloatBuffer.wrap(ClippingHelperImpl.getInstance().modelviewMatrix);
-		FloatBuffer projectionBuffer = FloatBuffer.wrap(ClippingHelperImpl.getInstance().projectionMatrix);
-		glGetFloat(GL_MODELVIEW_MATRIX, viewBuffer);
-		glGetFloat(GL_PROJECTION_MATRIX, projectionBuffer);
-		Matrix4 view = new Matrix4(viewBuffer.array());
-		Matrix4 projection = new Matrix4(projectionBuffer.array());
-
-		Matrix4 matrix = new Matrix4(new float[]{(float) vec3d.x, (float) vec3d.y, (float) vec3d.z}).mul((view.mul(projection)));
-
-		Vec3d screen = new Vec3d(matrix.get(0, 0), matrix.get(0, 1), matrix.get(0, 2));
-		//vec3d.x = vec3d.x * 0.5 / vec3d.w + 0.5;
-		//vec3d.y = vec3d.y * 0.5 / vec3d.w + 0.5;
-
-
-
-		//Vec3d p = Minecraft.getMinecraft().thePlayer.getEyePosition();
-		//Vec3d t = target.getPosition();
-		//Vec3d res = p + (t - p).normalize();
-		//drawNormal3dthingynear(res);
-
-		return null;
 	}
 
 	/**
