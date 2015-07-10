@@ -6,10 +6,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 
-import com.arisux.airi.api.obj3dapi.Obj3DAPI;
 import com.arisux.airi.api.remapping.RemappingAPI;
 import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.updater.UpdaterAPI;
+import com.arisux.airi.api.wavefrontapi.WavefrontAPI;
 import com.arisux.airi.api.window.WindowAPI;
 import com.arisux.airi.lib.BlockTypes.HookedBlock;
 
@@ -34,7 +34,7 @@ public class AIRI
 	
 	private WindowAPI windowAPI;
 	private UpdaterAPI updaterAPI;
-	private Obj3DAPI obj3dAPI;
+	private WavefrontAPI obj3dAPI;
 	private RemappingAPI remappingAPI;
 
 	@Mod.Instance(Properties.MODID)
@@ -100,7 +100,7 @@ public class AIRI
 		{
 			this.windowAPI = new WindowAPI();
 			this.updaterAPI = new UpdaterAPI();
-			this.obj3dAPI = new Obj3DAPI();
+			this.obj3dAPI = new WavefrontAPI();
 		}
 	}
 
@@ -147,7 +147,7 @@ public class AIRI
 		return AIRI.instance().windowAPI;
 	}
 	
-	public static Obj3DAPI obj3dApi()
+	public static WavefrontAPI obj3dApi()
 	{
 		return AIRI.instance().obj3dAPI;
 	}
