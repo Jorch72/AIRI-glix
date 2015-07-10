@@ -291,12 +291,12 @@ public class WavefrontModel
 		try
 		{
 			{
-				String assetsPath = "/assets/" + modid + directory + pathName;
-				InputStream stream = AIRI.class.getResourceAsStream(assetsPath);// TODO: Resource loading problem
-
-				if (stream == null)
+				File file = new File(path);
+				InputStream stream = new FileInputStream(file);
+				
+				if (stream == null || file == null || path == null)
 				{
-					AIRI.logger.bug("MTL Loading failed (Null Stream): " + assetsPath);
+					AIRI.logger.bug("MTL Loading failed (Null Stream): " + path);
 					return false;
 				}
 
