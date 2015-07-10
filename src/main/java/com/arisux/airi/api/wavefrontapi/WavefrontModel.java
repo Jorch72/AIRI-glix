@@ -308,10 +308,10 @@ public class WavefrontModel
 				while ((line = bufferedReader.readLine()) != null)
 				{
 					String[] words = line.split(" ");
+					part = new Part(vertex, uv);
 
 					if (words[0].equals("o"))
 					{
-						part = new Part(vertex, uv);
 						nameToPartHash.put(words[1], part);
 					}
 					else if (words[0].equals("v"))
@@ -328,7 +328,6 @@ public class WavefrontModel
 						xMax = Math.max(xMax, v.x);
 						yMax = Math.max(yMax, v.y);
 						zMax = Math.max(zMax, v.z);
-
 					}
 					else if (words[0].equals("vt"))
 					{
