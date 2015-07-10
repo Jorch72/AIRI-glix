@@ -149,8 +149,8 @@ public class WavefrontModel
 			zMax = Math.max(zMax, v.z);
 		}
 
-		ArrayList<FaceGroup> faceGroup = new ArrayList<FaceGroup>();
-		Hashtable<String, Float> nameToFloatHash = new Hashtable<String, Float>();
+		public ArrayList<FaceGroup> faceGroup = new ArrayList<FaceGroup>();
+		public Hashtable<String, Float> nameToFloatHash = new Hashtable<String, Float>();
 
 		public Part(ArrayList<Vertex> vertex, ArrayList<UV> uv)
 		{
@@ -383,8 +383,10 @@ public class WavefrontModel
 			part = null;
 			
 			{
-				File file = new File(path);
+				File file = new File(path.replace(".obj", ".mtl"));
 				InputStream stream = new FileInputStream(file);
+				
+				System.out.println("Loading MTL: " + file);
 
 				if (stream == null || file == null || path == null)
 				{
@@ -409,9 +411,14 @@ public class WavefrontModel
 						{
 							for (FaceGroup faceGroup : partPtr.faceGroup)
 							{
+								System.out.println("Loaded MTL: " + faceGroup.mtlName);
 								if (faceGroup.mtlName != null && faceGroup.mtlName.equals(mtlName))
 								{
-									faceGroup.resource = new ResourceLocation(modid, directory.substring(1) + words[1]);
+									faceGroup.resource = new ResourceLocation(modid, "models/" + directory + words[1]);
+								}
+								else
+								{
+									AIRI.logger.info("MTL is null: %s", faceGroup.mtlName);
 								}
 							}
 						}
