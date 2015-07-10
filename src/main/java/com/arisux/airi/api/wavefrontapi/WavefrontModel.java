@@ -1,18 +1,21 @@
 package com.arisux.airi.api.wavefrontapi;
 
-import java.io.*;
-import java.net.URL;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
 import com.arisux.airi.AIRI;
 import com.arisux.airi.lib.RenderUtil.UV;
 import com.arisux.airi.lib.RenderUtil.Vertex;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 
 public class WavefrontModel
 {
@@ -308,10 +311,10 @@ public class WavefrontModel
 				while ((line = bufferedReader.readLine()) != null)
 				{
 					String[] words = line.split(" ");
-					part = new Part(vertex, uv);
 
 					if (words[0].equals("o"))
 					{
+						part = new Part(vertex, uv);
 						nameToPartHash.put(words[1], part);
 					}
 					else if (words[0].equals("v"))
@@ -493,6 +496,9 @@ public class WavefrontModel
 
 		dimMax = Math.max(Math.max(xMax, yMax), zMax);
 		dimMaxInv = 1.0f / dimMax;
+		
+		System.out.println("[WavefrontAPI] Loaded wavefront model: " + this.pathName);
+		
 		return true;
 	}
 

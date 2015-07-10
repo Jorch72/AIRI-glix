@@ -1,13 +1,12 @@
 package com.arisux.airi.api.wavefrontapi;
 
-import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.world.Schematic;
-
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 
 import org.apache.commons.io.FileUtils;
+
+import com.arisux.airi.AIRI;
 
 public class WavefrontAPI
 {
