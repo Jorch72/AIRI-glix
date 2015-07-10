@@ -415,7 +415,8 @@ public class WavefrontModel
 		}
 		catch (Exception e)
 		{
-			AIRI.logger.bug(e.toString());
+			AIRI.logger.bug("[WavefrontAPI] " + e.toString());
+			e.printStackTrace();
 			return false;
 		}
 
