@@ -296,7 +296,7 @@ public class WavefrontModel
 				
 				if (stream == null || file == null || path == null)
 				{
-					AIRI.logger.bug("MTL Loading failed (Null Stream): " + path);
+					AIRI.logger.bug("OBJ Loading Failed: " + path);
 					return false;
 				}
 
@@ -380,11 +380,12 @@ public class WavefrontModel
 			part = null;
 			
 			{
-				InputStream stream = AIRI.class.getResourceAsStream("/assets/" + modid + directory + mtlName);
+				File file = new File(path);
+				InputStream stream = new FileInputStream(file);
 
-				if (stream == null)
+				if (stream == null || file == null || path == null)
 				{
-					AIRI.logger.bug("MTL Loading failed.");
+					AIRI.logger.bug("MTL Loading failed: " + path);
 					return false;
 				}
 
