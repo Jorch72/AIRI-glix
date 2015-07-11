@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.settings.KeyBinding;
@@ -539,5 +540,80 @@ public class ModUtil
 
 			return null;
 		}
+		
+	    public static File extract(File compressedFile, File extractionDir)
+	    {
+	    	if (!extractionDir.exists())
+	    	{
+	    		extractionDir.mkdir();
+	    	}
+
+	        ZipFile zip = null;
+
+	        try
+	        {
+	            zip = new ZipFile(compressedFile);
+
+	            Enumeration<? extends ZipEntry> e = zip.entries();
+
+	            while (e.hasMoreElements())
+	            {
+	                ZipEntry entry = e.nextElement();
+
+	                File destinationPath = new File(extractionDir, entry.getName());
+
+	                if (!destinationPath.exists())
+	                {
+	                	destinationPath.getParentFile().mkdirs();
+	                }
+
+	                if (entry.isDirectory())
+	                {
+	                    continue;
+	                }
+	                else
+	                {
+	                    BufferedInputStream inputStream = new BufferedInputStream(zip.getInputStream(entry));
+
+	                    int b;
+	                    byte buffer[] = new byte[1024];
+
+	                    FileOutputStream fileOutputStream = new FileOutputStream(destinationPath);
+	                    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, 1024);
+
+	                    while ((b = inputStream.read(buffer, 0, 1024)) != -1)
+	                    {
+	                        bufferedOutputStream.write(buffer, 0, b);
+	                    }
+
+	                    bufferedOutputStream.close();
+	                    inputStream.close();
+	                    AIRI.logger.info("Extracted: " + destinationPath);
+	                }
+	            }
+	        }
+	        catch (Exception e)
+	        {
+	            AIRI.logger.warning("Error extracting %s: %s", compressedFile.getAbsolutePath(), e);
+	            e.printStackTrace();
+	        }
+	        finally
+	        {
+	        	if (zip != null)
+	        	{
+	        		try
+	        		{
+						zip.close();
+					} 
+	        		catch (Exception e)
+	        		{
+	        			AIRI.logger.warning("Error closing compressed file: %s", e);
+						e.printStackTrace();
+					}
+	        	}
+	        }
+
+	        return extractionDir;
+	    }
 	}
 }

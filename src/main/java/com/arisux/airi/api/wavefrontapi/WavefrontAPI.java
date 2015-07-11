@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipUtil;
 import org.apache.commons.io.FileUtils;
 
 import com.arisux.airi.AIRI;
@@ -57,40 +58,31 @@ public class WavefrontAPI
 		
 		try
 		{
-			URL urlDirectory = c.getResource(url);
-			File pathDirectory = path;
-			URL urlModel = c.getResource(url + ".obj");
-			File pathModel = new File(path.getAbsolutePath() + ".obj");
-			URL urlTexture = c.getResource(url + ".mtl");
-			File pathTexture = new File(path.getAbsolutePath() + ".mtl");
-
-			if (!pathDirectory.exists())
+			URL urlOBJ = c.getResource(url + ".obj");
+			File fileOBJ = new File(path.getAbsolutePath() + ".obj");
+			URL urlMTL = c.getResource(url + ".mtl");
+			File fileMTL = new File(path.getAbsolutePath() + ".mtl");
+			URL urlTEX = c.getResource(url + ".tex");
+			File fileTEX = new File(path.getAbsolutePath() + ".tex");
+			
+			if (!fileOBJ.exists())
 			{
-				if (!ModUtil.isDevEnvironment())
-				{
-				    for (File nextFile : new File(urlDirectory.toURI()).listFiles()) 
-				    {
-				        System.out.println("File-> " + nextFile.getName());
-				    }
-				}
-				else
-				{
-					FileUtils.copyDirectoryToDirectory(org.apache.logging.log4j.core.helpers.FileUtils.fileFromURI(urlDirectory.toURI()), baseDir);
-				}
-				
-				AIRI.logger.info("Extracted resource directory: %s", pathDirectory.getAbsoluteFile().getPath());
+				FileUtils.copyURLToFile(urlOBJ, fileOBJ);
+				AIRI.logger.info("Extracted wavefront model: %s", fileOBJ.getAbsoluteFile().getPath());
 			}
 			
-			if (!pathModel.exists())
+			if (!fileMTL.exists())
 			{
-				FileUtils.copyURLToFile(urlModel, pathModel);
-				AIRI.logger.info("Extracted wavefront model: %s", pathModel.getAbsoluteFile().getPath());
+			    FileUtils.copyURLToFile(urlMTL, fileMTL);
+				AIRI.logger.info("Extracted wavefront texture: %s", fileMTL.getAbsoluteFile().getPath());
 			}
 			
-			if (!pathTexture.exists())
+			if (!fileTEX.exists())
 			{
-			    FileUtils.copyURLToFile(urlTexture, pathTexture);
-				AIRI.logger.info("Extracted wavefront texture: %s", pathTexture.getAbsoluteFile().getPath());
+			    FileUtils.copyURLToFile(urlTEX, fileTEX);
+			    ModUtil.Jars.extract(fileTEX, path);
+			    FileUtils.deleteQuietly(fileTEX);
+				AIRI.logger.info("Extracted texture set: %s", fileTEX.getAbsoluteFile().getPath());
 			}
 		}
 		catch (Exception e)
