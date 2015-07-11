@@ -1,17 +1,12 @@
 package com.arisux.airi.api.wavefrontapi;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import org.apache.commons.compress.archivers.zip.ZipUtil;
 import org.apache.commons.io.FileUtils;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.ModUtil;
 
 public class WavefrontAPI
 {
@@ -62,8 +57,6 @@ public class WavefrontAPI
 			File fileOBJ = new File(path.getAbsolutePath() + ".obj");
 			URL urlMTL = c.getResource(url + ".mtl");
 			File fileMTL = new File(path.getAbsolutePath() + ".mtl");
-			URL urlTEX = c.getResource(url + ".tex");
-			File fileTEX = new File(path.getAbsolutePath() + ".tex");
 			
 			if (!fileOBJ.exists())
 			{
@@ -75,14 +68,6 @@ public class WavefrontAPI
 			{
 			    FileUtils.copyURLToFile(urlMTL, fileMTL);
 				AIRI.logger.info("Extracted wavefront texture: %s", fileMTL.getAbsoluteFile().getPath());
-			}
-			
-			if (!fileTEX.exists())
-			{
-			    FileUtils.copyURLToFile(urlTEX, fileTEX);
-			    ModUtil.Jars.extract(fileTEX, path);
-			    FileUtils.deleteQuietly(fileTEX);
-				AIRI.logger.info("Extracted texture set: %s", fileTEX.getAbsoluteFile().getPath());
 			}
 		}
 		catch (Exception e)
