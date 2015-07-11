@@ -81,6 +81,7 @@ public class WavefrontAPI
 		catch (Exception e)
 		{
 			AIRI.logger.info("Error while extracting %s: %s", path, e);
+			e.printStackTrace();
 		}
 		
 		return loadModel(modid, path);
