@@ -284,6 +284,8 @@ public class WavefrontModel
 
 	public boolean loadFile(String modid, String path)
 	{
+		File fileModel = new File(path + ".obj");
+		File fileTexture = new File(path + ".mtl");
 		int lastSlashId = path.lastIndexOf('/');
 		this.directory = path.substring(0, lastSlashId + 1);
 		this.pathName = path.substring(lastSlashId + 1, path.length());
@@ -294,18 +296,16 @@ public class WavefrontModel
 		try
 		{
 			{
-				File file = new File(path);
-				InputStream stream = new FileInputStream(file);
+				InputStream stream = new FileInputStream(fileModel);
 				
-				if (stream == null || file == null || path == null)
+				if (stream == null || fileModel == null || path == null)
 				{
 					AIRI.logger.bug("OBJ Loading Failed: " + path);
+					stream.close();
 					return false;
 				}
 
-				new StringBuilder();
 				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-
 				String line;
 
 				while ((line = bufferedReader.readLine()) != null)
@@ -378,19 +378,20 @@ public class WavefrontModel
 						}
 					}
 				}
+				bufferedReader.close();
 			}
 
 			part = null;
 			
 			{
-				File file = new File(path.replace(".obj", ".mtl"));
-				InputStream stream = new FileInputStream(file);
+				InputStream stream = new FileInputStream(fileTexture);
 				
-				System.out.println("Loading MTL: " + file);
+				System.out.println("Loading MTL: " + fileTexture);
 
-				if (stream == null || file == null || path == null)
+				if (stream == null || fileTexture == null || path == null)
 				{
 					AIRI.logger.bug("MTL Loading failed: " + path);
+					stream.close();
 					return false;
 				}
 
@@ -423,8 +424,8 @@ public class WavefrontModel
 							}
 						}
 					}
-
 				}
+				bufferedReader.close();
 			}
 		}
 		catch (Exception e)

@@ -33,20 +33,50 @@ public class WavefrontAPI
 	 * Extract a wavefront model from the provided URL to the provided File path and then load it.
 	 * 
 	 * @param path - The path we are extracting to and loading the model from.
-	 * @param resource - The URL path we are extracting the resource from.
+	 * @param url - The URL path we are extracting the resource from.
 	 * @return - The model that was loaded. Null if the model was not loaded.
 	 */
-	public WavefrontModel loadModel(String modid, File path, URL resource)
+	public WavefrontModel loadModel(Class<?> c, String modid, String model, String url)
 	{
+		File baseDir = new File(getModelsDirectory(), String.format("%s/", modid));
+		File path = new File(baseDir, model);
+		
 		if (!getModelsDirectory().exists())
 		{
 			getModelsDirectory().mkdirs();
 		}
 		
+		if (!baseDir.exists())
+		{
+			baseDir.mkdirs();
+		}
+		
 		try
 		{
-		    FileUtils.copyURLToFile(resource, path);
-			AIRI.logger.info("Extracted %s", path.getAbsoluteFile().getPath());
+			URL urlDirectory = c.getResource(url);
+			File pathDirectory = path;
+			URL urlModel = c.getResource(url + ".obj");
+			File pathModel = new File(path.getAbsolutePath() + ".obj");
+			URL urlTexture = c.getResource(url + ".mtl");
+			File pathTexture = new File(path.getAbsolutePath() + ".mtl");
+
+			if (!pathDirectory.exists())
+			{
+				FileUtils.copyDirectoryToDirectory(new File(urlDirectory.toURI()), baseDir);
+				AIRI.logger.info("Extracted resource directory: %s", pathDirectory.getAbsoluteFile().getPath());
+			}
+			
+			if (!pathModel.exists())
+			{
+				FileUtils.copyURLToFile(urlModel, pathModel);
+				AIRI.logger.info("Extracted wavefront model: %s", pathModel.getAbsoluteFile().getPath());
+			}
+			
+			if (!pathTexture.exists())
+			{
+			    FileUtils.copyURLToFile(urlTexture, pathTexture);
+				AIRI.logger.info("Extracted wavefront texture: %s", pathTexture.getAbsoluteFile().getPath());
+			}
 		}
 		catch (Exception e)
 		{
