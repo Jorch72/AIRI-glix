@@ -68,14 +68,10 @@ public class WavefrontAPI
 			{
 				if (!ModUtil.isDevEnvironment())
 				{
-					InputStream is = urlDirectory.openStream();
-					ZipInputStream zis = new ZipInputStream(is);
-					ZipEntry entry;
-	
-					while ((entry = zis.getNextEntry()) != null) 
-					{
-						System.out.println("JarEntry-> " + entry.getName());
-					}
+				    for (File nextFile : new File(urlDirectory.toURI()).listFiles()) 
+				    {
+				        System.out.println("File-> " + nextFile.getName());
+				    }
 				}
 				else
 				{
