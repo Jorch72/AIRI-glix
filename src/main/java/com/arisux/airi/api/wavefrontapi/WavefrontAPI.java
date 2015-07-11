@@ -1,21 +1,16 @@
 package com.arisux.airi.api.wavefrontapi;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
-import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.compress.archivers.zip.ZipUtil;
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.utils.URIUtils;
 
 import com.arisux.airi.AIRI;
-import com.sun.jndi.toolkit.url.UrlUtil;
-
-import cpw.mods.fml.common.ZipperUtil;
-import sun.net.util.URLUtil;
+import com.arisux.airi.lib.ModUtil;
 
 public class WavefrontAPI
 {
@@ -71,7 +66,22 @@ public class WavefrontAPI
 
 			if (!pathDirectory.exists())
 			{
-				FileUtils.copyDirectoryToDirectory(org.apache.logging.log4j.core.helpers.FileUtils.fileFromURI(urlDirectory.toURI()), baseDir);
+				if (!ModUtil.isDevEnvironment())
+				{
+					InputStream is = urlDirectory.openStream();
+					ZipInputStream zis = new ZipInputStream(is);
+					ZipEntry entry;
+	
+					while ((entry = zis.getNextEntry()) != null) 
+					{
+						System.out.println("JarEntry-> " + entry.getName());
+					}
+				}
+				else
+				{
+					FileUtils.copyDirectoryToDirectory(org.apache.logging.log4j.core.helpers.FileUtils.fileFromURI(urlDirectory.toURI()), baseDir);
+				}
+				
 				AIRI.logger.info("Extracted resource directory: %s", pathDirectory.getAbsoluteFile().getPath());
 			}
 			
@@ -89,7 +99,7 @@ public class WavefrontAPI
 		}
 		catch (Exception e)
 		{
-			AIRI.logger.info("Error while extracting %s: %s", path, e);
+			AIRI.logger.info("Error while extracting %s from %s: %s", path, url, e);
 			e.printStackTrace();
 		}
 		
