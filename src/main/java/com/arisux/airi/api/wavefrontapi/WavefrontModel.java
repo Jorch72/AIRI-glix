@@ -412,14 +412,9 @@ public class WavefrontModel
 						{
 							for (FaceGroup faceGroup : partPtr.faceGroup)
 							{
-								System.out.println("Loaded MTL: " + faceGroup.mtlName);
 								if (faceGroup.mtlName != null && faceGroup.mtlName.equals(mtlName))
 								{
 									faceGroup.resource = new ResourceLocation(modid, "models/" + directory + words[1]);
-								}
-								else
-								{
-									AIRI.logger.info("MTL is null: %s", faceGroup.mtlName);
 								}
 							}
 						}
