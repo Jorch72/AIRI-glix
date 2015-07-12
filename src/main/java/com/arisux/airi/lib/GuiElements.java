@@ -80,10 +80,15 @@ public class GuiElements
 			this.overlayColorPressed = 0x66000000;
 			this.textAlignment = Alignment.CENTER;
 		}
-
+		
 		public void drawButton()
 		{
-			this.drawButton(Minecraft.getMinecraft(), (int) RenderUtil.scaledMousePosition().x, (int) RenderUtil.scaledMousePosition().y);
+			this.drawButton(1);
+		}
+		
+		public void drawButton(float scale)
+		{
+			this.drawButton(Minecraft.getMinecraft(), (int) (RenderUtil.scaledMousePosition().x * scale), (int) (RenderUtil.scaledMousePosition().y * scale));
 		}
 
 		@Override
