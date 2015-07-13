@@ -23,7 +23,7 @@ public class GuiElements
 	{
 		LEFT, RIGHT, CENTER();
 	}
-	
+
 	public static interface IGuiElement
 	{
 		public void add();
@@ -35,7 +35,7 @@ public class GuiElements
 		public IActionPerformed getAction();
 		public IGuiElement setAction(IActionPerformed action);
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	public static class GuiCustomButton extends GuiButton implements IGuiElement
 	{
@@ -95,7 +95,7 @@ public class GuiElements
 		public void drawButton(Minecraft mc, int mouseX, int mouseY)
 		{
 			this.lastDrawTime = System.currentTimeMillis();
-			
+
 			if (this.visible)
 			{
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -109,7 +109,7 @@ public class GuiElements
 				RenderUtil.drawRect(this.xPosition, this.yPosition, this.width, this.height, overlayColor);
 
 				this.mouseDragged(mc, mouseX, mouseY);
-				
+
 				if (this.textAlignment == Alignment.CENTER)
 				{
 					RenderUtil.drawStringAlignCenter(this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, fontColor);
@@ -122,7 +122,7 @@ public class GuiElements
 				{
 					RenderUtil.drawStringAlignRight(this.displayString, this.xPosition + this.width - 4, this.yPosition + (this.height - 8) / 2, fontColor);
 				}
-			
+
 				if (this.isMouseOver() && !tooltip.equalsIgnoreCase(""))
 				{
 					RenderUtil.drawToolTip((int) RenderUtil.scaledMousePosition().x + 10, (int) RenderUtil.scaledMousePosition().y, this.tooltip);
@@ -149,12 +149,12 @@ public class GuiElements
 			this.action = action;
 			return this;
 		}
-		
+
 		public long getLastDrawTime()
 		{
 			return lastDrawTime;
 		}
-		
+
 		@Override
 		public void remove()
 		{
@@ -192,7 +192,7 @@ public class GuiElements
 		{
 			super.mouseDragged(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
 		}
-		
+
 		public GuiCustomButton setAlignment(Alignment alignment) 
 		{
 			this.textAlignment = alignment;
@@ -243,7 +243,7 @@ public class GuiElements
 			int mouseY = (int) mousePosition.y;
 			return mouseX >= (xPosition) && mouseX <= (xPosition + width) && mouseY >= (yPosition) && mouseY <= (yPosition + height);
 		}
-		
+
 		@Override
 		public void remove()
 		{
@@ -288,6 +288,35 @@ public class GuiElements
 		}
 	}
 
+
+	public static class GuiDropdownMenu extends GuiCustomButton implements IGuiElement
+	{
+		ArrayList<GuiCustomButton> options = new ArrayList<GuiCustomButton>();
+		public GuiDropdownMenu(ArrayList<GuiCustomButton> buttonList, int id, int xPosition, int yPosition, int width, int height, String displayString, IActionPerformed action)
+		{
+			super(buttonList, id, xPosition, yPosition, width, height, displayString, action);
+		}
+
+		@Override
+		public void mousePressed(Vector2d mousePosition)
+		{
+			super.mousePressed(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
+			this.drawOptions();
+		}
+
+		public void drawOptions()
+		{
+			if(options.size() > 0)
+			{
+				for(GuiCustomButton button : options)
+				{
+					button.drawButton();
+				}
+			}
+		}
+	}
+
+
 	public static class GuiCustomSlider extends GuiCustomButton implements IGuiElement
 	{
 		public String label;
@@ -315,7 +344,7 @@ public class GuiElements
 		public void mouseDragged(Minecraft minecraft, int mouseX, int mouseY)
 		{
 			super.mouseDragged(minecraft, mouseX, mouseY);
-			
+
 			if (this.visible)
 			{
 				if (this.dragging)
@@ -337,12 +366,12 @@ public class GuiElements
 				}
 			}
 		}
-		
+
 		@Override
 		public void drawButton(Minecraft mc, int mouseX, int mouseY)
 		{
 			super.drawButton(mc, mouseX, mouseY);
-			
+
 			if (this.visible)
 			{
 				RenderUtil.drawRectWithOutline(this.xPosition - 1, this.yPosition - 1, this.width + 2, this.height + 2, 1, 0x00000000, 0xAAFFFFFF);
@@ -380,19 +409,19 @@ public class GuiElements
 		{
 			this.dragging = false;
 		}
-		
+
 		@Override
 		public void mousePressed(Vector2d mousePosition)
 		{
 			this.mousePressed(Minecraft.getMinecraft(), (int) mousePosition.x, (int) mousePosition.y);
 		}
-		
+
 		@Override
 		public void mouseReleased(Vector2d mousePosition)
 		{
 			this.mouseReleased((int) mousePosition.x, (int) mousePosition.y);
 		}
-		
+
 		@Override
 		public void mouseDragged(Vector2d mousePosition)
 		{
@@ -415,13 +444,13 @@ public class GuiElements
 				button.mouseReleased(mouseX, mouseY);
 			}
 		}
-		
+
 		@Override
 		public void drawGradientRect(int par1, int par2, int par3, int par4, int par5, int par6)
 		{
 			super.drawGradientRect(par1, par2, par3, par4, par5, par6);
 		}
-		
+
 		public void setZLevel(float f)
 		{
 			this.zLevel = f;
