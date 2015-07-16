@@ -11,6 +11,8 @@ import java.util.Hashtable;
 import org.lwjgl.opengl.GL11;
 
 import com.arisux.airi.AIRI;
+import com.arisux.airi.lib.RenderUtil;
+import com.arisux.airi.lib.RenderUtil.Color;
 import com.arisux.airi.lib.RenderUtil.UV;
 import com.arisux.airi.lib.RenderUtil.Vertex;
 
@@ -40,13 +42,17 @@ public class WavefrontModel
 	{
 		public String mtlName;
 		public ResourceLocation resource;
-		public ArrayList<Face> face = new ArrayList<Face>();
+		public ArrayList<Face> faces = new ArrayList<Face>();
 		public boolean listReady = false;
 		public int glList;
+		public Color color;
 
 		public void bindTexture()
 		{
-			Minecraft.getMinecraft().renderEngine.bindTexture(resource);
+			if (resource != null)
+			{
+				Minecraft.getMinecraft().renderEngine.bindTexture(resource);
+			}
 		}
 
 		public void draw()
@@ -68,7 +74,7 @@ public class WavefrontModel
 		{
 			int mode = 0;
 
-			for (Face f : face)
+			for (Face f : faces)
 			{
 				if (f.vertexNbr != mode)
 				{
@@ -94,7 +100,9 @@ public class WavefrontModel
 					mode = f.vertexNbr;
 				}
 
+				GL11.glColor3f(this.color.r, this.color.g, this.color.b);
 				GL11.glNormal3f(f.normal.x, f.normal.y, f.normal.z);
+				
 				for (int idx = 0; idx < mode; idx++)
 				{
 					if (f.uv[idx] != null)
@@ -106,7 +114,9 @@ public class WavefrontModel
 			}
 
 			if (mode != 0)
+			{
 				GL11.glEnd();
+			}
 		}
 
 		public void drawNoBind()
@@ -272,7 +282,7 @@ public class WavefrontModel
 			this.vertex = vertex;
 			this.uv = uv;
 			this.normal = normal;
-			vertexNbr = vertex.length;
+			this.vertexNbr = vertex.length;
 		}
 	}
 
@@ -360,7 +370,7 @@ public class WavefrontModel
 								}
 							}
 
-							fg.face.add(new Face(verticeId, uvId, new Normal(verticeId[0], verticeId[1], verticeId[2])));
+							fg.faces.add(new Face(verticeId, uvId, new Normal(verticeId[0], verticeId[1], verticeId[2])));
 						}
 					}
 					else if (words[0].equals("mtllib"))
@@ -415,6 +425,19 @@ public class WavefrontModel
 								if (faceGroup.mtlName != null && faceGroup.mtlName.equals(mtlName))
 								{
 									faceGroup.resource = new ResourceLocation(modid, "models/" + directory + words[1]);
+								}
+							}
+						}
+					}
+					else if (words[0].toLowerCase().equals("kd".toLowerCase()))
+					{
+						for (Part partPtr : nameToPartHash.values())
+						{
+							for (FaceGroup faceGroup : partPtr.faceGroup)
+							{
+								if (faceGroup.mtlName != null && faceGroup.mtlName.equals(mtlName))
+								{
+									faceGroup.color = new RenderUtil.Color(Float.parseFloat(words[1]), Float.parseFloat(words[2]), Float.parseFloat(words[3]), 1F);
 								}
 							}
 						}
