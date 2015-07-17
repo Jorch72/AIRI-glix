@@ -1,6 +1,15 @@
 package com.arisux.airi.lib;
 
-import net.minecraft.block.*;
+import com.arisux.airi.lib.client.render.IconSet;
+import com.arisux.airi.lib.enums.IconSides;
+
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockSlab;
+import net.minecraft.block.BlockStairs;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,13 +18,6 @@ import net.minecraft.util.Facing;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import com.arisux.airi.lib.RenderUtil.IconSet;
-import com.arisux.airi.lib.enums.IconSides;
-
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockTypes
 {
@@ -26,7 +28,7 @@ public class BlockTypes
 		protected boolean renderAdvanced;
 		private boolean disableIcon;
 		private ISimpleBlockRenderingHandler renderType;
-		private RenderUtil.IconSet iconSet;
+		private IconSet iconSet;
 
 		public HookedBlock(Material material)
 		{
@@ -91,7 +93,7 @@ public class BlockTypes
 			return this;
 		}
 
-		public RenderUtil.IconSet getIconSet()
+		public IconSet getIconSet()
 		{
 			return iconSet;
 		}

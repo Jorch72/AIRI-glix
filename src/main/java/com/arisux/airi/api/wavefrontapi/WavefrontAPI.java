@@ -10,33 +10,26 @@ import com.arisux.airi.AIRI;
 
 public class WavefrontAPI
 {
-	private HashMap<String, WavefrontModel> modelMap = new HashMap<String, WavefrontModel>();
+	private HashMap<String, WavefrontModel> modelRegistry = new HashMap<String, WavefrontModel>();
 
-	public WavefrontModel getModel(String objName)
+	/*
+	 * Returns the WavefrontAPI instance.
+	 */
+	public static WavefrontAPI instance()
 	{
-		return modelMap.get(objName);
-	}
-
-	public WavefrontModel.Part getPart(String objName, String partName)
-	{
-		WavefrontModel model = getModel(objName);
-		return model != null ? model.getPart(partName) : null;
-	}
-
-	public void renderPart(String objName, String partName)
-	{
-		WavefrontModel.Part part = getPart(objName, partName);
-		if (part != null) part.draw();
+		return AIRI.wavefrontAPI();
 	}
 	
 	/**
 	 * Extract a wavefront model from the provided URL to the provided File path and then load it.
 	 * 
-	 * @param path - The path we are extracting to and loading the model from.
-	 * @param url - The URL path we are extracting the resource from.
+	 * @param c - The main class of the mod we are loading models for.
+	 * @param modid - The mod id of the mod we are loading models for.
+	 * @param model - The name of the model we are loading.
+	 * @param assetsPath - The location of the model in the assets.
 	 * @return - The model that was loaded. Null if the model was not loaded.
 	 */
-	public WavefrontModel loadModel(Class<?> c, String modid, String model, String url)
+	public WavefrontModel loadModel(Class<?> c, String modid, String model, String assetsPath)
 	{
 		File baseDir = new File(getModelsDirectory(), String.format("%s/", modid));
 		File path = new File(baseDir, model);
@@ -53,9 +46,9 @@ public class WavefrontAPI
 		
 		try
 		{
-			URL urlOBJ = c.getResource(url + ".obj");
+			URL urlOBJ = c.getResource(assetsPath + ".obj");
 			File fileOBJ = new File(path.getAbsolutePath() + ".obj");
-			URL urlMTL = c.getResource(url + ".mtl");
+			URL urlMTL = c.getResource(assetsPath + ".mtl");
 			File fileMTL = new File(path.getAbsolutePath() + ".mtl");
 			
 			if (!fileOBJ.exists())
@@ -72,7 +65,7 @@ public class WavefrontAPI
 		}
 		catch (Exception e)
 		{
-			AIRI.logger.info("Error while extracting %s from %s: %s", path, url, e);
+			AIRI.logger.info("Error while extracting %s from %s: %s", path, assetsPath, e);
 			e.printStackTrace();
 		}
 		
@@ -82,19 +75,19 @@ public class WavefrontAPI
 	/**
 	 * Load a wavefront model from the provided path.
 	 * 
+	 * @param modid - The mod id of the mod we are loading models for.
 	 * @param path - The path we are extracting to and loading the model from.
-	 * @param resource - The URL path we are extracting the resource from.
 	 * @return - The model that was loaded. Null if the model was not loaded.
 	 */
 	public WavefrontModel loadModel(String modid, File path)
 	{
 		WavefrontModel model = new WavefrontModel();
 
-		if (model.loadFile(modid, path.getAbsolutePath()))
+		if (model.load(modid, path.getAbsolutePath()))
 		{
 			String tag = path.getAbsolutePath().replaceAll(".obj", "").replaceAll(".OBJ", "");
 			tag = tag.substring(tag.lastIndexOf('/') + 1, tag.length());
-			modelMap.put(tag, model);
+			modelRegistry.put(tag, model);
 
 			AIRI.logger.info("[WavefrontAPI] Loaded wavefront model: " + path);
 		}
@@ -104,41 +97,58 @@ public class WavefrontAPI
 		}
 		
 		return model;
+	}	
+	
+	/**
+	 * Get the instance of the model with the specified name.
+	 * 
+	 * @param modelName - The name of the model we are getting.
+	 * @return The instance of the model that was found.
+	 */
+	public static WavefrontModel getModel(String modelName)
+	{
+		return WavefrontAPI.instance().modelRegistry.get(modelName);
 	}
 
-//	public void loadModels(String modId, String objPath)
-//	{
-//		try
-//		{
-//			URL url = (AIRI.class.getResource("/assets/" + modId + objPath));
-//			System.out.println(url);
-//			System.out.println(url.toURI());
-//
-//			if (url != null)
-//			{
-//				for (File file : (new File(url.toURI())).listFiles())
-//				{
-//					if (file.isFile() && file.getName().endsWith(".obj") || file.getName().endsWith(".OBJ"))
-//					{
-//						this.loadModel(modId, objPath + "/" + file.getName());
-//					}
-//
-//					if (file.isDirectory())
-//					{
-//						this.loadModels(modId, objPath + "/" + file.getName());
-//					}
-//				}
-//			}
-//		} catch (Exception e)
-//		{
-//			AIRI.logger.bug("[WavefrontAPI] " + e.toString());
-//			e.printStackTrace();
-//		}
-//	}
-
-	public HashMap<String, WavefrontModel> getModelMap()
+	/**
+	 * Return a Part instance of a part from the model with the specified name.
+	 * 
+	 * @param modelName - The name of the model we are getting a Part instance from.
+	 * @param partName - The name of the part we are getting.
+	 * @return The Part instance that was found in the specified model.
+	 */
+	public static Part getPart(String modelName, String partName)
 	{
-		return modelMap;
+		WavefrontModel model = getModel(modelName);
+		return model != null ? model.getPart(partName) : null;
+	}
+
+	/**
+	 * Render a part from a model obtained using the model name.
+	 * 
+	 * @param modelName - The name of the model we are rendering a part from.
+	 * @param partName - The name of the part we are rendering.
+	 * @return Returns true if the part was rendered, false if it was not.
+	 */
+	public static boolean renderPart(String modelName, String partName)
+	{
+		Part part = getPart(modelName, partName);
+		
+		if (part != null) 
+		{
+			part.draw();
+			return true;
+		}
+		
+		return false;
+	}
+
+	/**
+	 * @return - The HashMap containing each model registered in the WavefrontAPI.
+	 */
+	public HashMap<String, WavefrontModel> getModelRegistry()
+	{
+		return modelRegistry;
 	}
 	
     /**
