@@ -1,5 +1,7 @@
 package com.arisux.airi.lib;
 
+import java.util.Random;
+
 import com.arisux.airi.lib.client.render.IconSet;
 import com.arisux.airi.lib.enums.IconSides;
 
@@ -9,11 +11,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSlab;
 import net.minecraft.block.BlockStairs;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.item.Item;
 import net.minecraft.util.Facing;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
@@ -29,6 +30,7 @@ public class BlockTypes
 		private boolean disableIcon;
 		private ISimpleBlockRenderingHandler renderType;
 		private IconSet iconSet;
+		private Item itemDropped;
 
 		public HookedBlock(Material material)
 		{
@@ -37,6 +39,19 @@ public class BlockTypes
 			this.isOpaque = true;
 			this.disableIcon = false;
 			this.renderAdvanced = true;
+			this.itemDropped = null;
+		}
+		
+		@Override
+		public Item getItemDropped(int meta, Random rand, int fortune)
+		{
+			return itemDropped != null ? itemDropped : super.getItemDropped(meta, rand, fortune);
+		}
+		
+		public HookedBlock setItemDropped(Item itemDropped)
+		{
+			this.itemDropped = itemDropped;
+			return this;
 		}
 
 		@SideOnly(Side.CLIENT)
@@ -283,32 +298,6 @@ public class BlockTypes
 		public int getRenderType()
 		{
 			return 10;
-		}
-	}
-
-	public static abstract class HookedBlockContainer extends HookedBlock implements ITileEntityProvider
-	{
-		public HookedBlockContainer(Material material)
-		{
-			super(material);
-			this.isBlockContainer = true;
-			this.isOpaque = false;
-			this.renderNormal = false;
-		}
-
-		@Override
-		public void breakBlock(World world, int posX, int posY, int posZ, Block blockBroken, int meta)
-		{
-			super.breakBlock(world, posX, posY, posZ, blockBroken, meta);
-			world.removeTileEntity(posX, posY, posZ);
-		}
-
-		@Override
-		public boolean onBlockEventReceived(World world, int posX, int posY, int posZ, int eventId, int eventData)
-		{
-			super.onBlockEventReceived(world, posX, posY, posZ, eventId, eventData);
-			TileEntity tileentity = world.getTileEntity(posX, posY, posZ);
-			return tileentity != null ? tileentity.receiveClientEvent(eventId, eventData) : false;
 		}
 	}
 
