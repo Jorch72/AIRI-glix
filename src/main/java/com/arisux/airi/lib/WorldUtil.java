@@ -321,38 +321,35 @@ public class WorldUtil
 		 * 
 		 * @param nbt - The NBTTagCompound to be written.
 		 * @param file - The File to write to.
+		 * @throws IOException 
 		 */
-		public static void writeCompressed(NBTTagCompound nbt, File file)
+		public static void writeCompressed(NBTTagCompound nbt, File file) throws IOException
 		{
-			try
+			FileOutputStream stream = new FileOutputStream(file);
+			
+			CompressedStreamTools.writeCompressed(nbt, stream);
+
+			if (stream != null)
 			{
-				FileOutputStream stream = new FileOutputStream(file);
-				CompressedStreamTools.writeCompressed(nbt, stream);
 				stream.close();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
 			}
 		}
 
 		/**
 		 * @param file - The File to read an NBTTagCompound from.
 		 * @return The compressed NBTTagCompound being read from the specified File.
+		 * @throws IOException 
 		 */
-		public static NBTTagCompound readCompressed(File file)
+		public static NBTTagCompound readCompressed(File file) throws IOException
 		{
 			NBTTagCompound nbtTagCompound = null;
+			FileInputStream stream = new FileInputStream(file);
 
-			try
+			nbtTagCompound = CompressedStreamTools.readCompressed(stream);
+
+			if (stream != null)
 			{
-				FileInputStream stream = new FileInputStream(file);
-				nbtTagCompound = CompressedStreamTools.readCompressed(stream);
 				stream.close();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
 			}
 
 			return nbtTagCompound;
@@ -521,16 +518,15 @@ public class WorldUtil
 
 				return true;
 			}
-			
 
-		    @Override
-		    public int hashCode()
-		    {
-		        int result = this.posX;
-		        result = 31 * result + this.posY;
-		        result = 31 * result + this.posZ;
-		        return result;
-		    }
+			@Override
+			public int hashCode()
+			{
+				int result = this.posX;
+				result = 31 * result + this.posY;
+				result = 31 * result + this.posZ;
+				return result;
+			}
 
 			public Block getBlock()
 			{
@@ -1017,7 +1013,7 @@ public class WorldUtil
 					}
 				}
 			}
-			
+
 			if (pointedEntity != null && hitVec != null)
 			{
 				return new MovingObjectPosition(pointedEntity, hitVec);
@@ -1080,7 +1076,7 @@ public class WorldUtil
 					}
 				}
 			}
-			
+
 			if (pointedEntity != null && hitVec != null)
 			{
 				return new MovingObjectPosition(pointedEntity, hitVec);
@@ -1350,7 +1346,7 @@ public class WorldUtil
 				{
 					return newStack(obj, 1);
 				}
-				
+
 				/** 
 				 * @param obj - Item or Block instance 
 				 * @param amount - Amount of Items in this ItemStack
@@ -1405,7 +1401,7 @@ public class WorldUtil
 					{
 						return player.inventory.consumeInventoryItem(item);
 					}
-					
+
 					return true;
 				}
 
@@ -1452,7 +1448,7 @@ public class WorldUtil
 				{
 					return player.inventory.armorItemInSlot(0);
 				}
-				
+
 				public static int getAmountOfItemPlayerHas(Item item, EntityPlayer player)
 				{
 					int amount = 0;
@@ -1460,7 +1456,7 @@ public class WorldUtil
 					for (Object obj : player.inventory.mainInventory)
 					{
 						ItemStack stack = (ItemStack) obj;
-						
+
 						if (stack != null && stack.getItem() == item)
 						{
 							amount += stack.stackSize;

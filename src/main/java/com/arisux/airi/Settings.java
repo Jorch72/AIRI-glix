@@ -25,7 +25,7 @@ public class Settings implements IInitializablePre
 			config.load();
 
 			serverMain = config.get(CATEGORY_URLS, "SERVER_MAIN", "http://arisux.x10.mx", "").getString();
-			serverDev = config.get(CATEGORY_URLS, "SERVER_DEV", "http://localhost:10", "").getString();
+			serverDev = config.get(CATEGORY_URLS, "SERVER_DEV", "http://arisux.x10.mx", "").getString();
 			networking = config.get(Configuration.CATEGORY_GENERAL, "NETWORKING", true, "Toggles networking for mods that route external network access through AIRI.").getBoolean();
 		} finally
 		{
