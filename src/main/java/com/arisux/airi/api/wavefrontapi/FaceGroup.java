@@ -68,7 +68,7 @@ public class FaceGroup
 				{
 					GL11.glEnd();
 				}
-				
+
 				switch (f.vertexNbr)
 				{
 					case 3:
@@ -88,7 +88,11 @@ public class FaceGroup
 				mode = f.vertexNbr;
 			}
 
-			GL11.glColor3f(this.color.r, this.color.g, this.color.b);
+			if (this.color != null)
+			{
+				GL11.glColor3f(this.color.r, this.color.g, this.color.b);
+			}
+
 			GL11.glNormal3f(f.normal.x, f.normal.y, f.normal.z);
 
 			for (int idx = 0; idx < mode; idx++)
@@ -97,7 +101,7 @@ public class FaceGroup
 				{
 					GL11.glTexCoord2f(f.uv[idx].u, f.uv[idx].v);
 				}
-				
+
 				GL11.glVertex3f(f.vertex[idx].x, f.vertex[idx].y, f.vertex[idx].z);
 			}
 		}
