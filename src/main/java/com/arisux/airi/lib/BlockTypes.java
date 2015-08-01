@@ -124,7 +124,7 @@ public class BlockTypes
 			if (this.iconSet != null)
 			{
 				this.iconSet.registerIcons(iconRegister);
-				this.blockIcon = iconRegister.registerIcon(iconSet.frontRes);
+				this.blockIcon = iconSet.icon;
 			}
 			else
 			{

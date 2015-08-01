@@ -27,11 +27,11 @@ public class IconSet
 	public void registerIcons(IIconRegister register)
 	{
 		this.icon = (register.registerIcon(iconRes));
-		this.top = (register.registerIcon(topRes));
-		this.bottom = (register.registerIcon(bottomRes));
-		this.front = (register.registerIcon(frontRes));
-		this.back = (register.registerIcon(backRes));
-		this.left = (register.registerIcon(leftRes));
-		this.right = (register.registerIcon(rightRes));
+		this.top = (register.registerIcon(topRes == null ? iconRes : topRes));
+		this.bottom = (register.registerIcon(bottomRes == null ? iconRes : bottomRes));
+		this.front = (register.registerIcon(frontRes == null ? iconRes : frontRes));
+		this.back = (register.registerIcon(backRes == null ? iconRes : backRes));
+		this.left = (register.registerIcon(leftRes == null ? iconRes : leftRes));
+		this.right = (register.registerIcon(rightRes == null ? iconRes : rightRes));
 	}
 }
