@@ -1235,6 +1235,13 @@ public class WorldUtil
 
 		public static class Players
 		{
+			/**
+			 * Checks if the specified position is safe for a player to spawn at.
+			 * 
+			 * @param pos - The position we are checking.
+			 * @param world - The world instance we are checking in.
+			 * @return true if the position is safe.
+			 */
 			public static boolean isPositionSafe(CoordData pos, World world)
 			{
 				if (pos != null && world != null)
@@ -1247,13 +1254,20 @@ public class WorldUtil
 				return false;
 			}
 
-			public static CoordData getSafePosition(CoordData pos, EntityPlayer player)
+			/**
+			 * Gets a safe position for the player to spawn at from the given position.
+			 * 
+			 * @param pos - The position that we should check around.
+			 * @param world - The world we're checking for a safe position in.
+			 * @return The safe position.
+			 */
+			public static CoordData getSafePosition(CoordData pos, World world)
 			{
-				for (int y = pos.posY; y < player.worldObj.getHeight(); y++)
+				for (int y = pos.posY; y < world.getHeight(); y++)
 				{
 					CoordData newPos = new CoordData(pos.posX, y, pos.posZ);
 
-					if (isPositionSafe(newPos, player.worldObj))
+					if (isPositionSafe(newPos, world))
 					{
 						return newPos.add(0, 1, 0);
 					}
@@ -1262,6 +1276,12 @@ public class WorldUtil
 				return null;
 			}
 
+			/**
+			 * Gets the next safe position above the specified player.
+			 * 
+			 * @param player - The player we're checking for safe positions above.
+			 * @return The safe position.
+			 */
 			public static CoordData getNextSafePositionAbove(EntityPlayer player)
 			{
 				CoordData pos = new CoordData(player);
@@ -1279,6 +1299,12 @@ public class WorldUtil
 				return null;
 			}
 
+			/**
+			 * Gets the next safe position below the specified player.
+			 * 
+			 * @param player - The player we're checking for safe positions below.
+			 * @return The safe position.
+			 */
 			public static CoordData getNextSafePositionBelow(EntityPlayer player)
 			{
 				CoordData pos = new CoordData(player);
