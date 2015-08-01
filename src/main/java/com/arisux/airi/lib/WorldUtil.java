@@ -1247,7 +1247,7 @@ public class WorldUtil
 				return false;
 			}
 
-			public static CoordData getSafePositionForCommandSender(CoordData pos, EntityPlayer player)
+			public static CoordData getSafePosition(CoordData pos, EntityPlayer player)
 			{
 				for (int y = pos.posY; y < player.worldObj.getHeight(); y++)
 				{
@@ -1262,7 +1262,7 @@ public class WorldUtil
 				return null;
 			}
 
-			public static CoordData getNextSafePositionAboveCommandSender(EntityPlayer player)
+			public static CoordData getNextSafePositionAbove(EntityPlayer player)
 			{
 				CoordData pos = new CoordData(player);
 
@@ -1279,7 +1279,7 @@ public class WorldUtil
 				return null;
 			}
 
-			public static CoordData getNextSafePositionBelowCommandSender(EntityPlayer player)
+			public static CoordData getNextSafePositionBelow(EntityPlayer player)
 			{
 				CoordData pos = new CoordData(player);
 
