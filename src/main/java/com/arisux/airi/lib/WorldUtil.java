@@ -1,7 +1,14 @@
 package com.arisux.airi.lib;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 import com.arisux.airi.AIRI;
 import com.arisux.airi.lib.WorldUtil.Blocks.CoordData;
@@ -16,10 +23,19 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.world.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -1219,6 +1235,67 @@ public class WorldUtil
 
 		public static class Players
 		{
+			public static boolean isPositionSafe(CoordData pos, World world)
+			{
+				if (pos != null && world != null)
+				{
+					CoordData newPos = new CoordData(pos.posX, pos.posY, pos.posZ);
+					CoordData newPosBelow = new CoordData(pos.posX, pos.posY - 1, pos.posZ);
+					return newPosBelow.getBlock(world) != net.minecraft.init.Blocks.air && newPos.getBlock(world) == net.minecraft.init.Blocks.air && newPos.add(0, 1, 0).getBlock(world) == net.minecraft.init.Blocks.air && newPos.add(0, 2, 0).getBlock(world) == net.minecraft.init.Blocks.air;
+				}
+				
+				return false;
+			}
+
+			public static CoordData getSafePositionForCommandSender(CoordData pos, EntityPlayer player)
+			{
+				for (int y = pos.posY; y < player.worldObj.getHeight(); y++)
+				{
+					CoordData newPos = new CoordData(pos.posX, y, pos.posZ);
+
+					if (isPositionSafe(newPos, player.worldObj))
+					{
+						return newPos.add(0, 1, 0);
+					}
+				}
+
+				return null;
+			}
+
+			public static CoordData getNextSafePositionAboveCommandSender(EntityPlayer player)
+			{
+				CoordData pos = new CoordData(player);
+
+				for (int y = pos.posY; y < player.worldObj.getHeight(); y++)
+				{
+					CoordData position = new CoordData(pos.posX, y + 1, pos.posZ);
+
+					if (isPositionSafe(position, player.worldObj))
+					{
+						return position;
+					}
+				}
+
+				return null;
+			}
+
+			public static CoordData getNextSafePositionBelowCommandSender(EntityPlayer player)
+			{
+				CoordData pos = new CoordData(player);
+
+				for (int y = pos.posY; y > 0; y--)
+				{
+					CoordData position = new CoordData(pos.posX, y - 2, pos.posZ);
+
+					if (isPositionSafe(position, player.worldObj))
+					{
+						return position;
+					}
+				}
+
+				return null;
+			}
+			
 			/**
 			 * @param player - The EntityPlayer to check for XP.
 			 * @return the amount of XP required to reach the next level.
