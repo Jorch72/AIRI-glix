@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 public class CustomExplosion
@@ -64,10 +65,10 @@ public class CustomExplosion
 					var32 = (curZ + 1) * (1D / radiusZ);
 					double var37 = this.lengthSq(var25, var30, var35);
 
-					if (var37 > 1.0D)
-						if (curZ == 0)
-							if (curY == 0)
-								break;
+					if (var37 > 1.0D && curZ == 0 && curY == 0)
+					{
+						break;
+					}
 
 					if (this.lengthSq(var22, var30, var35) <= 1.0D && this.lengthSq(var25, var27, var35) <= 1.0D && this.lengthSq(var25, var30, var32) <= 1.0D || !this.random.nextBoolean())
 					{
@@ -97,7 +98,16 @@ public class CustomExplosion
 		if (block != Blocks.air && block != Blocks.bedrock)
 		{
 			int newX = (int) posX + this.posX, newY = (int) posY + this.posY, newZ = (int) posZ + this.posZ;
-			block.onBlockDestroyedByExplosion(this.worldObj, (int) posX, (int) posY, (int) posZ, null);
+			
+			try
+			{
+				block.onBlockDestroyedByExplosion(this.worldObj, (int) posX, (int) posY, (int) posZ, new Explosion(this.worldObj, null, posX, posY, posZ, 1F));
+			}
+			catch(Exception e)
+			{
+				;
+			}
+			
 			this.worldObj.setBlockToAir(newX, newY, newZ);
 		}
 	}
