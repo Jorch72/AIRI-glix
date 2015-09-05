@@ -51,7 +51,7 @@ public class WorldUtil
 	 * @param data - The CoordData containing the coordinates to create an explosion at.
 	 * @param strength - The strength of the explosion
 	 * @param isFlaming - Set to true if the explosion causes surrounding blocks to catch on fire.
-	 * @param isSmoking - Set to true if the explosion emitts smoke particles.
+	 * @param isSmoking - Set to true if the explosion emits smoke particles.
 	 * @param doesBlockDamage - Set to true if the explosion does physical Block damage.
 	 * @return Return the instance of the explosion that was just created.
 	 */
@@ -80,6 +80,27 @@ public class WorldUtil
 	}
 
 	/**
+	 * Gets the next safe position above the specified position
+	 * 
+	 * @param entity - The position we're checking for safe positions above.
+	 * @return The safe position.
+	 */
+	public static CoordData getNextSafePositionAbove(CoordData pos, World world)
+	{
+		for (int y = pos.posY; y < world.getHeight(); y++)
+		{
+			CoordData position = new CoordData(pos.posX, y + 1, pos.posZ);
+
+			if (Entities.isPositionSafe(position, world))
+			{
+				return position;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Get the light intensity as an Integer at the specified coordinates in the specified world.
 	 * 
 	 * @param worldObj - World to check for brightness values in.
@@ -92,6 +113,27 @@ public class WorldUtil
 		int sky = worldObj.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, data.posX, data.posY, data.posZ) - worldObj.calculateSkylightSubtracted(0f);
 
 		return Math.max(block, sky);
+	}
+
+	/**
+	 * Gets the next safe position below the specified position
+	 * 
+	 * @param pos - The position  we're checking for safe positions below.
+	 * @return The safe position.
+	 */
+	public static CoordData getNextSafePositionBelow(CoordData pos, World world)
+	{
+		for (int y = pos.posY; y > 0; y--)
+		{
+			CoordData position = new CoordData(pos.posX, y - 1, pos.posZ);
+
+			if (Entities.isPositionSafe(position, world))
+			{
+				return position;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -342,7 +384,7 @@ public class WorldUtil
 		public static void writeCompressed(NBTTagCompound nbt, File file) throws IOException
 		{
 			FileOutputStream stream = new FileOutputStream(file);
-			
+
 			CompressedStreamTools.writeCompressed(nbt, stream);
 
 			if (stream != null)
@@ -873,6 +915,53 @@ public class WorldUtil
 		}
 
 		/**
+		 * Checks if the specified position is safe for an entity to spawn at.
+		 * 
+		 * @param pos - The position we are checking.
+		 * @param world - The world instance we are checking in.
+		 * @return true if the position is safe.
+		 */
+		public static boolean isPositionSafe(CoordData pos, World world)
+		{
+			if (pos != null && world != null)
+			{
+
+				boolean safe = pos.getBlock(world) instanceof net.minecraft.block.BlockAir
+					&& pos.add(0, 1, 0).getBlock(world) instanceof net.minecraft.block.BlockAir
+					&& !(pos.subtract(0, 1, 0).getBlock(world) instanceof net.minecraft.block.BlockAir);
+
+				return safe;
+			}
+
+			return false;
+		}
+
+		/**
+		 * Gets a safe position for the entity to spawn at from the given position.
+		 * 
+		 * @param pos - The position that we should check around.
+		 * @param world - The world we're checking for a safe position in.
+		 * @return The safe position.
+		 */
+		public static CoordData getSafePosition(CoordData pos, World world)
+		{
+			CoordData newSafePosition = WorldUtil.getNextSafePositionAbove(pos, world);
+
+			if (newSafePosition == null)
+			{
+				newSafePosition = WorldUtil.getNextSafePositionBelow(pos, world);
+			}
+
+//			if (!(isPositionSafe(newSafePosition, world)))
+//			{
+//				Random rand = new Random();
+//				newSafePosition = getSafePosition(new CoordData(rand.nextInt(30000), rand.nextInt(256), rand.nextInt(30000)), world);
+//			}
+
+			return newSafePosition;
+		}
+
+		/**
 		 * Get the first Entity instance of the specified class type found, 
 		 * within specified range, at the specified world coordinates, within specified height.
 		 * 
@@ -1235,93 +1324,6 @@ public class WorldUtil
 
 		public static class Players
 		{
-			/**
-			 * Checks if the specified position is safe for a player to spawn at.
-			 * 
-			 * @param pos - The position we are checking.
-			 * @param world - The world instance we are checking in.
-			 * @return true if the position is safe.
-			 */
-			public static boolean isPositionSafe(CoordData pos, World world)
-			{
-				if (pos != null && world != null)
-				{
-					CoordData newPos = new CoordData(pos.posX, pos.posY, pos.posZ);
-					CoordData newPosBelow = new CoordData(pos.posX, pos.posY - 1, pos.posZ);
-					return newPosBelow.getBlock(world) != net.minecraft.init.Blocks.air && newPos.getBlock(world) == net.minecraft.init.Blocks.air && newPos.add(0, 1, 0).getBlock(world) == net.minecraft.init.Blocks.air && newPos.add(0, 2, 0).getBlock(world) == net.minecraft.init.Blocks.air;
-				}
-				
-				return false;
-			}
-
-			/**
-			 * Gets a safe position for the player to spawn at from the given position.
-			 * 
-			 * @param pos - The position that we should check around.
-			 * @param world - The world we're checking for a safe position in.
-			 * @return The safe position.
-			 */
-			public static CoordData getSafePosition(CoordData pos, World world)
-			{
-				for (int y = pos.posY; y < world.getHeight(); y++)
-				{
-					CoordData newPos = new CoordData(pos.posX, y, pos.posZ);
-
-					if (isPositionSafe(newPos, world))
-					{
-						return newPos.add(0, 1, 0);
-					}
-				}
-
-				return null;
-			}
-
-			/**
-			 * Gets the next safe position above the specified player.
-			 * 
-			 * @param player - The player we're checking for safe positions above.
-			 * @return The safe position.
-			 */
-			public static CoordData getNextSafePositionAbove(EntityPlayer player)
-			{
-				CoordData pos = new CoordData(player);
-
-				for (int y = pos.posY; y < player.worldObj.getHeight(); y++)
-				{
-					CoordData position = new CoordData(pos.posX, y + 1, pos.posZ);
-
-					if (isPositionSafe(position, player.worldObj))
-					{
-						return position;
-					}
-				}
-
-				return null;
-			}
-
-			/**
-			 * Gets the next safe position below the specified player.
-			 * 
-			 * @param player - The player we're checking for safe positions below.
-			 * @return The safe position.
-			 */
-			public static CoordData getNextSafePositionBelow(EntityPlayer player)
-			{
-				CoordData pos = new CoordData(player);
-
-				for (int y = pos.posY; y > 0; y--)
-				{
-					CoordData position = new CoordData(pos.posX, y - 2, pos.posZ);
-
-					if (isPositionSafe(position, player.worldObj))
-					{
-						return position;
-					}
-				}
-
-				return null;
-			}
-			
 			/**
 			 * @param player - The EntityPlayer to check for XP.
 			 * @return the amount of XP required to reach the next level.
