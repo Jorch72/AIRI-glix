@@ -1,19 +1,18 @@
 package com.arisux.airi.api.window.gui.windows;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-
-import org.lwjgl.opengl.GL11;
-
 import com.arisux.airi.AIRI;
 import com.arisux.airi.api.updater.Changelog;
 import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.window.IWindow;
+import com.arisux.airi.lib.GlStateManager;
 import com.arisux.airi.lib.GuiElements.GuiCustomButton;
-import com.arisux.airi.lib.*;
+import com.arisux.airi.lib.ModUtil;
+import com.arisux.airi.lib.RenderUtil;
 import com.arisux.airi.lib.interfaces.IActionPerformed;
 
 import cpw.mods.fml.common.ModContainer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 
 public class WindowUpdates extends Window implements IWindow
 {
@@ -46,7 +45,7 @@ public class WindowUpdates extends Window implements IWindow
 		RenderUtil.drawStringAlignCenter("Minecraft Forge " + updater.getVersionData().get("FORGEVER"), this.xPos + this.width / 2, this.yPos + 20, this.manager.getWindowAPI().getCurrentTheme().getTextColor(), false);
 		RenderUtil.drawRectWithOutline(this.xPos + 5, this.yPos + 35, this.width - 10, this.height - 40, 1, 0xFF000000, 0xFF111111);
 
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
 		{
 			if (updater.getChangelog() != null)
 			{
@@ -54,7 +53,7 @@ public class WindowUpdates extends Window implements IWindow
 
 				if (changelog != null)
 				{
-					GL11.glScalef(0.5F, 0.5F, 0.5F);
+					GlStateManager.scale(0.5F, 0.5F, 0.5F);
 
 					String[] lines = changelog.getContents().split("\n");
 					String longestLine = "";
@@ -73,7 +72,7 @@ public class WindowUpdates extends Window implements IWindow
 				}
 			}
 		}
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 
 		this.setWindowCentered();
 

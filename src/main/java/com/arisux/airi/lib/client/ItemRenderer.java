@@ -1,15 +1,14 @@
 package com.arisux.airi.lib.client;
 
+import com.arisux.airi.lib.GlStateManager;
+import com.arisux.airi.lib.RenderUtil.PlayerResourceManager;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
-
-import org.lwjgl.opengl.GL11;
-
-import com.arisux.airi.lib.RenderUtil.PlayerResourceManager;
 
 public abstract class ItemRenderer implements IItemRenderer
 {
@@ -64,7 +63,7 @@ public abstract class ItemRenderer implements IItemRenderer
 	{
 		this.rotation = (Minecraft.getMinecraft().thePlayer.worldObj.getWorldTime() % 360) * 8F;
 		
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
 		{
 			switch (type)
 			{
@@ -84,7 +83,7 @@ public abstract class ItemRenderer implements IItemRenderer
 					break;
 			}
 		}
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 	}
 
 	public void renderThirdPerson(ItemStack item, Object... data)

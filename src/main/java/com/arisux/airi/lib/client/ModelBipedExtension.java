@@ -1,13 +1,12 @@
 package com.arisux.airi.lib.client;
 
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.MathHelper;
-
-import org.lwjgl.opengl.GL11;
+import com.arisux.airi.lib.GlStateManager;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.MathHelper;
 
 @SideOnly(Side.CLIENT)
 public class ModelBipedExtension extends ModelBaseExtension
@@ -70,40 +69,46 @@ public class ModelBipedExtension extends ModelBaseExtension
 	}
 
 	@Override
-    public void render(Entity entity, float swingProgress, float swingProgressPrev, float idleProgress, float headYaw, float headPitch, float boxTranslation)
-    {
-        this.setRotationAngles(swingProgress, swingProgressPrev, idleProgress, headYaw, headPitch, boxTranslation, entity);
+	public void render(Entity entity, float swingProgress, float swingProgressPrev, float idleProgress, float headYaw, float headPitch, float boxTranslation)
+	{
+		this.setRotationAngles(swingProgress, swingProgressPrev, idleProgress, headYaw, headPitch, boxTranslation, entity);
 
-        if (this.isChild)
-        {
-            float f6 = 2.0F;
-            GL11.glPushMatrix();
-            GL11.glScalef(1.5F / f6, 1.5F / f6, 1.5F / f6);
-            GL11.glTranslatef(0.0F, 16.0F * boxTranslation, 0.0F);
-            this.bipedHead.render(boxTranslation);
-            GL11.glPopMatrix();
-            GL11.glPushMatrix();
-            GL11.glScalef(1.0F / f6, 1.0F / f6, 1.0F / f6);
-            GL11.glTranslatef(0.0F, 24.0F * boxTranslation, 0.0F);
-            this.bipedBody.render(boxTranslation);
-            this.bipedRightArm.render(boxTranslation);
-            this.bipedLeftArm.render(boxTranslation);
-            this.bipedRightLeg.render(boxTranslation);
-            this.bipedLeftLeg.render(boxTranslation);
-            this.bipedHeadwear.render(boxTranslation);
-            GL11.glPopMatrix();
-        }
-        else
-        {
-            this.bipedHead.render(boxTranslation);
-            this.bipedBody.render(boxTranslation);
-            this.bipedRightArm.render(boxTranslation);
-            this.bipedLeftArm.render(boxTranslation);
-            this.bipedRightLeg.render(boxTranslation);
-            this.bipedLeftLeg.render(boxTranslation);
-            this.bipedHeadwear.render(boxTranslation);
-        }
-    }
+		if (this.isChild)
+		{
+			float f6 = 2.0F;
+			
+			GlStateManager.pushMatrix();
+			{
+				GlStateManager.scale(1.5F / f6, 1.5F / f6, 1.5F / f6);
+				GlStateManager.translate(0.0F, 16.0F * boxTranslation, 0.0F);
+				this.bipedHead.render(boxTranslation);
+			}
+			GlStateManager.popMatrix();
+			
+			GlStateManager.pushMatrix();
+			{
+				GlStateManager.scale(1.0F / f6, 1.0F / f6, 1.0F / f6);
+				GlStateManager.translate(0.0F, 24.0F * boxTranslation, 0.0F);
+				this.bipedBody.render(boxTranslation);
+				this.bipedRightArm.render(boxTranslation);
+				this.bipedLeftArm.render(boxTranslation);
+				this.bipedRightLeg.render(boxTranslation);
+				this.bipedLeftLeg.render(boxTranslation);
+				this.bipedHeadwear.render(boxTranslation);
+			}
+			GlStateManager.popMatrix();
+		}
+		else
+		{
+			this.bipedHead.render(boxTranslation);
+			this.bipedBody.render(boxTranslation);
+			this.bipedRightArm.render(boxTranslation);
+			this.bipedLeftArm.render(boxTranslation);
+			this.bipedRightLeg.render(boxTranslation);
+			this.bipedLeftLeg.render(boxTranslation);
+			this.bipedHeadwear.render(boxTranslation);
+		}
+	}
 
 	@Override
 	public void setRotationAngles(float swingProgress, float swingProgressPrev, float idleProgress, float headYaw, float headPitch, float boxTranslation, Entity entity)

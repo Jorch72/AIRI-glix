@@ -1,20 +1,22 @@
 package com.arisux.airi.api.window.gui;
 
+import java.util.ArrayList;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
 import com.arisux.airi.api.window.WindowAPI;
 import com.arisux.airi.api.window.gui.taskbar.Taskbar;
 import com.arisux.airi.api.window.gui.windows.Window;
+import com.arisux.airi.lib.GlStateManager;
 import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
 import com.arisux.airi.lib.RenderUtil;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-
-import java.util.ArrayList;
 
 @SideOnly(Side.CLIENT)
 public class DesktopWindowManager extends GuiCustomScreen
@@ -126,11 +128,11 @@ public class DesktopWindowManager extends GuiCustomScreen
 		{
 			parentScreen.drawScreen(mouseX, mouseY, par3);
 		}
-
-		GL11.glEnable(GL11.GL_BLEND);
+		
+		GlStateManager.enableBlend();
 		RenderUtil.drawRect(0, 0, RenderUtil.scaledDisplayResolution().getScaledWidth(), RenderUtil.scaledDisplayResolution().getScaledHeight(), 0x88000000);
 		this.taskbar.draw(mouseX, mouseY);
-		GL11.glColor3f(1F, 1F, 1F);
+		GlStateManager.color(1F, 1F, 1F);
 
 		if (resetWindow != null)
 		{

@@ -3,8 +3,7 @@ package com.arisux.airi.api.wavefrontapi;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import org.lwjgl.opengl.GL11;
-
+import com.arisux.airi.lib.GlStateManager;
 import com.arisux.airi.lib.client.render.UV;
 import com.arisux.airi.lib.client.render.Vertex;
 
@@ -55,41 +54,41 @@ public class Part
 
 	public void draw(float angle, float x, float y, float z)
 	{
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
 		{
-			GL11.glTranslatef(oX, oY, oZ);
-			GL11.glRotatef(angle, x, y, z);
-			GL11.glTranslatef(-oX, -oY, -oZ);
+			GlStateManager.translate(oX, oY, oZ);
+			GlStateManager.rotate(angle, x, y, z);
+			GlStateManager.translate(-oX, -oY, -oZ);
 			this.draw();
 		}
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 	}
 
 	public void draw(float angle, float x, float y, float z, float angle2, float x2, float y2, float z2)
 	{
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
 		{
-			GL11.glTranslatef(oX, oY, oZ);
-			GL11.glRotatef(angle, x, y, z);
-			GL11.glTranslatef(oX2, oY2, oZ2);
-			GL11.glRotatef(angle2, x2, y2, z2);
-			GL11.glTranslatef(-oX2, -oY2, -oZ2);
-			GL11.glTranslatef(-oX, -oY, -oZ);
+			GlStateManager.translate(oX, oY, oZ);
+			GlStateManager.rotate(angle, x, y, z);
+			GlStateManager.translate(oX2, oY2, oZ2);
+			GlStateManager.rotate(angle2, x2, y2, z2);
+			GlStateManager.translate(-oX2, -oY2, -oZ2);
+			GlStateManager.translate(-oX, -oY, -oZ);
 			this.draw();
 		}
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 	}
 
 	public void drawNoBind(float angle, float x, float y, float z)
 	{
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
 		{
-			GL11.glTranslatef(oX, oY, oZ);
-			GL11.glRotatef(angle, x, y, z);
-			GL11.glTranslatef(-oX, -oY, -oZ);
+			GlStateManager.translate(oX, oY, oZ);
+			GlStateManager.rotate(angle, x, y, z);
+			GlStateManager.translate(-oX, -oY, -oZ);
 			this.drawNoBind();
 		}
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 	}
 
 	public void drawNoBind()

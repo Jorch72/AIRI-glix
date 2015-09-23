@@ -1,13 +1,12 @@
 package com.arisux.airi.api.window.themes;
 
+import com.arisux.airi.AIRI;
+import com.arisux.airi.api.window.gui.DesktopWindowManager;
+import com.arisux.airi.api.window.gui.windows.Window;
+import com.arisux.airi.lib.GlStateManager;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-
-import org.lwjgl.opengl.GL11;
-
-import com.arisux.airi.AIRI;
-import com.arisux.airi.api.window.gui.windows.Window;
-import com.arisux.airi.api.window.gui.DesktopWindowManager;
 
 public abstract class Theme implements ITheme
 {
@@ -63,7 +62,7 @@ public abstract class Theme implements ITheme
 			for (GuiButton button : window.getButtonList())
 			{
 				button.drawButton(Minecraft.getMinecraft(), x, y);
-				GL11.glColor3f(1f, 1f, 1f);
+				GlStateManager.color(1f, 1f, 1f);
 			}
 		} else
 		{

@@ -28,12 +28,12 @@ public class SystemUtil
 	
 	public static String gpu()
 	{
-		return GL11.glGetString(GL11.GL_RENDERER);
+		return GlStateManager.getString(GL11.GL_RENDERER);
 	}
 	
 	public static String gpuVendor()
 	{
-		return GL11.glGetString(GL11.GL_VENDOR);
+		return GlStateManager.getString(GL11.GL_VENDOR);
 	}
 
 	public static String cpu()

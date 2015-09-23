@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import javax.vecmath.Vector2d;
 
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 import com.arisux.airi.GuiElementHandler;
 import com.arisux.airi.lib.interfaces.IActionPerformed;
@@ -98,8 +97,8 @@ public class GuiElements
 
 			if (this.visible)
 			{
-				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-				GL11.glEnable(GL11.GL_BLEND);
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+				GlStateManager.enableBlend();
 				this.field_146123_n = mouseX >= this.xPosition * scale && mouseY >= this.yPosition * scale && mouseX < (this.xPosition + this.width) * scale && mouseY < (this.yPosition + this.height) * scale;
 				int k = this.getHoverState(this.field_146123_n);
 
@@ -127,7 +126,7 @@ public class GuiElements
 				{
 					RenderUtil.drawToolTip((int) RenderUtil.scaledMousePosition().x + 10, (int) RenderUtil.scaledMousePosition().y, this.tooltip);
 				}
-				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 			}
 		}
 

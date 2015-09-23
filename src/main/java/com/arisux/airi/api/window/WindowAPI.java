@@ -1,5 +1,8 @@
 package com.arisux.airi.api.window;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.arisux.airi.AIRI;
 import com.arisux.airi.api.window.gui.DesktopWindowManager;
 import com.arisux.airi.api.window.gui.windows.Window;
@@ -7,12 +10,10 @@ import com.arisux.airi.api.window.themes.Theme;
 import com.arisux.airi.api.window.themes.ThemeDefault;
 import com.arisux.airi.api.window.themes.ThemeMinecraft;
 import com.arisux.airi.api.window.themes.ThemeModern;
+import com.arisux.airi.lib.GlStateManager;
 import com.arisux.airi.lib.ModUtil;
-import net.minecraft.client.Minecraft;
-import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import net.minecraft.client.Minecraft;
 
 public class WindowAPI
 {
@@ -54,11 +55,11 @@ public class WindowAPI
 	
 	public void drawWindow(Window window, int mouseX, int mouseY)
 	{
-		GL11.glPushMatrix();
+		GlStateManager.pushMatrix();
 		{
 			this.getCurrentTheme().draw(window, mouseX, mouseY);
 		}
-		GL11.glPopMatrix();
+		GlStateManager.popMatrix();
 	}
 
 	public void registerTheme(Theme theme)

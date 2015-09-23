@@ -5,10 +5,10 @@ import com.arisux.airi.api.window.gui.taskbar.Taskbar;
 import com.arisux.airi.api.window.gui.taskbar.TaskbarEntry;
 import com.arisux.airi.api.window.gui.windows.Window;
 import com.arisux.airi.lib.ChatUtil;
+import com.arisux.airi.lib.GlStateManager;
 import com.arisux.airi.lib.ModUtil;
 import com.arisux.airi.lib.RenderUtil;
 import com.arisux.airi.lib.client.ScaledResolution;
-import org.lwjgl.opengl.GL11;
 
 public class ThemeModern extends Theme implements ITheme
 {
@@ -55,7 +55,7 @@ public class ThemeModern extends Theme implements ITheme
 	public void drawTaskbar(Taskbar taskbar, int mouseX, int mouseY)
 	{
 		ScaledResolution resolution = RenderUtil.scaledDisplayResolution();
-		GL11.glEnable(GL11.GL_BLEND);
+		GlStateManager.enableBlend();
 
 		taskbar.setX(0);
 		taskbar.setY(resolution.getScaledHeight() - taskbar.getH());

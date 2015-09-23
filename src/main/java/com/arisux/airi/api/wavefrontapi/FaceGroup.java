@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
+import com.arisux.airi.lib.GlStateManager;
 import com.arisux.airi.lib.RenderUtil;
 import com.arisux.airi.lib.client.render.Color;
 
@@ -35,9 +36,9 @@ public class FaceGroup
 		}
 		else
 		{
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
+			GlStateManager.disableTexture2d();
 			drawNoBind();
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			GlStateManager.enableTexture2d();
 		}
 	}
 
@@ -48,12 +49,12 @@ public class FaceGroup
 			listReady = true;
 			glList = GL11.glGenLists(1);
 
-			GL11.glNewList(glList, GL11.GL_COMPILE);
+			GlStateManager.newList(glList, GL11.GL_COMPILE);
 			this.drawVertex();
-			GL11.glEndList();
+			GlStateManager.endList();
 		}
 
-		GL11.glCallList(glList);
+		GlStateManager.callList(glList);
 	}
 
 	private void drawVertex()
@@ -72,16 +73,16 @@ public class FaceGroup
 				switch (f.vertexNbr)
 				{
 					case 3:
-						GL11.glBegin(GL11.GL_TRIANGLES);
+						GlStateManager.begin(GL11.GL_TRIANGLES);
 						break;
 					case 4:
-						GL11.glBegin(GL11.GL_QUADS);
+						GlStateManager.begin(GL11.GL_QUADS);
 						break;
 					case 6:
-						GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+						GlStateManager.begin(GL11.GL_TRIANGLE_STRIP);
 						break;
 					case 8:
-						GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+						GlStateManager.begin(GL11.GL_TRIANGLE_STRIP);
 						break;
 				}
 
@@ -90,25 +91,25 @@ public class FaceGroup
 
 			if (this.color != null)
 			{
-				GL11.glColor3f(this.color.r, this.color.g, this.color.b);
+				GlStateManager.color(this.color.r, this.color.g, this.color.b);
 			}
 
-			GL11.glNormal3f(f.normal.x, f.normal.y, f.normal.z);
+			GlStateManager.normal(f.normal.x, f.normal.y, f.normal.z);
 
 			for (int idx = 0; idx < mode; idx++)
 			{
 				if (f.uv[idx] != null)
 				{
-					GL11.glTexCoord2f(f.uv[idx].u, f.uv[idx].v);
+					GlStateManager.texCoord(f.uv[idx].u, f.uv[idx].v);
 				}
 
-				GL11.glVertex3f(f.vertex[idx].x, f.vertex[idx].y, f.vertex[idx].z);
+				GlStateManager.vertex(f.vertex[idx].x, f.vertex[idx].y, f.vertex[idx].z);
 			}
 		}
 
 		if (mode != 0)
 		{
-			GL11.glEnd();
+			GlStateManager.end();
 		}
 	}
 }

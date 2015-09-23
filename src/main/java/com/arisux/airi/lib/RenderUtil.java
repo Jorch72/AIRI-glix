@@ -1,45 +1,9 @@
 package com.arisux.airi.lib;
 
-import static org.lwjgl.opengl.GL11.GL_ALPHA_TEST;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_CLAMP;
-import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_FLAT;
-import static org.lwjgl.opengl.GL11.GL_FOG;
-import static org.lwjgl.opengl.GL11.GL_FRONT;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
-import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_SMOOTH;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
-import static org.lwjgl.opengl.GL11.GL_ZERO;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDepthMask;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glGetBoolean;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glReadBuffer;
-import static org.lwjgl.opengl.GL11.glReadPixels;
-import static org.lwjgl.opengl.GL11.glRotatef;
-import static org.lwjgl.opengl.GL11.glScalef;
-import static org.lwjgl.opengl.GL11.glShadeModel;
-import static org.lwjgl.opengl.GL11.glTexParameteri;
-import static org.lwjgl.opengl.GL11.glTranslated;
-import static org.lwjgl.opengl.GL11.glTranslatef;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -58,7 +22,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import com.arisux.airi.AIRI;
 import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
@@ -76,12 +39,10 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.shader.Framebuffer;
@@ -102,7 +63,6 @@ public class RenderUtil
 	public static final GuiCustomScreen guiHook = new GuiCustomScreen();
 	public static final float DEFAULT_BOX_TRANSLATION = 0.0625F;
 	public static ArrayList<Framebuffer> frameBuffers = new ArrayList<Framebuffer>();
-	public static boolean lightmapTexUnitTextureEnable;
 
 	public static final DPI DPI1 = new DPI(1, 1.0F);
 	public static final DPI DPI2 = new DPI(2, 0.5F);
@@ -127,7 +87,7 @@ public class RenderUtil
 
 	public static void deleteFrameBuffer(Framebuffer buffer)
 	{
-		glEnable(GL_DEPTH_TEST);
+		GlStateManager.enableDepthTest();
 		if (buffer.framebufferObject >= 0)
 		{
 			buffer.deleteFramebuffer();
@@ -135,109 +95,58 @@ public class RenderUtil
 		frameBuffers.remove(buffer);
 	}
 
-	/**
-	 * Disable lightmapping, enable GL_BLEND, and reset the colors to default values.
-	 */
+	@Deprecated
 	public static void glDisableLightMapping()
 	{
-		char c0 = 61680;
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_ONE, GL_ONE);
-		glDepthMask(true);
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) c0 % 65536 / 1.0F, (float) c0 / 65536 / 1.0F);
-		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.disableLightMapping();
 	}
 
-	/**
-	 * Enable lightmapping, disable GL_BLEND, and reset the colors to default values.
-	 */
+	@Deprecated
 	public static void glEnableLightMapping()
 	{
-		char c0 = 61680;
-		glDisable(GL_BLEND);
-		glDepthMask(true);
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) c0 % 65536 / 1.0F, (float) c0 / 65536 / 1.0F);
-		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.enableLightMapping();
 	}
 
-	/** 
-	 * Disable lighting
-	 */
+	@Deprecated
 	public static void glDisableLight()
 	{
-		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-		if (lightmapTexUnitTextureEnable = glGetBoolean(GL_TEXTURE_2D))
-		{
-			glDisable(GL_TEXTURE_2D);
-		}
-		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
-		glDisable(GL_LIGHTING);
+		GlStateManager.disableLight();
 	}
 
-	/**
-	 * Enable lighting
-	 */
+	@Deprecated
 	public static void glEnableLight()
 	{
-		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-		if (lightmapTexUnitTextureEnable)
-		{
-			glEnable(GL_TEXTURE_2D);
-		}
-		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
-		glEnable(GL_LIGHTING);
+		GlStateManager.enableLight();
 	}
 
+	@Deprecated
 	public static void glBlendClear()
 	{
-		OpenGlHelper.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+		GlStateManager.blendClear();
 	}
 
-	/**
-	 * Combonation of GL functions used to smooth out the rough edges of a 2D texture.
-	 */
+	@Deprecated
 	public static void glAntiAlias2D()
 	{
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+		GlStateManager.antiAlias2d();
 	}
 
-	/**
-	 * @param resource - The ResourceLocation of which to get the GL texture ID from.
-	 * @return Returns the GL texture ID of the specified ResourceLocation
-	 */
+	@Deprecated
 	public static int glGetTextureID(ResourceLocation resource)
 	{
-		Object object = Minecraft.getMinecraft().getTextureManager().getTexture(resource);
-		object = object == null ? new SimpleTexture(resource) : object;
-		return ((ITextureObject) object).getGlTextureId();
+		return GlStateManager.getTextureId(resource);
 	}
 
-	/**
-	 * Same functionality as glColor4f
-	 * @param color - Hexadecimal color value
-	 */
+	@Deprecated
 	public static void glColorHexRGBA(int color)
 	{
-		float a = (color >> 24 & 255) / 255.0F;
-		float r = (color >> 16 & 255) / 255.0F;
-		float g = (color >> 8 & 255) / 255.0F;
-		float b = (color & 255) / 255.0F;
-		glColor4f(r, g, b, a);
+		GlStateManager.color4i(color);
 	}
 
-	/**
-	 * Same functionality as glColor3f
-	 * @param color - Hexadecimal color value
-	 */
+	@Deprecated
 	public static void glColorHexRGB(int color)
 	{
-		float r = (color >> 16 & 255) / 255.0F;
-		float g = (color >> 8 & 255) / 255.0F;
-		float b = (color & 255) / 255.0F;
-		glColor3f(r, g, b);
+		GlStateManager.color3i(color);
 	}
 
 	/**
@@ -347,8 +256,8 @@ public class RenderUtil
 	 */
 	public static void drawGradientRect(int x, int y, int w, int h, int zLevel, int color1, int color2)
 	{
-		glDisable(GL_TEXTURE_2D);
-		glShadeModel(GL_SMOOTH);
+		GlStateManager.disableTexture2d();
+		GlStateManager.shadeSmooth();
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
 		tessellator.setColorRGBA_F((color1 >> 16 & 255) / 255.0F, (color1 >> 8 & 255) / 255.0F, (color1 & 255) / 255.0F, (color1 >> 24 & 255) / 255.0F);
@@ -358,8 +267,8 @@ public class RenderUtil
 		tessellator.addVertex(x, h, zLevel);
 		tessellator.addVertex(w, h, zLevel);
 		tessellator.draw();
-		glShadeModel(GL_FLAT);
-		glEnable(GL_TEXTURE_2D);
+		GlStateManager.shadeFlat();
+		GlStateManager.enableTexture2d();
 	}
 
 	/**
@@ -697,9 +606,9 @@ public class RenderUtil
 			return;
 		}
 
-		glDisable(GL12.GL_RESCALE_NORMAL);
-		glDisable(GL_DEPTH_TEST);
-		RenderHelper.disableStandardItemLighting();
+		GlStateManager.disableRescaleNormal();
+		GlStateManager.disableDepthTest();
+		GlStateManager.disableStandardItemLighting();
 
 		int w = 0;
 		int h = -2;
@@ -743,8 +652,8 @@ public class RenderUtil
 		tipLineHandlers.clear();
 		guiHook.incZLevel(-300);
 
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL12.GL_RESCALE_NORMAL);
+		GlStateManager.enableDepthTest();
+		GlStateManager.enableRescaleNormal();
 	}
 
 	/**
@@ -810,34 +719,35 @@ public class RenderUtil
 	 */
 	public static void drawProgressBar(String label, int maxProgress, int curProgress, int posX, int posY, int barWidth, int barHeight, int stringPosY, int color, boolean barStyle)
 	{
-		Minecraft mc = Minecraft.getMinecraft();
-		FontRenderer fontrenderer = mc.fontRenderer;
+		FontRenderer fontrenderer = Minecraft.getMinecraft().fontRenderer;
 
-		glPushMatrix();
-		Gui.drawRect(posX + 0, posY + 0, posX + barWidth, posY + 5 + barHeight, 0x77000000);
-
-		if (!barStyle && curProgress > maxProgress / barWidth)
+		GlStateManager.pushMatrix();
 		{
-			Gui.drawRect(posX + 1, posY + 1, posX + ((((curProgress * maxProgress) / maxProgress) * barWidth) / maxProgress) - 1, posY + 4 + barHeight, color);
-			Gui.drawRect(posX + 1, posY + 2 + (barHeight / 2), posX + ((((curProgress * maxProgress) / maxProgress) * barWidth) / maxProgress) - 1, posY + 4 + barHeight, 0x55000000);
-		}
-		else if (curProgress > maxProgress / barWidth)
-		{
-			int spaceBetweenBars = 1;
-			int amountOfBars = 70;
-			int widthOfBar = (barWidth / amountOfBars - spaceBetweenBars);
+			Gui.drawRect(posX + 0, posY + 0, posX + barWidth, posY + 5 + barHeight, 0x77000000);
 
-			for (int x = 1; x <= amountOfBars - ((curProgress * amountOfBars) / maxProgress); x++)
+			if (!barStyle && curProgress > maxProgress / barWidth)
 			{
-				int barStartX = (posX + widthOfBar) * (x) - widthOfBar;
-
-				Gui.drawRect(barStartX + spaceBetweenBars * x, posY + 1, barStartX + widthOfBar + spaceBetweenBars * x, posY + 4 + barHeight, color);
-				Gui.drawRect(barStartX + spaceBetweenBars * x, posY + 2 + (barHeight / 2), barStartX + widthOfBar + spaceBetweenBars * x, posY + 4 + barHeight, 0x55000000);
+				Gui.drawRect(posX + 1, posY + 1, posX + ((((curProgress * maxProgress) / maxProgress) * barWidth) / maxProgress) - 1, posY + 4 + barHeight, color);
+				Gui.drawRect(posX + 1, posY + 2 + (barHeight / 2), posX + ((((curProgress * maxProgress) / maxProgress) * barWidth) / maxProgress) - 1, posY + 4 + barHeight, 0x55000000);
 			}
-		}
+			else if (curProgress > maxProgress / barWidth)
+			{
+				int spaceBetweenBars = 1;
+				int amountOfBars = 70;
+				int widthOfBar = (barWidth / amountOfBars - spaceBetweenBars);
 
-		fontrenderer.drawStringWithShadow(label, posX + (barWidth / 2) - fontrenderer.getStringWidth(label) + (fontrenderer.getStringWidth(label) / 2), (posY - 1) + stringPosY, 0xFFFFFFFF);
-		glPopMatrix();
+				for (int x = 1; x <= amountOfBars - ((curProgress * amountOfBars) / maxProgress); x++)
+				{
+					int barStartX = (posX + widthOfBar) * (x) - widthOfBar;
+
+					Gui.drawRect(barStartX + spaceBetweenBars * x, posY + 1, barStartX + widthOfBar + spaceBetweenBars * x, posY + 4 + barHeight, color);
+					Gui.drawRect(barStartX + spaceBetweenBars * x, posY + 2 + (barHeight / 2), barStartX + widthOfBar + spaceBetweenBars * x, posY + 4 + barHeight, 0x55000000);
+				}
+			}
+
+			fontrenderer.drawStringWithShadow(label, posX + (barWidth / 2) - fontrenderer.getStringWidth(label) + (fontrenderer.getStringWidth(label) / 2), (posY - 1) + stringPosY, 0xFFFFFFFF);
+		}
+		GlStateManager.popMatrix();
 	}
 
 	/**
@@ -934,19 +844,19 @@ public class RenderUtil
 	 */
 	public static void renderOverlay(ResourceLocation resource, float r, float g, float b, float a)
 	{
-		glEnable(GL_BLEND);
-		glDisable(GL_DEPTH_TEST);
-		glDepthMask(false);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glColor4f(r, g, b, a);
-		glDisable(GL_ALPHA_TEST);
+		GlStateManager.enableBlend();
+		GlStateManager.disableDepthTest();
+		GlStateManager.depthMask(false);
+		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.color(r, g, b, a);
+		GlStateManager.disableAlphaTest();
 		bindTexture(resource);
 		drawQuad(0, 0, scaledDisplayResolution().getScaledWidth(), scaledDisplayResolution().getScaledHeight());
-		glDepthMask(true);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_ALPHA_TEST);
-		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		glDisable(GL_BLEND);
+		GlStateManager.depthMask(true);
+		GlStateManager.enableDepthTest();
+		GlStateManager.enableAlphaTest();
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.disableBlend();
 	}
 
 	/**
@@ -972,10 +882,10 @@ public class RenderUtil
 		{
 			try
 			{
-				glReadBuffer(GL_FRONT);
+				GlStateManager.readBuffer(GL11.GL_FRONT);
 				int bpp = 4;
-				ByteBuffer buffer = BufferUtils.createByteBuffer(width * height * bpp);
-				glReadPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+				ByteBuffer pixels = BufferUtils.createByteBuffer(width * height * bpp);
+				GlStateManager.readPixels(x, y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
 				String format = "png";
 				BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -985,9 +895,9 @@ public class RenderUtil
 					for (int py = y; py < height; py++)
 					{
 						int i = (px + (width * py)) * bpp;
-						int r = buffer.get(i) & 0xFF;
-						int g = buffer.get(i + 1) & 0xFF;
-						int b = buffer.get(i + 2) & 0xFF;
+						int r = pixels.get(i) & 0xFF;
+						int g = pixels.get(i + 1) & 0xFF;
+						int b = pixels.get(i + 2) & 0xFF;
 						image.setRGB(px, height - (py + 1), (0xFF << 24) | (r << 16) | (g << 8) | b);
 					}
 				}
@@ -1053,9 +963,9 @@ public class RenderUtil
 	 */
 	public static void drawModel(Entity entity, ModelBase model, ResourceLocation resource, double posX, double posY, double posZ)
 	{
-		glDisable(GL_CULL_FACE);
+		GlStateManager.disableCullFace();
 		bindTexture(resource);
-		glTranslated(posX, posY, posZ);
+		GlStateManager.translate(posX, posY, posZ);
 		model.render(entity, 0, 0, 0, 0, 0, 0.625F);
 	}
 
@@ -1071,19 +981,19 @@ public class RenderUtil
 	 */
 	public static void drawShowcaseModel(ModelBase model, ResourceLocation resource, int x, int y, float scale)
 	{
-		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		glPushMatrix();
-		glTranslatef(x, y - (scale * 0.43f), 10);
-		glScalef(0.06f * scale, 0.06f * scale, 1);
-		glRotatef(-20, 1, 0, 0);
-		glRotatef(205, 0, 1, 0);
-		glDisable(GL_CULL_FACE);
-		glEnable(GL_DEPTH_TEST);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y - (scale * 0.43f), 10);
+		GlStateManager.scale(0.06f * scale, 0.06f * scale, 1);
+		GlStateManager.rotate(-20, 1, 0, 0);
+		GlStateManager.rotate(205, 0, 1, 0);
+		GlStateManager.disableCullFace();
+		GlStateManager.enableDepthTest();
 		bindTexture(resource);
 		model.render(null, 0F, 0F, 0F, 0F, 0F, 0.0625F);
-		glEnable(GL_CULL_FACE);
-		glDisable(GL_DEPTH_TEST);
-		glPopMatrix();
+		GlStateManager.enableCullFace();
+		GlStateManager.disableDepthTest();
+		GlStateManager.popMatrix();
 	}
 
 	/**
@@ -1099,25 +1009,25 @@ public class RenderUtil
 	 */
 	public static void drawEntity(int x, int y, int scale, float yaw, float pitch, Entity entity)
 	{
-		glEnable(GL_COLOR_MATERIAL);
-		glPushMatrix();
+		GlStateManager.enable(GL11.GL_COLOR_MATERIAL);
+		GlStateManager.pushMatrix();
 		{
-			glTranslatef(x, y, 100.0F);
-			glScalef(-scale, scale, scale);
-			glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
-			glRotatef(yaw, 0.0F, 1.0F, 0.0F);
-			glRotatef(pitch, 1.0F, 0.0F, 0.0F);
+			GlStateManager.translate(x, y, 100.0F);
+			GlStateManager.scale(-scale, scale, scale);
+			GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
+			GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
+			GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
 			RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F);
-			glEnableLightMapping();
+			GlStateManager.enableLightMapping();
 		}
-		glPopMatrix();
+		GlStateManager.popMatrix();
 	}
 
 	public static void lightingHelper(Entity entity, float offset)
 	{
 		int brightness = entity.worldObj.getLightBrightnessForSkyBlocks(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posY + offset / 16.0F), MathHelper.floor_double(entity.posZ), 0);
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightness % 65536, brightness / 65536);
-		glColor3f(1.0F, 1.0F, 1.0F);
+		GlStateManager.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, brightness % 65536, brightness / 65536);
+		GlStateManager.color(1.0F, 1.0F, 1.0F);
 	}
 
 	/**
@@ -1235,10 +1145,10 @@ public class RenderUtil
 	 */
 	public static void drawResource(ResourceLocation resource, int posX, int posY, int width, int height, float r, float g, float b, float a, float u, float v)
 	{
-		glDisable(GL_LIGHTING);
-		glDisable(GL_FOG);
+		GlStateManager.disableLighting();
+		GlStateManager.disableFog();
 		bindTexture(resource);
-		glColor4f(r, g, b, a);
+		GlStateManager.color(r, g, b, a);
 		drawQuad(posX, posY, width, height, 0, 0, u, 0, v);
 	}
 
@@ -1291,10 +1201,10 @@ public class RenderUtil
 	 */
 	public static void drawResourceCentered(ResourceLocation resource, int posX, int posY, int width, int height, float r, float g, float b, float a, float u, float v)
 	{
-		glDisable(GL_LIGHTING);
-		glDisable(GL_FOG);
+		GlStateManager.disableLighting();
+		GlStateManager.disableFog();
 		bindTexture(resource);
-		glColor4f(r, g, b, a);
+		GlStateManager.color(r, g, b, a);
 		drawQuad(posX - (width / 2), posY, width, height, 0, 0, u, 0, v);
 	}
 
