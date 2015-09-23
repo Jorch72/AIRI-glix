@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL11.GL_ZERO;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -24,10 +25,13 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.ResourceLocation;
 
 public class GlStateManager
 {
+	public static ArrayList<Framebuffer> frameBuffers = new ArrayList<Framebuffer>();
 	public static boolean lightmapTexUnitTextureEnable;
 	public static int lightmapTexUnit = OpenGlHelper.lightmapTexUnit;
 	public static int defaultTexUnit = OpenGlHelper.defaultTexUnit;
@@ -390,5 +394,48 @@ public class GlStateManager
 	public static void disableFog()
 	{
 		disable(GL11.GL_FOG);
+	}
+
+	public static void bindTexture(int target, int texture)
+	{
+		GL11.glBindTexture(target, texture);
+	}
+
+	public static void copyTexSubImage(int target, int level, int xoffset, int yoffset, int x, int y)
+	{
+		GL11.glCopyTexSubImage1D(target, level, xoffset, yoffset, x, y);
+	}
+
+	public static void copyTexSubImage(int target, int level, int xoffset, int yoffset, int x, int y, int width, int height)
+	{
+		GL11.glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+	}
+
+	public static void copyDownsizedRender(TextureManager manager, ResourceLocation target, int x, int y, int w, int h, int index)
+	{
+		ITextureObject textureObject = manager.getTexture(target);
+
+		if (textureObject != null)
+		{
+			GlStateManager.bindTexture(GL11.GL_TEXTURE_2D, textureObject.getGlTextureId());
+			GlStateManager.copyTexSubImage(GL11.GL_TEXTURE_2D, 0, index, index, x, y, w, h);
+		}
+	}	
+	
+	public static Framebuffer createFrameBuffer(int width, int height, boolean useDepth)
+	{
+		Framebuffer render = new Framebuffer(width, height, useDepth);
+		frameBuffers.add(render);
+		return render;
+	}
+
+	public static void destroyFrameBuffer(Framebuffer buffer)
+	{
+		GlStateManager.enableDepthTest();
+		if (buffer.framebufferObject >= 0)
+		{
+			buffer.deleteFramebuffer();
+		}
+		frameBuffers.remove(buffer);
 	}
 }

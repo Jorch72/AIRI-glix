@@ -1,18 +1,18 @@
 package com.arisux.airi.api.window.gui.windows;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.arisux.airi.AIRI;
 import com.arisux.airi.api.window.IWindow;
 import com.arisux.airi.api.window.gui.DesktopWindowManager;
 import com.arisux.airi.lib.BasicMarkupParser;
 import com.arisux.airi.lib.GuiElements.GuiCustomButton;
 import com.arisux.airi.lib.RenderUtil;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
-import org.lwjgl.opengl.GL11;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class Window implements IWindow
 {

@@ -4,6 +4,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 
+import com.arisux.airi.AIRI;
 import com.arisux.airi.lib.RenderUtil;
 
 import cpw.mods.fml.relauncher.Side;
@@ -83,5 +84,47 @@ public abstract class ModelBaseExtension extends ModelBase
 	public void setRotationAngles(float swingProgress, float swingProgressPrev, float idleProgress, float headYaw, float headPitch, float boxTranslation, Entity entity)
 	{
 		super.setRotationAngles(swingProgress, swingProgressPrev, idleProgress, headYaw, headPitch, boxTranslation, entity);
+	}
+	
+	/**
+	 * Constructs a standard ModelBase instance from the specified class.
+	 * 
+	 * @param modelClass - A class extending ModelBase which will be instantaniated. 
+	 * @return Instance of the class specified in the modelClass parameter.
+	 */
+	public static ModelBase createModelBase(Class<? extends ModelBase> modelClass)
+	{
+		try
+		{
+			return (modelClass.getConstructor()).newInstance(new Object[] {});
+		}
+		catch (Exception e)
+		{
+			AIRI.logger.bug("Error creating new model instance.");
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Constructs a ModelBaseExtension instance from the specified class.
+	 * 
+	 * @param modelClass - A class extending ModelBaseExtension which will be instantaniated. 
+	 * @return Instance of the class specified in the modelClass parameter.
+	 */
+	public static ModelBaseExtension createExtendedModelBase(Class<? extends ModelBaseExtension> modelClass)
+	{
+		try
+		{
+			return (modelClass.getConstructor()).newInstance(new Object[] {});
+		}
+		catch (Exception e)
+		{
+			AIRI.logger.bug("Error creating new model instance.");
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 }

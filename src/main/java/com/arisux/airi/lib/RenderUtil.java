@@ -62,37 +62,26 @@ public class RenderUtil
 {
 	public static final GuiCustomScreen guiHook = new GuiCustomScreen();
 	public static final float DEFAULT_BOX_TRANSLATION = 0.0625F;
-	public static ArrayList<Framebuffer> frameBuffers = new ArrayList<Framebuffer>();
 
 	public static final DPI DPI1 = new DPI(1, 1.0F);
 	public static final DPI DPI2 = new DPI(2, 0.5F);
 
+	@Deprecated
 	public static void copyDownsizedRenderToResource(TextureManager renderengine, ResourceLocation copyRenderTo, int x, int y, int w, int h, int index)
 	{
-		ITextureObject textureObject = renderengine.getTexture(copyRenderTo);
-
-		if (textureObject != null)
-		{
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureObject.getGlTextureId());
-			GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, index, index, x, y, w, h);
-		}
+		GlStateManager.copyDownsizedRender(renderengine, copyRenderTo, x, y, w, h, index);
 	}
 
+	@Deprecated
 	public static Framebuffer createFramebuffer(int width, int height, boolean useDepth)
 	{
-		Framebuffer render = new Framebuffer(width, height, useDepth);
-		frameBuffers.add(render);
-		return render;
+		return GlStateManager.createFrameBuffer(width, height, useDepth);
 	}
 
+	@Deprecated
 	public static void deleteFrameBuffer(Framebuffer buffer)
 	{
-		GlStateManager.enableDepthTest();
-		if (buffer.framebufferObject >= 0)
-		{
-			buffer.deleteFramebuffer();
-		}
-		frameBuffers.remove(buffer);
+		GlStateManager.destroyFrameBuffer(buffer);
 	}
 
 	@Deprecated
@@ -169,46 +158,17 @@ public class RenderUtil
 		return dest.getInt();
 	}
 
-	/**
-	 * Constructs a standard ModelBase instance from the specified class.
-	 * 
-	 * @param modelClass - A class extending ModelBase which will be instantaniated. 
-	 * @return Instance of the class specified in the modelClass parameter.
-	 */
+	@Deprecated
 	public static ModelBase createModelBase(Class<? extends ModelBase> modelClass)
 	{
-		try
-		{
-			return (modelClass.getConstructor()).newInstance(new Object[] {});
-		}
-		catch (Exception e)
-		{
-			AIRI.logger.bug("Error creating new model instance.");
-			e.printStackTrace();
-		}
-
-		return null;
+		return ModelBaseExtension.createModelBase(modelClass);
 	}
 
-	/**
-	 * Constructs a ModelBaseExtension instance from the specified class.
-	 * 
-	 * @param modelClass - A class extending ModelBaseExtension which will be instantaniated. 
-	 * @return Instance of the class specified in the modelClass parameter.
-	 */
+
+	@Deprecated
 	public static ModelBaseExtension createModelBaseExtended(Class<? extends ModelBaseExtension> modelClass)
 	{
-		try
-		{
-			return (modelClass.getConstructor()).newInstance(new Object[] {});
-		}
-		catch (Exception e)
-		{
-			AIRI.logger.bug("Error creating new model instance.");
-			e.printStackTrace();
-		}
-
-		return null;
+		return ModelBaseExtension.createExtendedModelBase(modelClass);
 	}
 
 	/**
