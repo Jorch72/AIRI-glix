@@ -127,12 +127,6 @@ public class RenderUtil
 	}
 
 	@Deprecated
-	public static void glColorHexRGBA(int color)
-	{
-		GlStateManager.color4i(color);
-	}
-
-	@Deprecated
 	public static void glColorHexRGB(int color)
 	{
 		GlStateManager.color3i(color);
