@@ -109,7 +109,7 @@ public class AIRI
 	{
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
 		{
-			(updater = updaterAPI.createNewUpdater(Properties.MODID, Properties.VERSION, settings.getServer() + "/page/mods/airi/latest.txt", settings.getServer() + "/page/mods/airi/", settings.getServer() + "/page/mods/airi/changelog.txt")).postInitialize(event);
+			(updater = updaterAPI.createNewUpdater(Properties.MODID, Properties.VERSION, settings.getServer() + "/page/beta/airi/latest.php", settings.getServer() + "/page/mods/airi/", settings.getServer() + "/page/mods/airi/changelog.txt")).postInitialize(event);
 		}
 		
 		GameRegistry.registerBlock(WORLDGEN_GHOST = (new HookedBlock(Material.air)).setCreativeTab(CreativeTabs.tabAllSearch), "airi.wgghost");

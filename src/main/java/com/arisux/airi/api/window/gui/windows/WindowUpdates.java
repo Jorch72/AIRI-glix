@@ -37,22 +37,22 @@ public class WindowUpdates extends Window implements IWindow
 	{
 		super.draw(mouseX, mouseY);
 
-		this.setTitle(AIRI.updaterApi().getAvailableUpdates().size() + " " + (AIRI.updaterApi().getAvailableUpdates().size() > 1 ? "Updates" : "Update") + " Available - " +  (AIRI.updaterApi().getAvailableUpdates().indexOf(updater) + 1) + " of " + AIRI.updaterApi().getAvailableUpdates().size());
+		this.setTitle((AIRI.updaterApi().getAvailableUpdates().size() > 1 ? "Updates" : "Update") + " Available - " + (AIRI.updaterApi().getAvailableUpdates().indexOf(updater) + 1) + " of " + AIRI.updaterApi().getAvailableUpdates().size());
 		ModContainer modContainer = ModUtil.getModContainerForId(updater.getVersionData().get("MODID"));
 		String message = (modContainer != null ? modContainer.getName() : updater.getModId()) + " " + updater.getVersionData().get("MODVER") + " for Minecraft " + updater.getVersionData().get("MCVER");
 
 		RenderUtil.drawStringAlignCenter(message, this.xPos + this.width / 2, this.yPos + 10, this.manager.getWindowAPI().getCurrentTheme().getButtonColor(), false);
-		RenderUtil.drawStringAlignCenter("Minecraft Forge " + updater.getVersionData().get("FORGEVER"), this.xPos + this.width / 2, this.yPos + 20, this.manager.getWindowAPI().getCurrentTheme().getTextColor(), false);
-		RenderUtil.drawRectWithOutline(this.xPos + 5, this.yPos + 35, this.width - 10, this.height - 40, 1, 0xFF000000, 0xFF111111);
+		RenderUtil.drawStringAlignCenter("Minecraft Forge " + updater.getVersionData().get("FORGEVER"), this.xPos + this.width / 2, this.yPos + 20, this.manager.getWindowAPI().getCurrentTheme().getTextColor() << 1, false);
 
-		GlStateManager.pushMatrix();
+		if (updater.getChangelog() != null && !updater.getChangelog().equals(""))
 		{
-			if (updater.getChangelog() != null)
+			GlStateManager.pushMatrix();
 			{
 				Changelog.SubChangelog changelog = updater.getChangelog().getChangelogByVersion(updater.getVersionData().get("MODVER"));
 
-				if (changelog != null)
+				if (changelog != null && !changelog.equals(""))
 				{
+					RenderUtil.drawRectWithOutline(this.xPos + 5, this.yPos + 35, this.width - 10, this.height - 40, 1, 0xFF000000, 0xFF111111);
 					GlStateManager.scale(0.5F, 0.5F, 0.5F);
 
 					String[] lines = changelog.getContents().split("\n");
@@ -70,10 +70,14 @@ public class WindowUpdates extends Window implements IWindow
 						}
 					}
 				}
+				else
+				{
+					this.height = 41;
+				}
 			}
+			GlStateManager.popMatrix();
 		}
-		GlStateManager.popMatrix();
-
+		
 		this.setWindowCentered();
 
 		// notifications.next

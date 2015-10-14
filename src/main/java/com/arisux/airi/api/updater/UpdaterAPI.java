@@ -16,13 +16,8 @@ public class UpdaterAPI
 {
 	private ArrayList<Updater> updaters = new ArrayList<Updater>();
 	private int currentUpdaterId;
-	private boolean recheckUpdates, showWindowManager, canRecheckForUpdates;
+	private boolean recheckUpdates, canRecheckForUpdates;
 	private Window updaterWindow;
-
-	public UpdaterAPI()
-	{
-		this.showWindowManager = true;
-	}
 
 	public void onTick()
 	{
@@ -70,14 +65,12 @@ public class UpdaterAPI
 						{
 							AIRI.windowApi().addWindow(this.updaterWindow);
 						}
-						
-						this.showWindowManager = true;
 					}
 				}
 
 				updater.tick();
 
-				if (this.recheckUpdates || this.showWindowManager)
+				if (this.recheckUpdates)
 				{
 					if (Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu)
 					{
@@ -93,13 +86,6 @@ public class UpdaterAPI
 								}
 							}).start();
 						}
-
-						if (updater.isUpdateAvailable() && !(AIRI.windowApi().getWindowsRegistry().size() <= 0))
-						{
-							AIRI.windowApi().showWindowManager();
-						}
-
-						this.showWindowManager = false;
 					}
 				}
 			}

@@ -2,16 +2,19 @@ package com.arisux.airi.api.updater;
 
 import java.util.HashMap;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 import com.arisux.airi.AIRI;
 import com.arisux.airi.lib.NetworkUtil;
 import com.arisux.airi.lib.WorldUtil;
 import com.arisux.airi.lib.interfaces.IInitializablePost;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.mojang.realmsclient.util.JsonUtils;
 
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class Updater implements IInitializablePost
 {
@@ -85,12 +88,13 @@ public class Updater implements IInitializablePost
 
 				if (retrieved != null)
 				{
-					String[] parsed = retrieved.split(":");
-
-					getVersionData().put("MCVER", parsed[0]);
-					getVersionData().put("MODVER", parsed[1]);
-					getVersionData().put("FORGEVER", parsed[2]);
-					getVersionData().put("MODID", parsed[3]);
+					JsonElement element = new JsonParser().parse(retrieved);
+					JsonObject obj = element.getAsJsonObject();
+					
+					getVersionData().put("MCVER", JsonUtils.getStringOr("gameVersion", obj, ""));
+					getVersionData().put("MODVER", JsonUtils.getStringOr("buildVersion", obj, ""));
+					getVersionData().put("FORGEVER", JsonUtils.getStringOr("apiVersion", obj, ""));
+					getVersionData().put("MODID", JsonUtils.getStringOr("projectName", obj, ""));
 					System.out.println("Latest release of " + getVersionData().get("MODID") + " is version " + getVersionData().get("MODVER") + " for Minecraft " + getVersionData().get("MCVER"));
 				}
 				else

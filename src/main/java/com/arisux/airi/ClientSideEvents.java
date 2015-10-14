@@ -1,23 +1,32 @@
 package com.arisux.airi;
 
-import net.minecraftforge.common.MinecraftForge;
-
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import com.arisux.airi.api.window.gui.windows.WindowATWarning;
 import com.arisux.airi.lib.ChatUtil;
+import com.arisux.airi.lib.GlStateManager;
+import com.arisux.airi.lib.GuiElements.GuiCustomButton;
 import com.arisux.airi.lib.ModUtil;
+import com.arisux.airi.lib.RenderUtil;
+import com.arisux.airi.lib.interfaces.IActionPerformed;
 import com.arisux.airi.lib.interfaces.IInitializablePre;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Type;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraftforge.common.MinecraftForge;
 
 public class ClientSideEvents implements IInitializablePre
 {
 	private boolean openedInitial;
+	private GuiCustomButton buttonUpdates;
 
 	@SubscribeEvent
 	public void clientTick(ClientTickEvent event)
@@ -51,16 +60,64 @@ public class ClientSideEvents implements IInitializablePre
 				AIRI.windowApi().showWindowManager();
 			}
 		}
-		
+
 		GuiElementHandler.instance().tick();
 	}
-	
+
 	@SubscribeEvent
 	public void onClientPlayerLogin(PlayerLoggedInEvent event)
 	{
 		if (AIRI.updaterApi().isUpdateAvailable())
 		{
 			ChatUtil.sendTo(event.player, "&7[&aAIRI&7] &fNew updates are available. To see what updates are available, enter chat and press LEFT ALT + W.");
+		}
+	}
+
+	@SubscribeEvent
+	public void onRenderTitleScreen(TickEvent.RenderTickEvent event)
+	{
+		if (Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu)
+		{
+			if (buttonUpdates == null && GuiElementHandler.instance() != null)
+			{
+				buttonUpdates = new GuiCustomButton(0, 0, 0, 0, 0, "", null);
+			}
+
+			if (buttonUpdates != null)
+			{
+				int amountOfUpdates = AIRI.updaterApi().getAvailableUpdates().size();
+				String updates = String.valueOf(amountOfUpdates);
+				String updateString = amountOfUpdates > 1 ? "Updates Available" : "Update Available";
+				int renderWidth = RenderUtil.getStringRenderWidth(updates);
+				int backgroundWidth = 30 + renderWidth + RenderUtil.getStringRenderWidth(updateString);
+				
+				RenderUtil.drawRect(0, 2, backgroundWidth, 23, 0x77000000);
+				GlStateManager.enableBlend();
+				RenderUtil.drawRectWithOutline(0, 2, 18 + renderWidth, 23, 2, 0x33000000, 0x00000000);
+				RenderUtil.drawString(updates, 10, 10, AIRI.windowApi().getCurrentTheme().getButtonColor(), false);
+				RenderUtil.drawString(updateString, 24 + renderWidth, 10, 0xFFFFFFFF, false);
+
+				buttonUpdates.displayString = "";
+				buttonUpdates.baseColor = 0x00000000;
+				buttonUpdates.overlayColorHover = 0x00000000;
+				buttonUpdates.overlayColorNormal = 0x00000000;
+				buttonUpdates.overlayColorPressed = 0x00000000;
+				buttonUpdates.fontColor = 0xFFFF3333;
+				buttonUpdates.xPosition = 0;
+				buttonUpdates.yPosition = 2;
+				buttonUpdates.width = backgroundWidth;
+				buttonUpdates.height = 23;
+				buttonUpdates.drawButton();
+				buttonUpdates.setAction(new IActionPerformed()
+				{
+					@Override
+					public void actionPerformed(GuiCustomButton button)
+					{
+						AIRI.windowApi().addWindow(AIRI.updaterApi().getUpdaterWindow());
+						AIRI.windowApi().showWindowManager();
+					}
+				});
+			}
 		}
 	}
 
