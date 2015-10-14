@@ -1,0 +1,15 @@
+[{
+  "modid": "AIRI",
+  "name": "AIRI",
+  "description": "N/A",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "http://arisux.x10.mx/",
+  "changelogUrl": "http://arisux.x10.mx/",
+  "authorList": ["Ri5ux"],
+  "credits": "The Minecraft Community",
+  "logoFile": "",
+  "screenshots": [],
+  "useDependencyInformation": false,
+  "beta": true
+}]
