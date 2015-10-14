@@ -85,18 +85,6 @@ public class RenderUtil
 	}
 
 	@Deprecated
-	public static void glDisableLightMapping()
-	{
-		GlStateManager.disableLightMapping();
-	}
-
-	@Deprecated
-	public static void glEnableLightMapping()
-	{
-		GlStateManager.enableLightMapping();
-	}
-
-	@Deprecated
 	public static void glDisableLight()
 	{
 		GlStateManager.disableLight();
