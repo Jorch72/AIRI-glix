@@ -26,7 +26,6 @@ import org.lwjgl.opengl.GL11;
 import com.arisux.airi.AIRI;
 import com.arisux.airi.lib.GuiElements.GuiCustomScreen;
 import com.arisux.airi.lib.WorldUtil.Blocks;
-import com.arisux.airi.lib.client.ModelBaseExtension;
 import com.arisux.airi.lib.client.PlayerResource;
 import com.arisux.airi.lib.client.ScaledResolution;
 import com.arisux.airi.lib.client.render.DPI;
@@ -45,7 +44,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -66,60 +64,6 @@ public class RenderUtil
 	public static final DPI DPI1 = new DPI(1, 1.0F);
 	public static final DPI DPI2 = new DPI(2, 0.5F);
 
-	@Deprecated
-	public static void copyDownsizedRenderToResource(TextureManager renderengine, ResourceLocation copyRenderTo, int x, int y, int w, int h, int index)
-	{
-		GlStateManager.copyDownsizedRender(renderengine, copyRenderTo, x, y, w, h, index);
-	}
-
-	@Deprecated
-	public static Framebuffer createFramebuffer(int width, int height, boolean useDepth)
-	{
-		return GlStateManager.createFrameBuffer(width, height, useDepth);
-	}
-
-	@Deprecated
-	public static void deleteFrameBuffer(Framebuffer buffer)
-	{
-		GlStateManager.destroyFrameBuffer(buffer);
-	}
-
-	@Deprecated
-	public static void glDisableLight()
-	{
-		GlStateManager.disableLight();
-	}
-
-	@Deprecated
-	public static void glEnableLight()
-	{
-		GlStateManager.enableLight();
-	}
-
-	@Deprecated
-	public static void glBlendClear()
-	{
-		GlStateManager.blendClear();
-	}
-
-	@Deprecated
-	public static void glAntiAlias2D()
-	{
-		GlStateManager.antiAlias2d();
-	}
-
-	@Deprecated
-	public static int glGetTextureID(ResourceLocation resource)
-	{
-		return GlStateManager.getTextureId(resource);
-	}
-
-	@Deprecated
-	public static void glColorHexRGB(int color)
-	{
-		GlStateManager.color3i(color);
-	}
-
 	/**
 	 * Converts 4 RGBA values into a single hexadecimal color value.
 	 * 
@@ -138,19 +82,6 @@ public class RenderUtil
 		dest.rewind();
 
 		return dest.getInt();
-	}
-
-	@Deprecated
-	public static ModelBase createModelBase(Class<? extends ModelBase> modelClass)
-	{
-		return ModelBaseExtension.createModelBase(modelClass);
-	}
-
-
-	@Deprecated
-	public static ModelBaseExtension createModelBaseExtended(Class<? extends ModelBaseExtension> modelClass)
-	{
-		return ModelBaseExtension.createExtendedModelBase(modelClass);
 	}
 
 	/**
@@ -338,11 +269,18 @@ public class RenderUtil
 	public static void drawString(String text, int x, int y, int color, boolean shadow)
 	{
 		text = I18n.format(text);
+		
 		if (shadow)
+		{
 			Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, color);
+		}
+		
 		if (!shadow)
+		{
 			Minecraft.getMinecraft().fontRenderer.drawString(text, x, y, color);
-		glColorHexRGB(0xFFFFFF);
+		}
+		
+		GlStateManager.color3i(0xFFFFFF);
 	}
 
 	/**
@@ -456,8 +394,7 @@ public class RenderUtil
 	 */
 	public static com.arisux.airi.lib.client.ScaledResolution scaledDisplayResolution()
 	{
-		Minecraft mc = Minecraft.getMinecraft();
-		return new com.arisux.airi.lib.client.ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+		return new com.arisux.airi.lib.client.ScaledResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
 	}
 
 	/**
@@ -621,29 +558,7 @@ public class RenderUtil
 		drawGradientRect(x + 1, y + 1, w - 1, 1, grad1, grad1);
 		drawGradientRect(x + 1, y + h - 1, w - 1, 1, grad2, grad2);
 	}
-
-	/**
-	 * Draws a progress bar.
-	 * 
-	 * @param label - Label to draw on top of the progress bar.
-	 * @param maxProgress - Maximum progress
-	 * @param curProgress - Current progress
-	 * @param posX - x coordinate to draw the bar at
-	 * @param posY - y coordinate to draw the bar at
-	 * @param barWidth - The width of the progress bar
-	 * @param barHeight - The height of the progress bar
-	 * @param stringPosY - The offset height of the label text (0 is default)
-	 * @param color - The color of the progress bar
-	 * @param reverse - Unused parameter
-	 * @param barStyle - Set to false for a solid style progress bar. Set to true 
-	 * for a box-style progress bar.
-	 */
-	@Deprecated
-	public static void drawProgressBar(String label, int maxProgress, int curProgress, int posX, int posY, int barWidth, int barHeight, int stringPosY, int color, boolean reverse, boolean barStyle)
-	{
-		drawProgressBar(label, maxProgress, curProgress, posX, posY, barWidth, barHeight, stringPosY, color, barStyle);
-	}
-
+	
 	/**
 	 * Draws a progress bar.
 	 * 
@@ -1322,9 +1237,9 @@ public class RenderUtil
 	 */
 	public static float interpolateRotation(float angle1, float angle2, float progress)
 	{
-		float f = angle2 - angle1;
-		f = f < -180F ? f += 360F : f;
-		return angle1 + (progress * (f = f >= 180F ? f -= 360F : f));
+		float angle = angle2 - angle1;
+		angle = angle < -180F ? angle += 360F : angle;
+		return angle1 + (progress * (angle = angle >= 180F ? angle -= 360F : angle));
 	}
 
 	/**

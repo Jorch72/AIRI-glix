@@ -53,7 +53,7 @@ public class GlStateManager
 
 	public static void translate(float offsetX, float offsetY, float offsetZ)
 	{
-		GL11.glTranslatef(offsetX, offsetY, offsetZ);
+		GlStateManager.translate(offsetX, offsetY, offsetZ);
 	}
 
 	public static void scale(double scaleX, double scaleY, double scaleZ)
@@ -63,7 +63,7 @@ public class GlStateManager
 	
 	public static void scale(float scaleX, float scaleY, float scaleZ)
 	{
-		GL11.glScalef(scaleX, scaleY, scaleZ);
+		GlStateManager.scale(scaleX, scaleY, scaleZ);
 	}
 	
 	public static void begin(int mode)
@@ -118,7 +118,7 @@ public class GlStateManager
 
 	public static void rotate(float angle, float x, float y, float z)
 	{
-		GL11.glRotatef(angle, x, y, z);
+		GlStateManager.rotate(angle, x, y, z);
 	}
 
 	public static void enableBlend()
@@ -188,7 +188,7 @@ public class GlStateManager
 	
 	public static void disable(int cap)
 	{
-		GL11.glDisable(cap);
+		GlStateManager.disable(cap);
 	}
 
 	public static void blendFunc(int sfactor, int dfactor)
