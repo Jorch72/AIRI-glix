@@ -53,7 +53,7 @@ public class GlStateManager
 
 	public static void translate(float offsetX, float offsetY, float offsetZ)
 	{
-		GlStateManager.translate(offsetX, offsetY, offsetZ);
+		GL11.glTranslatef(offsetX, offsetY, offsetZ);
 	}
 
 	public static void scale(double scaleX, double scaleY, double scaleZ)
@@ -63,7 +63,7 @@ public class GlStateManager
 	
 	public static void scale(float scaleX, float scaleY, float scaleZ)
 	{
-		GlStateManager.scale(scaleX, scaleY, scaleZ);
+		GL11.glScalef(scaleX, scaleY, scaleZ);
 	}
 	
 	public static void begin(int mode)
@@ -118,7 +118,7 @@ public class GlStateManager
 
 	public static void rotate(float angle, float x, float y, float z)
 	{
-		GlStateManager.rotate(angle, x, y, z);
+		GL11.glRotatef(angle, x, y, z);
 	}
 
 	public static void enableBlend()
@@ -142,7 +142,7 @@ public class GlStateManager
 	}
 	
 	/**
-	 * Same functionality as glColor4f
+	 * Same functionality as GlStateManager.color
 	 * @param color - Hexadecimal color value
 	 */
 	public static void color4i(int color)
@@ -173,12 +173,12 @@ public class GlStateManager
 
 	public static void enableDepthTest()
 	{
-		enable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	public static void disableDepthTest()
 	{
-		disable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 	}
 	
 	public static void enable(int cap)
@@ -188,7 +188,7 @@ public class GlStateManager
 	
 	public static void disable(int cap)
 	{
-		GlStateManager.disable(cap);
+		GL11.glDisable(cap);
 	}
 
 	public static void blendFunc(int sfactor, int dfactor)
