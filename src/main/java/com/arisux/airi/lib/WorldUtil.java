@@ -21,6 +21,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -1424,6 +1425,26 @@ public class WorldUtil
 
 			public static class Inventories
 			{
+				/**
+				 * Get the slot id of the specified item in the specified inventory.
+				 * 
+				 * @param item - The item we are getting the slot id of.
+				 * @param inventory - The inventory of which we are searching in.
+				 * @return
+				 */
+				public static int getSlotForItemIn(Item item, InventoryPlayer inventory)
+				{
+			        for (int id = 0; id < inventory.getSizeInventory(); ++id)
+			        {
+			            if (inventory.getStackInSlot(id) != null && inventory.getStackInSlot(id).getItem() == item)
+			            {
+			                return id;
+			            }
+			        }
+
+			        return -1;
+				}
+				
 				/**
 				 * @param items - List of Items to choose a random Item from.
 				 * @return an ItemStack instance instantaniated from a random Item chosen from the provided Item Array.
