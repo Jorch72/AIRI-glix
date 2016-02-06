@@ -75,31 +75,40 @@ public class Updater implements IInitializablePost
 
 	public void downloadVersionInformation()
 	{
-		new Thread() {
+		new Thread()
+		{
 			@Override
-			public void run() 
+			public void run()
 			{
 				System.out.println("Checking for updates for mod with ID " + modId);
-				
-				clearCaches();
-				isVersionDataValid();
 
-				String retrieved = NetworkUtil.getURLContents(updateUrl);
-
-				if (retrieved != null)
+				try
 				{
-					JsonElement element = new JsonParser().parse(retrieved);
-					JsonObject obj = element.getAsJsonObject();
-					
-					getVersionData().put("MCVER", JsonUtils.getStringOr("gameVersion", obj, ""));
-					getVersionData().put("MODVER", JsonUtils.getStringOr("buildVersion", obj, ""));
-					getVersionData().put("FORGEVER", JsonUtils.getStringOr("apiVersion", obj, ""));
-					getVersionData().put("MODID", JsonUtils.getStringOr("projectName", obj, ""));
-					System.out.println("Latest release of " + getVersionData().get("MODID") + " is version " + getVersionData().get("MODVER") + " for Minecraft " + getVersionData().get("MCVER"));
+					clearCaches();
+					isVersionDataValid();
+
+					String retrieved = NetworkUtil.getURLContents(updateUrl);
+
+					if (retrieved != null)
+					{
+						JsonElement element = new JsonParser().parse(retrieved);
+						JsonObject obj = element.getAsJsonObject();
+
+						getVersionData().put("MCVER", JsonUtils.getStringOr("gameVersion", obj, ""));
+						getVersionData().put("MODVER", JsonUtils.getStringOr("buildVersion", obj, ""));
+						getVersionData().put("FORGEVER", JsonUtils.getStringOr("apiVersion", obj, ""));
+						getVersionData().put("MODID", JsonUtils.getStringOr("projectName", obj, ""));
+						System.out.println("Latest release of " + getVersionData().get("MODID") + " is version " + getVersionData().get("MODVER") + " for Minecraft " + getVersionData().get("MCVER"));
+					}
+					else
+					{
+						printConnectionError();
+					}
 				}
-				else
+				catch (Exception e)
 				{
-					printConnectionError();
+					System.out.println("Error while downloading version information: " + e + ", " + updateUrl);
+					e.printStackTrace();
 				}
 			}
 		}.start();
@@ -145,7 +154,7 @@ public class Updater implements IInitializablePost
 		{
 			this.versionData = new HashMap<String, String>();
 		}
-		
+
 		return getVersionData().get("MCVER") != null && getVersionData().get("MODVER") != null && getVersionData().get("FORGEVER") != null && getVersionData().get("MODID") != null;
 	}
 
