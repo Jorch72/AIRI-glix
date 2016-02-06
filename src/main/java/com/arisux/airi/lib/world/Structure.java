@@ -91,7 +91,7 @@ public abstract class Structure
 		{
 			e.printStackTrace();
 			this.onProcessingComplete();
-			System.out.println("Generation of " + this.getName() + " completed with error: " + e);
+			System.out.println("Generation of " + this.getName() + " completed with an error: " + e);
 			
 			return true;
 		}
