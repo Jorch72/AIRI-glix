@@ -594,7 +594,12 @@ public class WorldUtil
 
 			public Block getBlock(World world)
 			{
-				return this.block == null && world != null ? world.getBlock(this.posX, this.posY, this.posZ) : this.block;
+				return getBlock(world, false);
+			}
+
+			public Block getBlock(World world, boolean force)
+			{
+				return this.block == null && world != null || force ? world.getBlock(this.posX, this.posY, this.posZ) : this.block;
 			}
 
 			public int getBlockMetadata()
