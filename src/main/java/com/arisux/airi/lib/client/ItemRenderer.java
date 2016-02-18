@@ -16,7 +16,6 @@ public abstract class ItemRenderer implements IItemRenderer
 	protected PlayerResourceManager resourceManager;
 	protected ResourceLocation resource;
 	protected ModelBaseExtension model;
-	protected float rotation;
 	private boolean rendersInFirstPerson, rendersInThirdPerson, rendersInInventory, rendersInWorld;
 
 	public ItemRenderer(ModelBaseExtension model, ResourceLocation resource)
@@ -61,8 +60,6 @@ public abstract class ItemRenderer implements IItemRenderer
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data)
 	{
-		this.rotation = (Minecraft.getMinecraft().thePlayer.worldObj.getWorldTime() % 360) * 8F;
-		
 		GlStateManager.pushMatrix();
 		{
 			switch (type)
@@ -148,10 +145,5 @@ public abstract class ItemRenderer implements IItemRenderer
 	public boolean firstPersonRenderCheck(Object o)
 	{
 		return o == mc.renderViewEntity && mc.gameSettings.thirdPersonView == 0 && (!(mc.currentScreen instanceof GuiInventory) && !(mc.currentScreen instanceof GuiContainerCreative));
-	}
-	
-	public float getRotation()
-	{
-		return rotation;
 	}
 }
