@@ -1341,7 +1341,12 @@ public class WorldUtil
 		
 	    public static boolean isInMaterial(Entity entity, Material material)
 	    {
-	        return entity.worldObj.isMaterialInBB(entity.getBoundingBox().expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D), material);
+	    	if (entity != null && entity.worldObj != null)
+	    	{
+	    		return entity.worldObj.isMaterialInBB(entity.getBoundingBox().expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D), material);
+	    	}
+	    	
+	    	return false;
 	    }
 
 		public static class Players
