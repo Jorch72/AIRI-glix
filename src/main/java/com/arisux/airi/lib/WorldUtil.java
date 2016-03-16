@@ -17,6 +17,7 @@ import com.arisux.airi.lib.world.CustomExplosion;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -1327,6 +1328,21 @@ public class WorldUtil
 				}
 			}
 		}
+		
+	    public boolean isInLava(Entity entity)
+	    {
+	        return isInMaterial(entity, Material.lava);
+	    }
+		
+	    public boolean isInWater(Entity entity)
+	    {
+	        return isInMaterial(entity, Material.water);
+	    }
+		
+	    public boolean isInMaterial(Entity entity, Material material)
+	    {
+	        return entity.worldObj.isMaterialInBB(entity.getBoundingBox().expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D), material);
+	    }
 
 		public static class Players
 		{
