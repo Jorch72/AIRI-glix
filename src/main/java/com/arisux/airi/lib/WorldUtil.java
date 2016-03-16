@@ -1329,17 +1329,17 @@ public class WorldUtil
 			}
 		}
 		
-	    public boolean isInLava(Entity entity)
+	    public static boolean isInLava(Entity entity)
 	    {
 	        return isInMaterial(entity, Material.lava);
 	    }
 		
-	    public boolean isInWater(Entity entity)
+	    public static boolean isInWater(Entity entity)
 	    {
 	        return isInMaterial(entity, Material.water);
 	    }
 		
-	    public boolean isInMaterial(Entity entity, Material material)
+	    public static boolean isInMaterial(Entity entity, Material material)
 	    {
 	        return entity.worldObj.isMaterialInBB(entity.getBoundingBox().expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D), material);
 	    }
