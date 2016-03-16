@@ -1,10 +1,15 @@
 package com.arisux.airi.lib;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.util.*;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.ai.EntityMoveHelper;
+import net.minecraft.pathfinding.PathNavigate;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Session;
+import net.minecraft.util.Timer;
 
 public class AccessWrapper
 {
@@ -108,5 +113,15 @@ public class AccessWrapper
 	public static ResourceLocation getParticleTextures()
 	{
 		return (ResourceLocation) ReflectionUtil.get(Minecraft.getMinecraft().effectRenderer, "particleTextures", "field_110737_b");
+	}
+
+	public static void setMoveHelper(EntityLiving living, EntityMoveHelper moveHelper)
+	{
+		ReflectionUtil.set(EntityLiving.class, living, "moveHelper", "field_70765_h", moveHelper);
+	}
+
+	public static void setNavigator(EntityLiving living, PathNavigate navigator)
+	{
+		ReflectionUtil.set(EntityLiving.class, living, "navigator", "field_70699_by", navigator);
 	}
 }
