@@ -43,11 +43,16 @@ public class ReflectionUtil
 	
 	public static void set(Object obj, String deobfName, String obfName, Object value)
 	{
+		set(obj.getClass(), deobfName, obfName, value);
+	}
+	
+	public static void set(Class<?> clazz, Object obj, String deobfName, String obfName, Object value)
+	{
 		String fieldName = ModUtil.isDevEnvironment() ? deobfName : obfName;
 
 		try
 		{
-			Field field = obj.getClass().getDeclaredField(fieldName);
+			Field field = clazz.getDeclaredField(fieldName);
 			field.setAccessible(true);
 			field.set(obj, value);
 		}
@@ -59,11 +64,16 @@ public class ReflectionUtil
 	
 	public static Object get(Object obj, String deobfName, String obfName)
 	{
+		return get(obj.getClass(), obj, deobfName, obfName);
+	}
+	
+	public static Object get(Class<?> clazz, Object obj, String deobfName, String obfName)
+	{
 		String fieldName = ModUtil.isDevEnvironment() ? deobfName : obfName;
 		
 		try
 		{
-			Field field = obj.getClass().getDeclaredField(fieldName);
+			Field field = clazz.getDeclaredField(fieldName);
 			field.setAccessible(true);
 			return field.get(obj);
 		}
