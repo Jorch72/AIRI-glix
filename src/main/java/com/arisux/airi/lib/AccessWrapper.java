@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.ResourceLocation;
@@ -123,5 +124,45 @@ public class AccessWrapper
 	public static void setNavigator(EntityLiving living, PathNavigate navigator)
 	{
 		ReflectionUtil.set(EntityLiving.class, living, "navigator", "field_70699_by", navigator);
+	}
+	
+	public static double getMoveHelperPosX(EntityMoveHelper moveHelper)
+	{
+		return (Double) ReflectionUtil.get(EntityMoveHelper.class, moveHelper, "posX", "field_75646_b");
+	}
+	
+	public static double getMoveHelperPosY(EntityMoveHelper moveHelper)
+	{
+		return (Double) ReflectionUtil.get(EntityMoveHelper.class, moveHelper, "posY", "field_75647_c");
+	}
+	
+	public static double getMoveHelperPosZ(EntityMoveHelper moveHelper)
+	{
+		return (Double) ReflectionUtil.get(EntityMoveHelper.class, moveHelper, "posZ", "field_75644_d");
+	}
+	
+	public static double getMoveHelperSpeed(EntityMoveHelper moveHelper)
+	{
+		return (Double) ReflectionUtil.get(EntityMoveHelper.class, moveHelper, "speed", "field_75645_e");
+	}
+	
+	public static double getLookHelperPosX(EntityLookHelper lookHelper)
+	{
+		return (Double) ReflectionUtil.get(EntityLookHelper.class, lookHelper, "posX", "field_75656_e");
+	}
+	
+	public static double getLookHelperPosY(EntityLookHelper lookHelper)
+	{
+		return (Double) ReflectionUtil.get(EntityLookHelper.class, lookHelper, "posY", "field_75653_f");
+	}
+	
+	public static double getLookHelperPosZ(EntityLookHelper lookHelper)
+	{
+		return (Double) ReflectionUtil.get(EntityLookHelper.class, lookHelper, "posZ", "field_75654_g");
+	}
+	
+	public static boolean getLookHelperIsLooking(EntityLookHelper lookHelper)
+	{
+		return (Boolean) ReflectionUtil.get(EntityLookHelper.class, lookHelper, "isLooking", "field_75655_d");
 	}
 }
