@@ -83,15 +83,24 @@ public class ModUtil
 		{
 			return registerBlock(block, reference, this.getMod().tab());
 		}
-		
+
 		public Block registerBlock(Block block, String reference, CreativeTabs tab)
 		{
 			block.setBlockName(getMod().domain() + reference);
 			block.setBlockTextureName((block.getUnlocalizedName()).replace("tile.", ""));
-			block.setCreativeTab(tab);
+			this.setCreativeTab(block, tab);
+			
 			return GameRegistry.registerBlock(block, reference);
 		}
 		
+		public void setCreativeTab(Block block, CreativeTabs tab)
+		{
+			if (tab != null)
+			{
+				block.setCreativeTab(tab);
+			}
+		}
+
 		public Item registerItem(Item item, String reference)
 		{
 			return registerItem(item, reference, true, null);
@@ -349,7 +358,7 @@ public class ModUtil
 
 		return null;
 	}
-	
+
 	public static JsonElement parseJsonFromFile(File pathToJson)
 	{
 		try
@@ -362,7 +371,7 @@ public class ModUtil
 		}
 		return null;
 	}
-	
+
 	public static JsonElement parseJsonFromStream(InputStream stream)
 	{
 		try
@@ -375,7 +384,7 @@ public class ModUtil
 			{
 				for (JsonElement json : rootElement.getAsJsonArray())
 				{
-					 return json;
+					return json;
 				}
 			}
 		}
@@ -424,80 +433,80 @@ public class ModUtil
 
 			return null;
 		}
-		
-	    public static File extract(File compressedFile, File extractionDir)
-	    {
-	    	if (!extractionDir.exists())
-	    	{
-	    		extractionDir.mkdir();
-	    	}
 
-	        ZipFile zip = null;
+		public static File extract(File compressedFile, File extractionDir)
+		{
+			if (!extractionDir.exists())
+			{
+				extractionDir.mkdir();
+			}
 
-	        try
-	        {
-	            zip = new ZipFile(compressedFile);
+			ZipFile zip = null;
 
-	            Enumeration<? extends ZipEntry> e = zip.entries();
+			try
+			{
+				zip = new ZipFile(compressedFile);
 
-	            while (e.hasMoreElements())
-	            {
-	                ZipEntry entry = e.nextElement();
+				Enumeration<? extends ZipEntry> e = zip.entries();
 
-	                File destinationPath = new File(extractionDir, entry.getName());
+				while (e.hasMoreElements())
+				{
+					ZipEntry entry = e.nextElement();
 
-	                if (!destinationPath.exists())
-	                {
-	                	destinationPath.getParentFile().mkdirs();
-	                }
+					File destinationPath = new File(extractionDir, entry.getName());
 
-	                if (entry.isDirectory())
-	                {
-	                    continue;
-	                }
-	                else
-	                {
-	                    BufferedInputStream inputStream = new BufferedInputStream(zip.getInputStream(entry));
+					if (!destinationPath.exists())
+					{
+						destinationPath.getParentFile().mkdirs();
+					}
 
-	                    int b;
-	                    byte buffer[] = new byte[1024];
+					if (entry.isDirectory())
+					{
+						continue;
+					}
+					else
+					{
+						BufferedInputStream inputStream = new BufferedInputStream(zip.getInputStream(entry));
 
-	                    FileOutputStream fileOutputStream = new FileOutputStream(destinationPath);
-	                    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, 1024);
+						int b;
+						byte buffer[] = new byte[1024];
 
-	                    while ((b = inputStream.read(buffer, 0, 1024)) != -1)
-	                    {
-	                        bufferedOutputStream.write(buffer, 0, b);
-	                    }
+						FileOutputStream fileOutputStream = new FileOutputStream(destinationPath);
+						BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, 1024);
 
-	                    bufferedOutputStream.close();
-	                    inputStream.close();
-	                    AIRI.logger.info("Extracted: " + destinationPath);
-	                }
-	            }
-	        }
-	        catch (Exception e)
-	        {
-	            AIRI.logger.warning("Error extracting %s: %s", compressedFile.getAbsolutePath(), e);
-	            e.printStackTrace();
-	        }
-	        finally
-	        {
-	        	if (zip != null)
-	        	{
-	        		try
-	        		{
+						while ((b = inputStream.read(buffer, 0, 1024)) != -1)
+						{
+							bufferedOutputStream.write(buffer, 0, b);
+						}
+
+						bufferedOutputStream.close();
+						inputStream.close();
+						AIRI.logger.info("Extracted: " + destinationPath);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				AIRI.logger.warning("Error extracting %s: %s", compressedFile.getAbsolutePath(), e);
+				e.printStackTrace();
+			}
+			finally
+			{
+				if (zip != null)
+				{
+					try
+					{
 						zip.close();
-					} 
-	        		catch (Exception e)
-	        		{
-	        			AIRI.logger.warning("Error closing compressed file: %s", e);
+					}
+					catch (Exception e)
+					{
+						AIRI.logger.warning("Error closing compressed file: %s", e);
 						e.printStackTrace();
 					}
-	        	}
-	        }
+				}
+			}
 
-	        return extractionDir;
-	    }
+			return extractionDir;
+		}
 	}
 }

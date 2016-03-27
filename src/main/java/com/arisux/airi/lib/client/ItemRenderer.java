@@ -71,6 +71,9 @@ public abstract class ItemRenderer implements IItemRenderer
 					this.renderFirstPerson(item, data);
 					break;
 				case INVENTORY:
+					GlStateManager.rotate(-45, 1, 0, 0);
+					GlStateManager.rotate(180, 0, 1, 0);
+					GlStateManager.translate(-16, 0, 0);
 					this.renderInInventory(item, data);
 					break;
 				case ENTITY:
