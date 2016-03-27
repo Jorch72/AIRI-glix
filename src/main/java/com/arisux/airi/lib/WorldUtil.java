@@ -21,8 +21,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -1451,6 +1453,29 @@ public class WorldUtil
 
 			public static class Inventories
 			{
+				public static void dropItemsInAt(IInventory inv, World world, double xCoord, double yCoord, double zCoord)
+				{
+					if (inv != null)
+					{
+						for (byte i = 0; i < inv.getSizeInventory(); i++)
+						{
+							ItemStack stack = inv.getStackInSlotOnClosing(i);
+
+							if (stack != null)
+							{
+								EntityItem entity = new EntityItem(world, xCoord + world.rand.nextFloat(), yCoord + world.rand.nextFloat(), zCoord + world.rand.nextFloat(), stack);
+								float velocity = 0.05F;
+								
+								entity.motionX = (-0.5F + world.rand.nextFloat()) * velocity;
+								entity.motionY = (4F + world.rand.nextFloat()) * velocity;
+								entity.motionZ = (-0.5F + world.rand.nextFloat()) * velocity;
+
+								world.spawnEntityInWorld(entity);
+							}
+						}
+					}
+				}
+				
 				/**
 				 * Get the slot id of the specified item in the specified inventory.
 				 * 

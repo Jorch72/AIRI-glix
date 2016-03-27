@@ -2,6 +2,7 @@ package com.arisux.airi.lib;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.entity.EntityLiving;
@@ -164,5 +165,20 @@ public class AccessWrapper
 	public static boolean getLookHelperIsLooking(EntityLookHelper lookHelper)
 	{
 		return (Boolean) ReflectionUtil.get(EntityLookHelper.class, lookHelper, "isLooking", "field_75655_d");
+	}
+	
+	public static float getBlockResistance(Block block)
+	{
+		return (Float) ReflectionUtil.get(Block.class, block, "blockResistance", "field_149781_w");
+	}
+	
+	public static float getBlockHardness(Block block)
+	{
+		return (Float) ReflectionUtil.get(Block.class, block, "blockHardness", "field_149782_v");
+	}
+	
+	public static String getBlockTextureName(Block block)
+	{
+		return (String) ReflectionUtil.get(Block.class, block, "textureName", "field_149768_d");
 	}
 }

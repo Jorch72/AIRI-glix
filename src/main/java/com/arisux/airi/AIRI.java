@@ -1,14 +1,12 @@
 package com.arisux.airi;
 
-import java.util.Arrays;
-
 import com.arisux.airi.api.remapping.RemappingAPI;
 import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.updater.UpdaterAPI;
 import com.arisux.airi.api.wavefrontapi.WavefrontAPI;
 import com.arisux.airi.api.window.WindowAPI;
+import com.arisux.airi.lib.BlockTypes.BlockMaterial;
 import com.arisux.airi.lib.ModUtil;
-import com.arisux.airi.lib.BlockTypes.HookedBlock;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -104,7 +102,7 @@ public class AIRI
 			(updater = updaterAPI.createNewUpdater(Properties.MODID, container.getVersion(), settings.getServer() + "/page/beta/airi/latest.php", settings.getServer() + "/page/mods/airi/", settings.getServer() + "/page/mods/airi/changelog.txt")).postInitialize(event);
 		}
 		
-		GameRegistry.registerBlock(WORLDGEN_GHOST = (new HookedBlock(Material.air)).setCreativeTab(CreativeTabs.tabAllSearch), "airi.wgghost");
+		GameRegistry.registerBlock(WORLDGEN_GHOST = (new BlockMaterial(Material.air)).setCreativeTab(CreativeTabs.tabAllSearch), "airi.wgghost");
 	}
 
 	@Mod.EventHandler

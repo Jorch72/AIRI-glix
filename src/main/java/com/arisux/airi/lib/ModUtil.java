@@ -1,13 +1,39 @@
 package com.arisux.airi.lib;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.Level;
+
+import com.arisux.airi.AIRI;
+import com.arisux.airi.lib.interfaces.IMod;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.creativetab.CreativeTabs;
@@ -15,21 +41,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.logging.log4j.Level;
-
-import com.arisux.airi.AIRI;
-import com.arisux.airi.lib.BlockTypes.HookedBlock;
-import com.arisux.airi.lib.interfaces.IMod;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.common.*;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ModUtil
 {
@@ -70,144 +81,17 @@ public class ModUtil
 		 */
 		public Block registerBlock(Block block, String reference)
 		{
-			return registerBlock(block, reference, true);
+			return registerBlock(block, reference, this.getMod().tab());
 		}
-
-		/**
-		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
-		 * registration of Blocks. Using this method will result in the Block being automatically assigned
-		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-		 * 
-		 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
-		 * mod's domain. Texture names are based off of the Block's unlocalized name.
-		 * 
-		 * @param block - The Block instance to register.
-		 * @param reference - The reference ID to register the block under.
-		 * @param visibleOnTab - If set true, the Block will automatically be registered to the CreativeTab
-		 * specified in the IBHandler instance this Block was registered from.
-		 * @return Returns the Block instances originally provided in the block parameter.
-		 */
-		public Block registerBlock(Block block, String reference, boolean visibleOnTab)
+		
+		public Block registerBlock(Block block, String reference, CreativeTabs tab)
 		{
-			return registerBlock(block, reference, null, visibleOnTab);
+			block.setBlockName(getMod().domain() + reference);
+			block.setBlockTextureName((block.getUnlocalizedName()).replace("tile.", ""));
+			block.setCreativeTab(tab);
+			return GameRegistry.registerBlock(block, reference);
 		}
-
-		/**
-		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
-		 * registration of Blocks. Using this method will result in the Block being automatically assigned
-		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-		 * 
-		 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
-		 * mod's domain. Texture names are based off of the Block's unlocalized name.
-		 * 
-		 * @param block - The Block instance to register.
-		 * @param reference - The reference ID to register the block under.
-		 * @param texture - The path to the texture assigned to this block.
-		 * @return Returns the Block instances originally provided in the block parameter.
-		 */
-		public Block registerBlock(Block block, String reference, String texture)
-		{
-			return registerBlock(block, reference, texture, true);
-		}
-
-		/**
-		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
-		 * registration of Blocks. Using this method will result in the Block being automatically assigned
-		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-		 * 
-		 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
-		 * mod's domain. Texture names are based off of the Block's unlocalized name.
-		 * 
-		 * This method allows you to provide a parent texture block as a parameter. The block you provide this
-		 * method with will allow the block currently being registered to use the parent block's texture, but
-		 * only on the condition that the block extends HookedBlock.
-		 * 
-		 * @param block - The Block instance to register.
-		 * @param reference - The reference ID to register the block under.
-		 * @param textureBlock - The parent block of which this block will receive its texture from.
-		 * @return Returns the Block instances originally provided in the block parameter.
-		 */
-		public Block registerBlock(Block block, String reference, Block textureBlock)
-		{
-			return registerBlock(block, reference, (textureBlock instanceof HookedBlock ? ((HookedBlock) textureBlock).getBlockTextureName() : null), true);
-		}
-
-		/**
-		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
-		 * registration of Blocks. Using this method will result in the Block being automatically assigned
-		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-		 * 
-		 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
-		 * mod's domain. Texture names are based off of the Block's unlocalized name.
-		 * 
-		 * This method allows you to provide a parent texture block as a parameter. The block you provide this
-		 * method with will allow the block currently being registered to use the parent block's texture, but
-		 * only on the condition that the block extends HookedBlock.
-		 * 
-		 * @param block - The Block instance to register.
-		 * @param reference - The reference ID to register the block under.
-		 * @param textureBlock - The parent block of which this block will receive its texture from.
-		 * @param tab - The CreativeTabs tab instance this Block will be displayed on.
-		 * @return Returns the Block instances originally provided in the block parameter.
-		 */
-		public Block registerBlock(Block block, String reference, Block textureBlock, CreativeTabs tab)
-		{
-			return registerBlock(block, reference, (textureBlock instanceof HookedBlock ? ((HookedBlock) textureBlock).getBlockTextureName() : null), tab);
-		}
-
-		/**
-		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
-		 * registration of Blocks. Using this method will result in the Block being automatically assigned
-		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-		 * 
-		 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
-		 * mod's domain. Texture names are based off of the Block's unlocalized name.
-		 * 
-		 * @param block - The Block instance to register.
-		 * @param reference - The reference ID to register the block under.
-		 * @param texture - The path to the texture assigned to this block.
-		 * @param visibleOnTab - If set true, the Block will automatically be registered to the CreativeTab
-		 * specified in the IBHandler instance this Block was registered from.
-		 * @return Returns the Block instances originally provided in the block parameter.
-		 */
-		public Block registerBlock(Block block, String reference, String texture, boolean visibleOnTab)
-		{
-			return ModUtil.registerBlock(block, reference, texture, this, visibleOnTab, this.getMod().tab());
-		}
-
-		/**
-		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
-		 * registration of Blocks. Using this method will result in the Block being automatically assigned
-		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-		 * 
-		 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
-		 * mod's domain. Texture names are based off of the Block's unlocalized name.
-		 * 
-		 * @param block - The Block instance to register.
-		 * @param reference - The reference ID to register the block under.
-		 * @param texture - The path to the texture assigned to this block.
-		 * @param tab - The CreativeTabs tab instance this Block will be displayed on.
-		 * @return Returns the Block instances originally provided in the block parameter.
-		 */
-		public Block registerBlock(Block block, String reference, String texture, CreativeTabs tab)
-		{
-			return ModUtil.registerBlock(block, reference, texture, this, tab != null, tab);
-		}
-
-		/**
-		 * Wrapper method for the registerItem method found in ModEngine. Allows for simplified
-		 * registration of Items. Using this method will result in the Item being automatically assigned
-		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-		 * 
-		 * Automatically assigned texture IDs are set to the default resource location of Items in the
-		 * mod's domain. Texture names are based off of the Item's unlocalized name.
-		 * 
-		 * Unlocalized names are based off of the specified String reference IDs.
-		 * 
-		 * @param item - The Block instance to register.
-		 * @param reference - The reference ID to register the item under.
-		 * @return Returns the Item instances originally provided in the item parameter.
-		 */
+		
 		public Item registerItem(Item item, String reference)
 		{
 			return registerItem(item, reference, true, null);

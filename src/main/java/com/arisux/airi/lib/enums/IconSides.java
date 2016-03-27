@@ -2,7 +2,7 @@ package com.arisux.airi.lib.enums;
 
 public enum IconSides
 {
-	BOTTOM(0), TOP(1), BACK(2), FRONT(3), LEFT(4), RIGHT(5);
+	DEFAULT(-1), BOTTOM(0), TOP(1), BACK(2), FRONT(3), LEFT(4), RIGHT(5);
 	
 	public int side;
 	
@@ -26,6 +26,6 @@ public enum IconSides
 			}
 		}
 		
-		return null;
+		return DEFAULT;
 	}
 }
