@@ -94,7 +94,7 @@ public class WorldUtil
 		for (int y = pos.posY; y < world.getHeight(); y++)
 		{
 			CoordData position = new CoordData(pos.posX, y + 1, pos.posZ);
-
+			
 			if (Entities.isPositionSafe(position, world))
 			{
 				return position;
@@ -102,6 +102,21 @@ public class WorldUtil
 		}
 
 		return null;
+	}
+
+	public static boolean canSeeSky(CoordData pos, World world)
+	{
+		for (int y = pos.posY; y < world.getHeight(); y++)
+		{
+			CoordData position = new CoordData(pos.posX, y + 1, pos.posZ);
+			
+			if (position.getBlock(world) != net.minecraft.init.Blocks.air)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -935,9 +950,7 @@ public class WorldUtil
 			if (pos != null && world != null)
 			{
 
-				boolean safe = pos.getBlock(world) instanceof net.minecraft.block.BlockAir
-					&& pos.add(0, 1, 0).getBlock(world) instanceof net.minecraft.block.BlockAir
-					&& !(pos.subtract(0, 1, 0).getBlock(world) instanceof net.minecraft.block.BlockAir);
+				boolean safe = pos.getBlock(world) instanceof net.minecraft.block.BlockAir && pos.add(0, 1, 0).getBlock(world) instanceof net.minecraft.block.BlockAir && !(pos.subtract(0, 1, 0).getBlock(world) instanceof net.minecraft.block.BlockAir);
 
 				return safe;
 			}
@@ -961,11 +974,11 @@ public class WorldUtil
 				newSafePosition = WorldUtil.getNextSafePositionBelow(pos, world);
 			}
 
-//			if (!(isPositionSafe(newSafePosition, world)))
-//			{
-//				Random rand = new Random();
-//				newSafePosition = getSafePosition(new CoordData(rand.nextInt(30000), rand.nextInt(256), rand.nextInt(30000)), world);
-//			}
+			// if (!(isPositionSafe(newSafePosition, world)))
+			// {
+			// Random rand = new Random();
+			// newSafePosition = getSafePosition(new CoordData(rand.nextInt(30000), rand.nextInt(256), rand.nextInt(30000)), world);
+			// }
 
 			return newSafePosition;
 		}
@@ -1330,26 +1343,26 @@ public class WorldUtil
 				}
 			}
 		}
-		
-	    public static boolean isInLava(Entity entity)
-	    {
-	        return isInMaterial(entity, Material.lava);
-	    }
-		
-	    public static boolean isInWater(Entity entity)
-	    {
-	        return isInMaterial(entity, Material.water);
-	    }
-		
-	    public static boolean isInMaterial(Entity entity, Material material)
-	    {
-	    	if (entity != null && entity.worldObj != null && entity.getBoundingBox() != null)
-	    	{
-	    		return entity.worldObj.isMaterialInBB(entity.getBoundingBox().expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D), material);
-	    	}
-	    	
-	    	return false;
-	    }
+
+		public static boolean isInLava(Entity entity)
+		{
+			return isInMaterial(entity, Material.lava);
+		}
+
+		public static boolean isInWater(Entity entity)
+		{
+			return isInMaterial(entity, Material.water);
+		}
+
+		public static boolean isInMaterial(Entity entity, Material material)
+		{
+			if (entity != null && entity.worldObj != null && entity.getBoundingBox() != null)
+			{
+				return entity.worldObj.isMaterialInBB(entity.getBoundingBox().expand(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D), material);
+			}
+
+			return false;
+		}
 
 		public static class Players
 		{
@@ -1465,7 +1478,7 @@ public class WorldUtil
 							{
 								EntityItem entity = new EntityItem(world, xCoord + world.rand.nextFloat(), yCoord + world.rand.nextFloat(), zCoord + world.rand.nextFloat(), stack);
 								float velocity = 0.05F;
-								
+
 								entity.motionX = (-0.5F + world.rand.nextFloat()) * velocity;
 								entity.motionY = (4F + world.rand.nextFloat()) * velocity;
 								entity.motionZ = (-0.5F + world.rand.nextFloat()) * velocity;
@@ -1475,7 +1488,7 @@ public class WorldUtil
 						}
 					}
 				}
-				
+
 				/**
 				 * Get the slot id of the specified item in the specified inventory.
 				 * 
@@ -1485,17 +1498,17 @@ public class WorldUtil
 				 */
 				public static int getSlotForItemIn(Item item, InventoryPlayer inventory)
 				{
-			        for (int id = 0; id < inventory.getSizeInventory(); ++id)
-			        {
-			            if (inventory.getStackInSlot(id) != null && inventory.getStackInSlot(id).getItem() == item)
-			            {
-			                return id;
-			            }
-			        }
+					for (int id = 0; id < inventory.getSizeInventory(); ++id)
+					{
+						if (inventory.getStackInSlot(id) != null && inventory.getStackInSlot(id).getItem() == item)
+						{
+							return id;
+						}
+					}
 
-			        return -1;
+					return -1;
 				}
-				
+
 				/**
 				 * @param items - List of Items to choose a random Item from.
 				 * @return an ItemStack instance instantaniated from a random Item chosen from the provided Item Array.
