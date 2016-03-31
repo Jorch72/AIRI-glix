@@ -126,6 +126,11 @@ public class AccessWrapper
 	{
 		ReflectionUtil.set(EntityLiving.class, living, "navigator", "field_70699_by", navigator);
 	}
+
+	public static void setLookHelper(EntityLiving living, EntityLookHelper lookHelper)
+	{
+		ReflectionUtil.set(EntityLiving.class, living, "lookHelper", "field_70749_g", lookHelper);
+	}
 	
 	public static double getMoveHelperPosX(EntityMoveHelper moveHelper)
 	{
