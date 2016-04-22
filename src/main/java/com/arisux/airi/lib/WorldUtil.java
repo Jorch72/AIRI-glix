@@ -101,7 +101,7 @@ public class WorldUtil
 			}
 		}
 
-		return null;
+		return pos;
 	}
 
 	public static boolean canSeeSky(CoordData pos, World world)
@@ -152,7 +152,7 @@ public class WorldUtil
 			}
 		}
 
-		return null;
+		return pos;
 	}
 
 	/**
@@ -945,16 +945,17 @@ public class WorldUtil
 		 * @param world - The world instance we are checking in.
 		 * @return true if the position is safe.
 		 */
+		
 		public static boolean isPositionSafe(CoordData pos, World world)
 		{
 			if (pos != null && world != null)
 			{
-
-				boolean safe = pos.getBlock(world) instanceof net.minecraft.block.BlockAir && pos.add(0, 1, 0).getBlock(world) instanceof net.minecraft.block.BlockAir && !(pos.subtract(0, 1, 0).getBlock(world) instanceof net.minecraft.block.BlockAir);
-
-				return safe;
+				CoordData newPos = new CoordData(pos.posX, pos.posY, pos.posZ);
+				CoordData newPosBelow = new CoordData(pos.posX, pos.posY - 1, pos.posZ);
+				
+				return newPosBelow.getBlock(world) != net.minecraft.init.Blocks.air && newPos.getBlock(world) == net.minecraft.init.Blocks.air;
 			}
-
+			
 			return false;
 		}
 
