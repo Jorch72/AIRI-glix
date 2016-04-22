@@ -3,7 +3,6 @@ package com.arisux.airi;
 import java.util.ArrayList;
 
 import com.arisux.airi.api.remapping.RemappingAPI;
-import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.updater.UpdaterAPI;
 import com.arisux.airi.api.wavefrontapi.WavefrontAPI;
 import com.arisux.airi.api.window.WindowAPI;
@@ -31,10 +30,10 @@ public class AIRI
 
 	public static Logger logger = new Logger();
 	private Properties properties = new Properties();
+	private ModContainer container;
 	public LocalEventHandler events;
 	public GuiElementHandler guiElementHandler;
 	public Settings settings;
-	public Updater updater;
 	
 	private WindowAPI windowAPI;
 	private UpdaterAPI updaterAPI;
@@ -49,6 +48,11 @@ public class AIRI
 	public static AIRI instance()
 	{
 		return instance;
+	}
+
+	public ModContainer container()
+	{
+		return this.container == null ? this.container = ModUtil.getModContainerForId(Properties.MODID) : this.container;
 	}
 	
 	public static Properties properties()
@@ -100,11 +104,9 @@ public class AIRI
 	@Mod.EventHandler
 	public void postInitialize(FMLPostInitializationEvent event)
 	{
-		ModContainer container = ModUtil.getModContainerForId(Properties.MODID);
-		
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
 		{
-			(updater = updaterAPI.createNewUpdater(Properties.MODID, container.getVersion(), settings.getServer() + "/page/beta/airi/latest.php", settings.getServer() + "/page/mods/airi/", settings.getServer() + "/page/mods/airi/changelog.txt")).postInitialize(event);
+			UpdateHandler.instance.postInitialize(event);
 		}
 		
 		GameRegistry.registerBlock(WORLDGEN_GHOST = (new BlockMaterial(Material.air)).setCreativeTab(CreativeTabs.tabAllSearch), "airi.wgghost");

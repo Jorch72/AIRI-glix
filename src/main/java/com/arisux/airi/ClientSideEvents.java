@@ -89,7 +89,7 @@ public class ClientSideEvents implements IInitializablePre
 				if (buttonUpdates != null)
 				{
 					String updates = String.valueOf(amountOfUpdates);
-					String updateString = amountOfUpdates > 1 ? "Updates Available" : "Update Available";
+					String updateString = amountOfUpdates > 1 ? "Updates" : "Update";
 					int renderWidth = RenderUtil.getStringRenderWidth(updates);
 					int backgroundWidth = 30 + renderWidth + RenderUtil.getStringRenderWidth(updateString);
 

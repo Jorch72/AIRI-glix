@@ -1,5 +1,7 @@
 package com.arisux.airi.api.window.gui.windows;
 
+import java.util.ArrayList;
+
 import com.arisux.airi.AIRI;
 import com.arisux.airi.api.updater.Changelog;
 import com.arisux.airi.api.updater.Updater;
@@ -23,7 +25,7 @@ public class WindowUpdates extends Window implements IWindow
 	public WindowUpdates(String id, String title, int xPos, int yPos, int width, int height)
 	{
 		super(id, title, xPos, yPos, width, height);
-		this.updater = AIRI.updaterApi().getUpdaterRegistry().get(0);
+		this.updater = AIRI.updaterApi().getAvailableUpdates().get(0);
 	}
 
 	@Override
@@ -49,7 +51,18 @@ public class WindowUpdates extends Window implements IWindow
 			GlStateManager.pushMatrix();
 			{
 				Changelog.SubChangelog changelog = updater.getChangelog().getChangelogByVersion(updater.getVersionData().get("MODVER"));
-
+				
+				if (changelog == null || changelog != null && changelog.equals(""))
+				{
+					if (updater.getChangelog() != null)
+					{
+						if (updater.getChangelog().getSubLogs() != null && updater.getChangelog().getSubLogs().size() > 0)
+						{
+							changelog = updater.getChangelog().getSubLogs().get(0);
+						}
+					}
+				}
+				
 				if (changelog != null && !changelog.equals(""))
 				{
 					RenderUtil.drawRectWithOutline(this.xPos + 5, this.yPos + 35, this.width - 10, this.height - 40, 1, 0xFF000000, 0xFF111111);
@@ -94,7 +107,8 @@ public class WindowUpdates extends Window implements IWindow
 				@Override
 				public void actionPerformed(GuiCustomButton button)
 				{
-					updater = AIRI.updaterApi().getAvailableUpdates().get(updater.getUpdaterId() < AIRI.updaterApi().getAvailableUpdates().size() - 1 ? updater.getUpdaterId() + 1 : 0);
+					ArrayList<Updater> updates = AIRI.updaterApi().getAvailableUpdates();
+					updater = updates.get(updates.indexOf(updater) < (updates.size() - 1) ? updates.indexOf(updater) + 1 : 0);
 				}
 			});
 			if (buttonNext.isMouseOver())
@@ -117,7 +131,8 @@ public class WindowUpdates extends Window implements IWindow
 				@Override
 				public void actionPerformed(GuiCustomButton button)
 				{
-					updater = AIRI.updaterApi().getAvailableUpdates().get(updater.getUpdaterId() > 0 && updater.getUpdaterId() < AIRI.updaterApi().getAvailableUpdates().size() - 1 ? updater.getUpdaterId() - 1 : AIRI.updaterApi().getAvailableUpdates().size() - 1);
+					ArrayList<Updater> updates = AIRI.updaterApi().getAvailableUpdates();
+					updater = updates.get(updates.indexOf(updater) > 0 && updates.indexOf(updater) <= updates.size() - 1 ? updates.indexOf(updater) - 1 : updates.size() - 1);
 				}
 			});
 			if (buttonPrevious.isMouseOver())

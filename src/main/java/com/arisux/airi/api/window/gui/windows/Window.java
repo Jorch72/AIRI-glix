@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import com.arisux.airi.AIRI;
 import com.arisux.airi.api.window.IWindow;
-import com.arisux.airi.api.window.gui.DesktopWindowManager;
+import com.arisux.airi.api.window.gui.OverlayWindowManager;
 import com.arisux.airi.lib.BasicMarkupParser;
 import com.arisux.airi.lib.GuiElements.GuiCustomButton;
 import com.arisux.airi.lib.RenderUtil;
@@ -16,7 +16,7 @@ import net.minecraft.client.resources.I18n;
 
 public abstract class Window implements IWindow
 {
-	protected DesktopWindowManager manager;
+	protected OverlayWindowManager manager;
 	private String title, id, defaultText, previousText;
 	private ArrayList<String> defaultTextLines = new ArrayList<String>();
 	protected ArrayList<GuiButton> buttonList = new ArrayList<GuiButton>();

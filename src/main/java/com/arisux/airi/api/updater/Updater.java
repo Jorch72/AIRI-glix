@@ -19,14 +19,16 @@ import net.minecraft.entity.player.EntityPlayer;
 public class Updater implements IInitializablePost
 {
 	private HashMap<String, String> versionData = new HashMap<String, String>();
-	private String modId, curVer, updateUrl, downloadUrl, changelogUrl;
+	private String modId;
+	private String curVer;
+	private String updateUrl;
+	private String downloadUrl;
+	private String changelogUrl;
 	private Thread changelogDownloadThread;
 	private Changelog changelog;
-	private int updaterId;
 
-	public Updater(int updaterId, String modId, String curVer, String updateUrl, String downloadUrl, String changelogUrl)
+	public Updater(String modId, String curVer, String updateUrl, String downloadUrl, String changelogUrl)
 	{
-		this.updaterId = updaterId;
 		this.modId = modId;
 		this.curVer = curVer;
 		this.updateUrl = updateUrl;
@@ -37,13 +39,8 @@ public class Updater implements IInitializablePost
 	@Override
 	public void postInitialize(FMLPostInitializationEvent event)
 	{
+		AIRI.updaterApi().register(this);
 		downloadVersionInformation();
-	}
-
-	public Updater register()
-	{
-		AIRI.updaterApi().getUpdaterRegistry().add(this);
-		return this;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -80,7 +77,7 @@ public class Updater implements IInitializablePost
 			@Override
 			public void run()
 			{
-				System.out.println("Checking for updates for mod with ID " + modId);
+				System.out.println(String.format("Checking for %s updates...", modId));
 
 				try
 				{
@@ -137,12 +134,7 @@ public class Updater implements IInitializablePost
 			e.printStackTrace();
 		}
 	}
-
-	public int getUpdaterId()
-	{
-		return updaterId;
-	}
-
+	
 	public HashMap<String, String> getVersionData()
 	{
 		return this.versionData;

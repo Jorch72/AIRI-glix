@@ -19,7 +19,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
 @SideOnly(Side.CLIENT)
-public class DesktopWindowManager extends GuiCustomScreen
+public class OverlayWindowManager extends GuiCustomScreen
 {
 	protected Taskbar taskbar;
 	private WindowAPI windowapi;
@@ -30,7 +30,7 @@ public class DesktopWindowManager extends GuiCustomScreen
 	private int mouseXLast;
 	private int mouseYLast;
 
-	public DesktopWindowManager(WindowAPI windowapi, GuiScreen parentScreen)
+	public OverlayWindowManager(WindowAPI windowapi, GuiScreen parentScreen)
 	{
 		this.windowapi = windowapi;
 		this.parentScreen = parentScreen;

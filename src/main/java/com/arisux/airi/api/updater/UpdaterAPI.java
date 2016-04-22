@@ -3,19 +3,17 @@ package com.arisux.airi.api.updater;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.arisux.airi.AIRI;
+import com.arisux.airi.api.window.gui.OverlayWindowManager;
+import com.arisux.airi.api.window.gui.windows.Window;
+import com.arisux.airi.api.window.gui.windows.WindowUpdates;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
-
-import com.arisux.airi.AIRI;
-import com.arisux.airi.api.window.gui.windows.Window;
-import com.arisux.airi.api.window.gui.DesktopWindowManager;
-import com.arisux.airi.api.window.gui.windows.WindowUpdates;
-import com.arisux.airi.lib.interfaces.IMod;
 
 public class UpdaterAPI
 {
 	private ArrayList<Updater> updaters = new ArrayList<Updater>();
-	private int currentUpdaterId;
 	private boolean recheckUpdates, canRecheckForUpdates;
 	private Window updaterWindow;
 
@@ -28,7 +26,7 @@ public class UpdaterAPI
 				this.recheckUpdates = true;
 			}
 			
-			if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof DesktopWindowManager))
+			if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager))
 			{
 				this.canRecheckForUpdates = true;
 			}
@@ -57,7 +55,7 @@ public class UpdaterAPI
 
 			for (final Updater updater : this.updaters)
 			{
-				if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof DesktopWindowManager))
+				if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager))
 				{
 					if (updater.isUpdateAvailable())
 					{
@@ -93,18 +91,13 @@ public class UpdaterAPI
 			this.recheckUpdates = false;
 		}
 	}
-
-	public Updater createNewUpdater(IMod mod, String changelogUrl)
+	
+	public void register(Updater updater)
 	{
-		return createNewUpdater(mod.container().getModId(), mod.container().getMetadata().version, mod.container().getMetadata().updateUrl, mod.container().getMetadata().url, changelogUrl);
+		this.updaters.add(updater);
 	}
 
-	public Updater createNewUpdater(String modId, String curVer, String updateUrl, String downloadUrl, String changelogUrl)
-	{
-		return (new Updater(currentUpdaterId++, modId, curVer, updateUrl, downloadUrl, changelogUrl)).register();
-	}
-
-	public Updater getUpdaterByID(String ID)
+	public Updater getUpdaterByModIdentifier(String modid)
 	{
 		Iterator<Updater> iterator = updaters.iterator();
 		Updater updater;
@@ -116,7 +109,7 @@ public class UpdaterAPI
 
 			updater = iterator.next();
 		}
-		while (!(updater.getVersionData().get("MODID").equalsIgnoreCase(ID)));
+		while (!(updater.getVersionData().get("MODID").equalsIgnoreCase(modid)));
 
 		return updater;
 	}

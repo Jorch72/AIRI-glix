@@ -64,7 +64,7 @@ public class ThemeModern extends Theme implements ITheme
 		}
 
 		RenderUtil.drawRect(taskbar.getX(), taskbar.getY(), taskbar.getW(), taskbar.getH(), this.getTaskbarColor());
-		RenderUtil.drawString(ChatUtil.format(String.format("&7AIRI %s &8Press ESC to hide. Press LEFT ALT + W to show.", ModUtil.getModContainerForId("airi").getVersion())), 4, 4, this.getForegroundColor());
+		RenderUtil.drawString(ChatUtil.format(String.format("&7AIRI %s", ModUtil.getModContainerForId("airi").getVersion())), 4, 4, this.getForegroundColor());
 
 		taskbar.getTaskbarEntries().clear();
 
@@ -110,7 +110,7 @@ public class ThemeModern extends Theme implements ITheme
 	@Override
 	public int getButtonColor()
 	{
-		return 0xCC00FF00;
+		return 0xCC00CCFF;
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.api.window.gui.DesktopWindowManager;
+import com.arisux.airi.api.window.gui.OverlayWindowManager;
 import com.arisux.airi.api.window.gui.windows.Window;
 import com.arisux.airi.api.window.themes.Theme;
 import com.arisux.airi.api.window.themes.ThemeDefault;
@@ -17,7 +17,7 @@ import net.minecraft.client.Minecraft;
 
 public class WindowAPI
 {
-	private DesktopWindowManager windowManager;
+	private OverlayWindowManager windowManager;
 	private Theme currentTheme;
 	private ArrayList<Window> windows = new ArrayList<Window>();
 	private HashMap<String, Theme> themes = new HashMap<String, Theme>();
@@ -28,7 +28,7 @@ public class WindowAPI
 
 	public WindowAPI()
 	{
-		this.windowManager = new DesktopWindowManager(this, null);
+		this.windowManager = new OverlayWindowManager(this, null);
 		this.registerTheme(themeDefault);
 		this.registerTheme(themeModern);
 		this.registerTheme(themeMinecraft);
@@ -37,18 +37,18 @@ public class WindowAPI
 
 	public void onTick()
 	{
-		if (getWindowsRegistry().size() <= 0 && Minecraft.getMinecraft().currentScreen instanceof DesktopWindowManager)
+		if (getWindowsRegistry().size() <= 0 && Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager)
 		{
 			Minecraft.getMinecraft().displayGuiScreen(this.getWindowManager().parentScreen);
 		}
 
-		if (this.getWindowManager().parentScreen != Minecraft.getMinecraft().currentScreen && !(Minecraft.getMinecraft().currentScreen instanceof DesktopWindowManager))
+		if (this.getWindowManager().parentScreen != Minecraft.getMinecraft().currentScreen && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager))
 		{
 			this.getWindowManager().parentScreen = Minecraft.getMinecraft().currentScreen;
 		}
 	}
 
-	public DesktopWindowManager getWindowManager()
+	public OverlayWindowManager getWindowManager()
 	{
 		return windowManager;
 	}
@@ -126,7 +126,7 @@ public class WindowAPI
 
 	public boolean canWindowManagerOpen()
 	{
-		return (Minecraft.getMinecraft().currentScreen != null && !(Minecraft.getMinecraft().currentScreen instanceof DesktopWindowManager));
+		return (Minecraft.getMinecraft().currentScreen != null && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager));
 	}
 
 	public void showWindowManager()

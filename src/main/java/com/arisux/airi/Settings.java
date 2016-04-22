@@ -1,18 +1,13 @@
 package com.arisux.airi;
 
-import net.minecraftforge.common.config.Configuration;
-
-import com.arisux.airi.lib.ModUtil;
 import com.arisux.airi.lib.interfaces.IInitializablePre;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.common.config.Configuration;
 
 public class Settings implements IInitializablePre
 {
-	private final String CATEGORY_URLS = "URLS";
-	private String serverMain;
-	private String serverDev;
 	private boolean networking;
 
 	@Override
@@ -24,8 +19,6 @@ public class Settings implements IInitializablePre
 		{
 			config.load();
 
-			serverMain = config.get(CATEGORY_URLS, "SERVER_MAIN", "http://aliensvspredator.org", "").getString();
-			serverDev = config.get(CATEGORY_URLS, "SERVER_DEV", "http://aliensvspredator.org", "").getString();
 			networking = config.get(Configuration.CATEGORY_GENERAL, "NETWORKING", true, "Toggles networking for mods that route external network access through AIRI.").getBoolean();
 		} finally
 		{
@@ -35,7 +28,7 @@ public class Settings implements IInitializablePre
 	
 	public String getServer()
 	{
-		return ModUtil.isDevEnvironment() ? serverDev : serverMain;
+		return "https://aliensvspredator.org";
 	}
 	
 	public boolean isNetworkingEnabled()

@@ -1,7 +1,7 @@
 package com.arisux.airi.api.window.themes;
 
 import com.arisux.airi.AIRI;
-import com.arisux.airi.api.window.gui.DesktopWindowManager;
+import com.arisux.airi.api.window.gui.OverlayWindowManager;
 import com.arisux.airi.api.window.gui.windows.Window;
 import com.arisux.airi.lib.GlStateManager;
 
@@ -80,7 +80,7 @@ public abstract class Theme implements ITheme
 		this.themeName = themeName;
 	}
 
-	public DesktopWindowManager getWindowManager()
+	public OverlayWindowManager getWindowManager()
 	{
 		return AIRI.windowApi().getWindowManager();
 	}
