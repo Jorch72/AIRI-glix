@@ -1,5 +1,7 @@
 package com.arisux.airi;
 
+import java.util.ArrayList;
+
 import com.arisux.airi.api.remapping.RemappingAPI;
 import com.arisux.airi.api.updater.Updater;
 import com.arisux.airi.api.updater.UpdaterAPI;
@@ -7,6 +9,7 @@ import com.arisux.airi.api.wavefrontapi.WavefrontAPI;
 import com.arisux.airi.api.window.WindowAPI;
 import com.arisux.airi.lib.BlockTypes.BlockMaterial;
 import com.arisux.airi.lib.ModUtil;
+import com.arisux.airi.lib.world.Schematic;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -37,6 +40,8 @@ public class AIRI
 	private UpdaterAPI updaterAPI;
 	private WavefrontAPI wavefrontAPI;
 	private RemappingAPI remappingAPI;
+	
+	private ArrayList<Schematic> loadedSchematics = new ArrayList<Schematic>();
 
 	@Mod.Instance(Properties.MODID)
 	private static AIRI instance;
@@ -140,5 +145,10 @@ public class AIRI
 	public static WavefrontAPI wavefrontAPI()
 	{
 		return AIRI.instance().wavefrontAPI;
+	}
+	
+	public ArrayList<Schematic> getLoadedSchematics()
+	{
+		return loadedSchematics;
 	}
 }

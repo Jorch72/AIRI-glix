@@ -76,7 +76,10 @@ public class SchematicLoader
     {
         try
         {
-        	return new Schematic(path, CompressedStreamTools.readCompressed(new FileInputStream(path)));
+        	Schematic schematic = new Schematic(path, CompressedStreamTools.readCompressed(new FileInputStream(path)));
+        	AIRI.instance().getLoadedSchematics().add(schematic);
+        	
+        	return schematic;
         }
         catch (Exception e)
         {
