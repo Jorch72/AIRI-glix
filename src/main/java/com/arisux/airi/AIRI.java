@@ -36,7 +36,6 @@ public class AIRI
 	public Settings settings;
 	
 	private WindowAPI windowAPI;
-	private UpdaterAPI updaterAPI;
 	private WavefrontAPI wavefrontAPI;
 	private RemappingAPI remappingAPI;
 	
@@ -86,7 +85,7 @@ public class AIRI
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		logger.info("[AIRI] Copyright(C) 2013-2015 Arisux");
+		logger.info("[AIRI] Copyright(C) 2013-2016 Arisux Technology Group");
 
 		(settings = new Settings()).preInitialize(event);
 		(remappingAPI = new RemappingAPI()).preInitialize(event);
@@ -96,7 +95,7 @@ public class AIRI
 		if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
 		{
 			this.windowAPI = new WindowAPI();
-			this.updaterAPI = new UpdaterAPI();
+			updaterApi().preInitialize(event);
 			this.wavefrontAPI = new WavefrontAPI();
 		}
 	}
@@ -136,7 +135,7 @@ public class AIRI
 	
 	public static UpdaterAPI updaterApi()
 	{
-		return AIRI.instance().updaterAPI;
+		return UpdaterAPI.instance;
 	}
 	
 	public static WindowAPI windowApi()

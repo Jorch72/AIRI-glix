@@ -4,20 +4,112 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.arisux.airi.AIRI;
+import com.arisux.airi.GuiElementHandler;
 import com.arisux.airi.api.window.gui.OverlayWindowManager;
 import com.arisux.airi.api.window.gui.windows.Window;
 import com.arisux.airi.api.window.gui.windows.WindowUpdates;
+import com.arisux.airi.lib.ChatUtil;
+import com.arisux.airi.lib.GlStateManager;
+import com.arisux.airi.lib.GuiElements.GuiCustomButton;
+import com.arisux.airi.lib.RenderUtil;
+import com.arisux.airi.lib.interfaces.IActionPerformed;
+import com.arisux.airi.lib.interfaces.IInitializablePre;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraftforge.common.MinecraftForge;
 
-public class UpdaterAPI
+public class UpdaterAPI implements IInitializablePre
 {
+	public static final UpdaterAPI instance = new UpdaterAPI();
 	private ArrayList<Updater> updaters = new ArrayList<Updater>();
-	private boolean recheckUpdates, canRecheckForUpdates;
+	private boolean recheckUpdates;
+	private boolean canRecheckForUpdates;
 	private Window updaterWindow;
+	private GuiCustomButton buttonUpdates;
+	
+	@Override
+	public void preInitialize(FMLPreInitializationEvent event)
+	{
+		FMLCommonHandler.instance().bus().register(this);
+		MinecraftForge.EVENT_BUS.register(this);
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void onClientPlayerLogin(PlayerLoggedInEvent event)
+	{
+		if (AIRI.updaterApi().isUpdateAvailable())
+		{
+			ChatUtil.sendTo(event.player, "&7[&aAIRI&7] &fNew updates are available. To see them, press SHIFT + TAB.");
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void onRenderTitleScreen(TickEvent.RenderTickEvent event)
+	{
+		if (Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu)
+		{
+			int amountOfUpdates = AIRI.updaterApi().getAvailableUpdates().size();
 
-	public void onTick()
+			if (amountOfUpdates > 0)
+			{
+				if (buttonUpdates == null && GuiElementHandler.instance() != null)
+				{
+					buttonUpdates = new GuiCustomButton(0, 0, 0, 0, 0, "", null);
+				}
+
+				if (buttonUpdates != null)
+				{
+					String updates = String.valueOf(amountOfUpdates);
+					String updateString = amountOfUpdates > 1 ? "Updates" : "Update";
+					int renderWidth = RenderUtil.getStringRenderWidth(updates);
+					int backgroundWidth = 30 + renderWidth + RenderUtil.getStringRenderWidth(updateString);
+
+					RenderUtil.drawRect(0, 0, backgroundWidth, 18, 0xCC444444);
+					GlStateManager.enableBlend();
+					RenderUtil.drawRectWithOutline(0, 0, 18 + renderWidth, 18, 2, 0x88000000, 0x00000000);
+					RenderUtil.drawString(updates, 10, 5, AIRI.windowApi().getCurrentTheme().getButtonColor(), false);
+					RenderUtil.drawString(updateString, 23 + renderWidth, 5, AIRI.windowApi().getCurrentTheme().getTextColor(), false);
+
+					buttonUpdates.displayString = "";
+					buttonUpdates.baseColor = 0x00000000;
+					buttonUpdates.overlayColorHover = 0x00000000;
+					buttonUpdates.overlayColorNormal = 0x00000000;
+					buttonUpdates.overlayColorPressed = 0x00000000;
+					buttonUpdates.fontColor = 0xFFFF3333;
+					buttonUpdates.xPosition = 0;
+					buttonUpdates.yPosition = 0;
+					buttonUpdates.width = backgroundWidth;
+					buttonUpdates.height = 18;
+					buttonUpdates.tooltip = "Click here or Press SHIFT + TAB to view.";
+					buttonUpdates.drawButton();
+					buttonUpdates.setAction(new IActionPerformed()
+					{
+						@Override
+						public void actionPerformed(GuiCustomButton button)
+						{
+							AIRI.windowApi().addWindow(AIRI.updaterApi().getUpdaterWindow());
+							AIRI.windowApi().showWindowManager();
+						}
+					});
+				}
+			}
+		}
+	}
+
+
+	@SubscribeEvent
+	public void onClientTick(ClientTickEvent event)
 	{
 		if (AIRI.settings().isNetworkingEnabled())
 		{

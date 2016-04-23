@@ -15,7 +15,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class LocalEventHandler implements IInitializablePre
 {
-	private IInitializablePre clientEvents, serverEvents;
+	private IInitializablePre clientEvents;
 	private ArrayList<Structure> structuresInQueue = new ArrayList<Structure>();
 	
 	@Override
@@ -29,24 +29,12 @@ public class LocalEventHandler implements IInitializablePre
 			FMLCommonHandler.instance().bus().register(clientEvents = new ClientSideEvents());
 			clientEvents.preInitialize(event);
 		}
-		
-		if (FMLCommonHandler.instance().getSide() == Side.SERVER)
-		{
-			FMLCommonHandler.instance().bus().register(serverEvents = new ServerSideEvents());
-			serverEvents.preInitialize(event);
-		}
 	}
 	
 	@SideOnly(Side.CLIENT)
 	public ClientSideEvents getClientEvents()
 	{
 		return (ClientSideEvents) clientEvents;
-	}
-	
-	@SideOnly(Side.SERVER)
-	public ServerSideEvents getServerEvents()
-	{
-		return (ServerSideEvents) serverEvents;
 	}
 	
 	@SubscribeEvent

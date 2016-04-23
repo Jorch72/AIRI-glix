@@ -29,19 +29,27 @@ public class ThemeModern extends Theme implements ITheme
 	{
 		GlStateManager.enableBlend();
 		RenderUtil.drawGradientRect(window.getX(), window.getY() - 2, window.getWidth(), window.getHeight(), 0xFF000000, this.getBackgroundColor());
+		
+		GlStateManager.pushMatrix();
+		{
+			float scale = 0.5F;
+			GlStateManager.scale(scale, scale, scale);
+			RenderUtil.drawRectWithOutline((int)((window.getX() - 1) / scale), (int)((window.getY() - 17) / scale), (int)((window.getWidth() + 2) / scale), (int)((window.getHeight() + 16) / scale), 1, 0x00000000, this.getButtonColor());
+		}
+		GlStateManager.popMatrix();
 	}
 
 	@Override
 	public void drawTitleBar(Window window, int mouseX, int mouseY)
 	{
-		RenderUtil.drawRect(window.getX(), window.getY() - 16, window.getWidth() - 15, 14, this.getBackgroundColor() >> 1);
+		RenderUtil.drawRect(window.getX(), window.getY() - 16, window.getWidth() - 15, 14, 0xFF222222);
 		RenderUtil.drawString(window.getTitle(), window.getX() + 5, window.getY() - 12, this.getTextColor(), false);
 	}
 
 	@Override
 	public void drawCloseButton(Window window, int mouseX, int mouseY)
 	{
-		RenderUtil.drawRect(window.getX() + window.getWidth() - 15, window.getY() - 16, 15, 14, this.getBackgroundColor());
+		RenderUtil.drawRect(window.getX() + window.getWidth() - 15, window.getY() - 16, 15, 14, 0xFF222222);
 		RenderUtil.drawString("x", window.getX() + window.getWidth() - 10, window.getY() - 14, 0xFFFFFFFF, false);
 	}
 
@@ -70,7 +78,7 @@ public class ThemeModern extends Theme implements ITheme
 
 		for (Window window : AIRI.windowApi().getWindowsRegistry())
 		{
-			taskbar.addTaskbarEntry(new TaskbarEntry(window).setText(window.getTitle().substring(0, window.getTitle().length() > 14 ? 14 : window.getTitle().length()) + "..."));
+			taskbar.addTaskbarEntry(new TaskbarEntry(window).setText(window.getTitle().substring(0, window.getTitle().length() > 14 ? 14 : window.getTitle().length()) + (window.getTitle().length() < 14 ? "" : "...")));
 		}
 
 		for (TaskbarEntry taskbarEntry : taskbar.getTaskbarEntries())
@@ -110,7 +118,7 @@ public class ThemeModern extends Theme implements ITheme
 	@Override
 	public int getButtonColor()
 	{
-		return 0xCC00CCFF;
+		return 0xFF00AAFF;
 	}
 
 	@Override
