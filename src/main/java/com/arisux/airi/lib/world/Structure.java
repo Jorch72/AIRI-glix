@@ -73,7 +73,7 @@ public abstract class Structure
 
 				if (coord.block != Blocks.air)
 				{
-					this.world.setBlock(coord.posX, coord.posY, coord.posZ, coord.block, coord.meta, 2);
+					this.world.setBlock((int) coord.posX, (int) coord.posY, (int) coord.posZ, coord.block, coord.meta, 2);
 				}
 
 				this.blockQueue.remove(coord);

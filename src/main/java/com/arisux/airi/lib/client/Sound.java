@@ -50,12 +50,12 @@ public class Sound
 	
 	public void playSound(World world, CoordData data)
 	{
-		playSound(world, data.posX, data.posY, data.posZ, volume, pitch);
+		playSound(world, (int) data.posX, (int) data.posY, (int) data.posZ, volume, pitch);
 	}
 	
 	public void playSound(World world, CoordData data, float volume, float pitch)
 	{
-		playSound(world, data.posX, data.posY, data.posZ, volume, pitch);
+		playSound(world, (int) data.posX, (int) data.posY, (int) data.posZ, volume, pitch);
 	}
 	
 	public void playSound(World world, int posX, int posY, int posZ)

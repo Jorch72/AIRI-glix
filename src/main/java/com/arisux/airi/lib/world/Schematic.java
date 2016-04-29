@@ -111,7 +111,7 @@ public class Schematic
 		{
 			for (CoordData relative : blockArea)
 			{
-				int index = relative.posX + (relative.posY * length + relative.posZ) * width;
+				int index = (int) relative.posX + ((int) relative.posY * length + (int) relative.posZ) * width;
 				CoordData data = structure.getData().add(relative);
 				Block block = blocks[index];
 				byte meta = this.metadata[index];
@@ -147,7 +147,7 @@ public class Schematic
 		{
 			for (CoordData relative : blockArea)
 			{
-				int index = relative.posX + (relative.posY * length + relative.posZ) * width;
+				int index = (int) relative.posX + ((int) relative.posY * length + (int) relative.posZ) * width;
 				Block block = blocks[index];
 				byte meta = this.metadata[index];
 
@@ -158,9 +158,9 @@ public class Schematic
 
 					if (tileEntity != null)
 					{
-						world.setBlockMetadataWithNotify(pos.posX, pos.posY, pos.posZ, meta, 2);
+						world.setBlockMetadataWithNotify((int) pos.posX, (int) pos.posY, (int) pos.posZ, meta, 2);
 						TileEntities.setTileEntityPosition(tileEntity, pos);
-						world.setTileEntity(pos.posX, pos.posY, pos.posZ, tileEntity);
+						world.setTileEntity((int) pos.posX, (int) pos.posY, (int) pos.posZ, tileEntity);
 						tileEntity.updateContainingBlockInfo();
 					}
 				}
@@ -189,22 +189,22 @@ public class Schematic
 		{
 			for (CoordData relative : blockArea)
 			{
-				int index = relative.posX + (relative.posY * length + relative.posZ) * width;
+				int index = (int) relative.posX + ((int) relative.posY * length + (int) relative.posZ) * width;
 				Block block = blocks[index];
 				byte meta = this.metadata[index];
 
 				if (block != null && getPass(block, meta) == pass && block != AIRI.WORLDGEN_GHOST)
 				{
 					CoordData pos = new CoordData(data.posX, data.posY, data.posZ, block, meta).add(relative);
-					world.setBlock(pos.posX, pos.posY, pos.posZ, block, meta, 3);
+					world.setBlock((int) pos.posX, (int) pos.posY, (int) pos.posZ, block, meta, 3);
 
 					TileEntity tileEntity = tileEntities.get(relative.hashCode());
 
 					if (tileEntity != null)
 					{
-						world.setBlockMetadataWithNotify(pos.posX, pos.posY, pos.posZ, meta, 2);
+						world.setBlockMetadataWithNotify((int) pos.posX, (int) pos.posY, (int) pos.posZ, meta, 2);
 						TileEntities.setTileEntityPosition(tileEntity, pos);
-						world.setTileEntity(pos.posX, pos.posY, pos.posZ, tileEntity);
+						world.setTileEntity((int) pos.posX, (int) pos.posY, (int) pos.posZ, tileEntity);
 						tileEntity.updateContainingBlockInfo();
 					}
 				}

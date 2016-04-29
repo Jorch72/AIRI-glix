@@ -91,7 +91,7 @@ public class WorldUtil
 	 */
 	public static CoordData getNextSafePositionAbove(CoordData pos, World world)
 	{
-		for (int y = pos.posY; y < world.getHeight(); y++)
+		for (int y = (int) pos.posY; y < world.getHeight(); y++)
 		{
 			CoordData position = new CoordData(pos.posX, y + 1, pos.posZ);
 			
@@ -106,7 +106,7 @@ public class WorldUtil
 
 	public static boolean canSeeSky(CoordData pos, World world)
 	{
-		for (int y = pos.posY; y < world.getHeight(); y++)
+		for (int y = (int) pos.posY; y < world.getHeight(); y++)
 		{
 			CoordData position = new CoordData(pos.posX, y + 1, pos.posZ);
 			
@@ -128,8 +128,8 @@ public class WorldUtil
 	 */
 	public static int getLightAtCoord(World worldObj, Blocks.CoordData data)
 	{
-		int block = worldObj.getSkyBlockTypeBrightness(EnumSkyBlock.Block, data.posX, data.posY, data.posZ);
-		int sky = worldObj.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, data.posX, data.posY, data.posZ) - worldObj.calculateSkylightSubtracted(0f);
+		int block = worldObj.getSkyBlockTypeBrightness(EnumSkyBlock.Block, (int) data.posX, (int) data.posY, (int) data.posZ);
+		int sky = worldObj.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, (int) data.posX, (int) data.posY, (int) data.posZ) - worldObj.calculateSkylightSubtracted(0f);
 
 		return Math.max(block, sky);
 	}
@@ -142,7 +142,7 @@ public class WorldUtil
 	 */
 	public static CoordData getNextSafePositionBelow(CoordData pos, World world)
 	{
-		for (int y = pos.posY; y > 0; y--)
+		for (int y = (int) pos.posY; y > 0; y--)
 		{
 			CoordData position = new CoordData(pos.posX, y - 1, pos.posZ);
 
@@ -224,13 +224,13 @@ public class WorldUtil
 	{
 		for (BiomeGenBase biome : biomes)
 		{
-			if (world.provider.getBiomeGenForCoords(chunkCoord.posX, chunkCoord.posZ) == biome)
+			if (world.provider.getBiomeGenForCoords((int) chunkCoord.posX, (int) chunkCoord.posZ) == biome)
 			{
 				for (int i = 0; i < genPerChunk; ++i)
 				{
-					int posX = chunkCoord.posX + seed.nextInt(16);
+					int posX = (int) chunkCoord.posX + seed.nextInt(16);
 					int posY = levelStart + seed.nextInt(levelEnd);
-					int posZ = chunkCoord.posZ + seed.nextInt(16);
+					int posZ = (int) chunkCoord.posZ + seed.nextInt(16);
 					(new WorldGenMinable(block, groupSize)).generate(world, seed, posX, posY, posZ);
 				}
 			}
@@ -302,13 +302,13 @@ public class WorldUtil
 	{
 		for (BiomeGenBase biome : biomes)
 		{
-			if (world.provider.getBiomeGenForCoords(chunkCoord.posX, chunkCoord.posZ) == biome)
+			if (world.provider.getBiomeGenForCoords((int) chunkCoord.posX, (int) chunkCoord.posZ) == biome)
 			{
 				for (int i = 0; i < genPerChunk; ++i)
 				{
-					int posX = chunkCoord.posX + seed.nextInt(16);
+					int posX = (int) chunkCoord.posX + seed.nextInt(16);
 					int posY = levelStart + seed.nextInt(levelEnd);
-					int posZ = chunkCoord.posZ + seed.nextInt(16);
+					int posZ = (int) chunkCoord.posZ + seed.nextInt(16);
 					worldGen.generate(world, seed, posX, posY, posZ);
 				}
 			}
@@ -503,7 +503,8 @@ public class WorldUtil
 
 		public static class CoordData
 		{
-			public int posX, posY, posZ, meta;
+			public double posX, posY, posZ;
+			public int meta;
 			public Block block;
 			public UniqueIdentifier identifier;
 
@@ -517,38 +518,33 @@ public class WorldUtil
 				this(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, tileEntity.getWorldObj() != null ? tileEntity.getWorldObj().getBlock(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord) : null, tileEntity.getWorldObj() != null ? tileEntity.getWorldObj().getBlockMetadata(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord) : 0);
 			}
 
-			public CoordData(int posX, int posY, int posZ, World world)
-			{
-				this(posX, posY, posZ, world.getBlock(posX, posY, posZ), world.getBlockMetadata(posX, posY, posZ));
-			}
-
-			public CoordData(int posX, int posY, int posZ, Block block)
+			public CoordData(double posX, double posY, double posZ, Block block)
 			{
 				this(posX, posY, posZ, block, 0);
 			}
 
-			public CoordData(int posX, int posY, int posZ, Block block, int meta)
+			public CoordData(double posX, double posY, double posZ, Block block, double meta)
 			{
 				this(posX, posY, posZ, GameRegistry.findUniqueIdentifierFor(block));
 				this.block = block;
 			}
 
-			public CoordData(int posX, int posY, int posZ, String id)
+			public CoordData(double posX, double posY, double posZ, String id)
 			{
 				this(posX, posY, posZ, id, 0);
 			}
 
-			public CoordData(int posX, int posY, int posZ, String id, int meta)
+			public CoordData(double posX, double posY, double posZ, String id, double meta)
 			{
 				this(posX, posY, posZ, new UniqueIdentifier(id), 0);
 			}
 
-			public CoordData(int posX, int posY, int posZ, UniqueIdentifier identifier)
+			public CoordData(double posX, double posY, double posZ, UniqueIdentifier identifier)
 			{
 				this(posX, posY, posZ, identifier, 0);
 			}
 
-			public CoordData(int posX, int posY, int posZ, UniqueIdentifier identifier, int meta)
+			public CoordData(double posX, double posY, double posZ, UniqueIdentifier identifier, int meta)
 			{
 				this.identifier = identifier;
 				this.posX = posX;
@@ -557,7 +553,7 @@ public class WorldUtil
 				this.meta = meta;
 			}
 
-			public CoordData(int posX, int posY, int posZ)
+			public CoordData(double posX, double posY, double posZ)
 			{
 				this.posX = posX;
 				this.posY = posY;
@@ -566,23 +562,23 @@ public class WorldUtil
 
 			public CoordData(long posX, long posY, long posZ)
 			{
-				this.posX = (int) posX;
-				this.posY = (int) posY;
-				this.posZ = (int) posZ;
+				this.posX = (double) posX;
+				this.posY = (double) posY;
+				this.posZ = (double) posZ;
 			}
 
 			public CoordData(float posX, float posY, float posZ)
 			{
-				this.posX = (int) posX;
-				this.posY = (int) posY;
-				this.posZ = (int) posZ;
+				this.posX = (double) posX;
+				this.posY = (double) posY;
+				this.posZ = (double) posZ;
 			}
 
-			public CoordData(double posX, double posY, double posZ)
+			public CoordData(int posX, int posY, int posZ)
 			{
-				this.posX = (int) posX;
-				this.posY = (int) posY;
-				this.posZ = (int) posZ;
+				this.posX = (double) posX;
+				this.posY = (double) posY;
+				this.posZ = (double) posZ;
 			}
 
 			@Override
@@ -599,17 +595,27 @@ public class WorldUtil
 			@Override
 			public int hashCode()
 			{
-				int result = this.posX;
-				result = 31 * result + this.posY;
-				result = 31 * result + this.posZ;
+				int result = (int) this.posX;
+				result = 31 * result + (int) this.posY;
+				result = 31 * result + (int) this.posZ;
 				return result;
 			}
-
-			public Block getBlock()
+			
+			public double x()
 			{
-				return this.block;
+				return posX;
 			}
-
+			
+			public double y()
+			{
+				return posY;
+			}
+			
+			public double z()
+			{
+				return posZ;
+			}
+			
 			public Block getBlock(World world)
 			{
 				return getBlock(world, false);
@@ -617,22 +623,17 @@ public class WorldUtil
 
 			public Block getBlock(World world, boolean force)
 			{
-				return this.block == null && world != null || force ? world.getBlock(this.posX, this.posY, this.posZ) : this.block;
-			}
-
-			public int getBlockMetadata()
-			{
-				return this.meta;
+				return this.block == null && world != null || force ? world.getBlock((int) this.posX, (int) this.posY, (int) this.posZ) : this.block;
 			}
 
 			public int getBlockMetadata(World world)
 			{
-				return this.meta == 0 && world != null ? world.getBlockMetadata(this.posX, this.posY, this.posZ) : 0;
+				return this.meta == 0 && world != null ? world.getBlockMetadata((int) this.posX, (int) this.posY, (int) this.posZ) : 0;
 			}
 
 			public TileEntity getTileEntity(World world)
 			{
-				return world.getTileEntity(this.posX, this.posY, this.posZ);
+				return world.getTileEntity((int) this.posX, (int) this.posY, (int) this.posZ);
 			}
 
 			public CoordData min(CoordData data)
@@ -650,7 +651,7 @@ public class WorldUtil
 				return new CoordData(this.posX + data.posX, this.posY + data.posY, this.posZ + data.posZ);
 			}
 
-			public CoordData add(int posX, int posY, int posZ)
+			public CoordData add(double posX, double posY, double posZ)
 			{
 				return this.add(new CoordData(posX, posY, posZ));
 			}
@@ -660,24 +661,24 @@ public class WorldUtil
 				return new CoordData(this.max(data).posX - this.min(data).posX, this.max(data).posY - this.min(data).posY, this.max(data).posZ - this.min(data).posZ);
 			}
 
-			public CoordData subtract(int posX, int posY, int posZ)
+			public CoordData subtract(double posX, double posY, double posZ)
 			{
 				return this.add(new CoordData(posX, posY, posZ));
 			}
 
-			public CoordData offsetX(int amount)
+			public CoordData offsetX(double amount)
 			{
 				this.posX = this.posX + amount;
 				return this;
 			}
 
-			public CoordData offsetY(int amount)
+			public CoordData offsetY(double amount)
 			{
 				this.posY = this.posY + amount;
 				return this;
 			}
 
-			public CoordData offsetZ(int amount)
+			public CoordData offsetZ(double amount)
 			{
 				this.posZ = this.posZ + amount;
 				return this;
@@ -717,9 +718,9 @@ public class WorldUtil
 				NBTTagCompound dataTag = nbt == null ? new NBTTagCompound() : nbt;
 
 				dataTag.setString(labelId, String.format("%s:%s", this.identity().modId, this.identity().name));
-				dataTag.setInteger(labelX, this.posX);
-				dataTag.setInteger(labelY, this.posY);
-				dataTag.setInteger(labelZ, this.posZ);
+				dataTag.setDouble(labelX, this.posX);
+				dataTag.setDouble(labelY, this.posY);
+				dataTag.setDouble(labelZ, this.posZ);
 
 				return dataTag;
 			}
@@ -804,9 +805,9 @@ public class WorldUtil
 				return pos1.max(pos2);
 			}
 
-			public int[] areaSize()
+			public double[] areaSize()
 			{
-				return new int[] { max().subtract(min()).posX + 1, max().subtract(min()).posY + 1, max().subtract(min()).posZ + 1 };
+				return new double[] { max().subtract(min()).posX + 1, max().subtract(min()).posY + 1, max().subtract(min()).posZ + 1 };
 			}
 
 			public boolean contains(CoordData coord)
@@ -839,9 +840,9 @@ public class WorldUtil
 			{
 				this.min = min;
 				this.max = max;
-				this.curX = min.posX;
-				this.curY = min.posY;
-				this.curZ = min.posZ;
+				this.curX = (int) min.posX;
+				this.curY = (int) min.posY;
+				this.curZ = (int) min.posZ;
 			}
 
 			@Override
@@ -859,12 +860,12 @@ public class WorldUtil
 
 				if (this.curX > this.max.posX)
 				{
-					this.curX = this.min.posX;
+					this.curX = (int) this.min.posX;
 					this.curY++;
 
 					if (this.curY > this.max.posY)
 					{
-						this.curY = this.min.posY;
+						this.curY = (int) this.min.posY;
 						this.curZ++;
 					}
 				}
@@ -903,9 +904,9 @@ public class WorldUtil
 		 */
 		public static void setTileEntityPosition(TileEntity tileEntity, Blocks.CoordData coord)
 		{
-			tileEntity.xCoord = coord.posX;
-			tileEntity.yCoord = coord.posY;
-			tileEntity.zCoord = coord.posZ;
+			tileEntity.xCoord = (int) coord.posX;
+			tileEntity.yCoord = (int) coord.posY;
+			tileEntity.zCoord = (int) coord.posZ;
 		}
 
 		/**
