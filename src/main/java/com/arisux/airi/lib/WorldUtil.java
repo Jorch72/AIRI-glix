@@ -24,6 +24,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -751,6 +752,67 @@ public class WorldUtil
 				CoordData back = this.add(0, 0, 1);
 
 				return up.getBlock(world) == net.minecraft.init.Blocks.air || down.getBlock(world) == net.minecraft.init.Blocks.air || left.getBlock(world) == net.minecraft.init.Blocks.air || right.getBlock(world) == net.minecraft.init.Blocks.air || front.getBlock(world) == net.minecraft.init.Blocks.air || back.getBlock(world) == net.minecraft.init.Blocks.air;
+			}
+
+			public CoordData findSafePosAround(World world)
+			{
+				CoordData pos = this;
+				CoordData up = pos.add(0, 1, 0);
+				CoordData down = pos.add(0, -1, 0);
+				CoordData left = pos.add(-1, 0, 0);
+				CoordData right = pos.add(1, 0, 0);
+				CoordData front = pos.add(0, 0, -1);
+				CoordData frontLeft = pos.add(-1, 0, -1);
+				CoordData frontRight = pos.add(1, 0, -1);
+				CoordData back = pos.add(0, 0, 1);
+				CoordData backLeft = pos.add(-1, 0, 1);
+				CoordData backRight = pos.add(1, 0, 1);
+				
+				if (pos.getBlock(world) != net.minecraft.init.Blocks.air)
+				{
+					if (left.getBlock(world) == net.minecraft.init.Blocks.air)
+					{
+						pos = left;
+					}
+					else if (right.getBlock(world) == net.minecraft.init.Blocks.air)
+					{
+						pos = right;
+					}
+					else if (front.getBlock(world) == net.minecraft.init.Blocks.air)
+					{
+						pos = front;
+					}
+					else if (frontLeft.getBlock(world) == net.minecraft.init.Blocks.air)
+					{
+						pos = frontLeft;
+					}
+					else if (frontRight.getBlock(world) == net.minecraft.init.Blocks.air)
+					{
+						pos = frontRight;
+					}
+					else if (back.getBlock(world) == net.minecraft.init.Blocks.air)
+					{
+						pos = left;
+					}
+					else if (backLeft.getBlock(world) == net.minecraft.init.Blocks.air)
+					{
+						pos = backLeft;
+					}
+					else if (backRight.getBlock(world) == net.minecraft.init.Blocks.air)
+					{
+						pos = backRight;
+					}
+					else if (up.getBlock(world) == net.minecraft.init.Blocks.air)
+					{
+						pos = up;
+					}
+					else if (down.getBlock(world) == net.minecraft.init.Blocks.air)
+					{
+						pos = down;
+					}
+				}
+				
+				return pos.add(0.5, 0.0, 0.5);
 			}
 		}
 
