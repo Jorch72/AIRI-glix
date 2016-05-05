@@ -9,7 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 
 @SideOnly(Side.CLIENT)
-public class ModelBipedExtension extends ModelBaseExtension
+public class ModelBipedExtension extends ModelBaseWrapper
 {
 	public ModelRenderer bipedHead;
 	public ModelRenderer bipedHeadwear;

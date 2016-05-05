@@ -22,9 +22,9 @@ public class ModelTexMap
 		return this.model;
 	}
 	
-	public ModelBaseExtension asModelBaseExtension()
+	public ModelBaseWrapper asModelBaseExtension()
 	{
-		return (ModelBaseExtension) this.model;
+		return (ModelBaseWrapper) this.model;
 	}
 	
 	public ResourceLocation asResourceLocation()

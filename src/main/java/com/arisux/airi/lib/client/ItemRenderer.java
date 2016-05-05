@@ -15,10 +15,10 @@ public abstract class ItemRenderer implements IItemRenderer
 	protected Minecraft mc = Minecraft.getMinecraft();
 	protected PlayerResourceManager resourceManager;
 	protected ResourceLocation resource;
-	protected ModelBaseExtension model;
+	protected ModelBaseWrapper model;
 	private boolean rendersInFirstPerson, rendersInThirdPerson, rendersInInventory, rendersInWorld;
 
-	public ItemRenderer(ModelBaseExtension model, ResourceLocation resource)
+	public ItemRenderer(ModelBaseWrapper model, ResourceLocation resource)
 	{
 		this.resourceManager = new PlayerResourceManager();
 		this.model = model;
@@ -130,7 +130,7 @@ public abstract class ItemRenderer implements IItemRenderer
 		return this;
 	}
 
-	public ModelBaseExtension getModel()
+	public ModelBaseWrapper getModel()
 	{
 		return model;
 	}
