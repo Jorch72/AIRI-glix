@@ -22,7 +22,7 @@ public class ModelTexMap
 		return this.model;
 	}
 	
-	public ModelBaseWrapper asModelBaseExtension()
+	public ModelBaseWrapper asModelWrapper()
 	{
 		return (ModelBaseWrapper) this.model;
 	}
