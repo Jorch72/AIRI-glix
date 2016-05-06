@@ -21,9 +21,9 @@ public interface ITheme
     public int getTextColor();
 
     public int getForegroundColor();
-    
+
     public int getBackgroundColor();
-    
+
     public int getButtonColor();
 
     public int getTaskbarColor();

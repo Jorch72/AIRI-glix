@@ -8,27 +8,27 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ModelTexMap
 {
-	private ResourceLocation resourceLocation;
-	private ModelBase model;
-	
-	public ModelTexMap(ModelBase model, ResourceLocation resourceLocation)
-	{
-		this.model = model;
-		this.resourceLocation = resourceLocation;
-	}
-	
-	public ModelBase asModelBase()
-	{
-		return this.model;
-	}
-	
-	public ModelBaseWrapper asModelWrapper()
-	{
-		return (ModelBaseWrapper) this.model;
-	}
-	
-	public ResourceLocation asResourceLocation()
-	{
-		return this.resourceLocation;
-	}
+    private ResourceLocation resourceLocation;
+    private ModelBase model;
+
+    public ModelTexMap(ModelBase model, ResourceLocation resourceLocation)
+    {
+        this.model = model;
+        this.resourceLocation = resourceLocation;
+    }
+
+    public ModelBase asModelBase()
+    {
+        return this.model;
+    }
+
+    public ModelBaseWrapper asModelWrapper()
+    {
+        return (ModelBaseWrapper) this.model;
+    }
+
+    public ResourceLocation asResourceLocation()
+    {
+        return this.resourceLocation;
+    }
 }

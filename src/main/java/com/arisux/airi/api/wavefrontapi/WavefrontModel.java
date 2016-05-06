@@ -18,301 +18,301 @@ import net.minecraft.util.ResourceLocation;
 
 public class WavefrontModel
 {
-	private String pathName;
-	private String mtlName;
-	private String modid;
-	private String directory;
+    private String pathName;
+    private String mtlName;
+    private String modid;
+    private String directory;
 
-	public ArrayList<Vertex> vertex = new ArrayList<Vertex>();
-	public ArrayList<UV> uv = new ArrayList<UV>();
-	public Hashtable<String, String> nameToStringHash = new Hashtable<String, String>();
-	public Hashtable<String, Part> nameToPartHash = new Hashtable<String, Part>();
+    public ArrayList<Vertex> vertex = new ArrayList<Vertex>();
+    public ArrayList<UV> uv = new ArrayList<UV>();
+    public Hashtable<String, String> nameToStringHash = new Hashtable<String, String>();
+    public Hashtable<String, Part> nameToPartHash = new Hashtable<String, Part>();
 
-	public float xDim, yDim, zDim;
-	public float xMin, yMin, zMin;
-	public float xMax, yMax, zMax;
-	public float dimMax, dimMaxInv;
+    public float xDim, yDim, zDim;
+    public float xMin, yMin, zMin;
+    public float xMax, yMax, zMax;
+    public float dimMax, dimMaxInv;
 
-	public ResourceLocation getAlternativeTexture(String name)
-	{
-		ResourceLocation resource = new ResourceLocation(modid, directory.substring(1) + name);
-		return resource;
-	}
+    public ResourceLocation getAlternativeTexture(String name)
+    {
+        ResourceLocation resource = new ResourceLocation(modid, directory.substring(1) + name);
+        return resource;
+    }
 
-	public boolean load(String modid, String path)
-	{
-		File fileModel = new File(path + ".obj");
-		File fileTexture = new File(path + ".mtl");
-		File fileOrigins = new File(path + ".ori");
-		int lastSlashId = path.lastIndexOf('/');
-		this.modid = modid;
-		this.directory = path.substring(0, lastSlashId + 1);
-		this.pathName = path.substring(lastSlashId + 1, path.length());
-		Part part = null;
-		FaceGroup fg = null;
+    public boolean load(String modid, String path)
+    {
+        File fileModel = new File(path + ".obj");
+        File fileTexture = new File(path + ".mtl");
+        File fileOrigins = new File(path + ".ori");
+        int lastSlashId = path.lastIndexOf('/');
+        this.modid = modid;
+        this.directory = path.substring(0, lastSlashId + 1);
+        this.pathName = path.substring(lastSlashId + 1, path.length());
+        Part part = null;
+        FaceGroup fg = null;
 
-		try
-		{
-			this.loadOBJ(fileModel, path, part, fg);
-			part = null;
-			this.loadMTL(fileTexture, path);
-			part = null;
-		}
-		catch (Exception e)
-		{
-			AIRI.logger.warning("[WavefrontAPI] Error loading model for mod with id %s: %s", modid, path);
-			e.printStackTrace();
-			return false;
-		}
-		
-		try
-		{
-			this.loadORI(fileOrigins, part);
-		}
-		catch (Exception e)
-		{
-			AIRI.logger.warning("[WavefrontAPI] Error (%s) loading origins for model for mod with id %s: %s", e, modid, path);
-		}
+        try
+        {
+            this.loadOBJ(fileModel, path, part, fg);
+            part = null;
+            this.loadMTL(fileTexture, path);
+            part = null;
+        }
+        catch (Exception e)
+        {
+            AIRI.logger.warning("[WavefrontAPI] Error loading model for mod with id %s: %s", modid, path);
+            e.printStackTrace();
+            return false;
+        }
 
-		xDim = xMax - xMin;
-		yDim = yMax - yMin;
-		zDim = zMax - zMin;
+        try
+        {
+            this.loadORI(fileOrigins, part);
+        }
+        catch (Exception e)
+        {
+            AIRI.logger.warning("[WavefrontAPI] Error (%s) loading origins for model for mod with id %s: %s", e, modid, path);
+        }
 
-		dimMax = Math.max(Math.max(xMax, yMax), zMax);
-		dimMaxInv = 1.0f / dimMax;
+        xDim = xMax - xMin;
+        yDim = yMax - yMin;
+        zDim = zMax - zMin;
 
-		AIRI.logger.info("[WavefrontAPI] Loaded wavefront model for mod with id %s: %s", this.modid, this.pathName);
+        dimMax = Math.max(Math.max(xMax, yMax), zMax);
+        dimMaxInv = 1.0f / dimMax;
 
-		return true;
-	}
+        AIRI.logger.info("[WavefrontAPI] Loaded wavefront model for mod with id %s: %s", this.modid, this.pathName);
 
-	private boolean loadOBJ(File fileModel, String path, Part part, FaceGroup fg) throws Exception
-	{
-		InputStream stream = new FileInputStream(fileModel);
+        return true;
+    }
 
-		if (stream == null || fileModel == null || path == null)
-		{
-			AIRI.logger.bug("OBJ Loading Failed: " + path);
-			stream.close();
-			return false;
-		}
+    private boolean loadOBJ(File fileModel, String path, Part part, FaceGroup fg) throws Exception
+    {
+        InputStream stream = new FileInputStream(fileModel);
 
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-		String line;
+        if (stream == null || fileModel == null || path == null)
+        {
+            AIRI.logger.bug("OBJ Loading Failed: " + path);
+            stream.close();
+            return false;
+        }
 
-		while ((line = bufferedReader.readLine()) != null)
-		{
-			String[] words = line.split(" ");
-			String command = words[0];
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+        String line;
 
-			if (command.equals("o"))
-			{
-				part = new Part(vertex, uv);
-				nameToPartHash.put(words[1], part);
-			}
-			else if (command.equals("v"))
-			{
-				Vertex v;
-				part.addVertex(v = new Vertex(Float.parseFloat(words[1]), Float.parseFloat(words[2]), Float.parseFloat(words[3])));
+        while ((line = bufferedReader.readLine()) != null)
+        {
+            String[] words = line.split(" ");
+            String command = words[0];
 
-				xMin = Math.min(xMin, v.x);
-				yMin = Math.min(yMin, v.y);
-				zMin = Math.min(zMin, v.z);
-				xMax = Math.max(xMax, v.x);
-				yMax = Math.max(yMax, v.y);
-				zMax = Math.max(zMax, v.z);
-			}
-			else if (command.equals("vt"))
-			{
-				part.getUV().add(new UV(Float.parseFloat(words[1]), 1 - Float.parseFloat(words[2])));
-			}
-			else if (command.equals("f"))
-			{
-				int vertexNbr = words.length - 1;
-				if (vertexNbr == 3)
-				{
-					Vertex[] verticeId = new Vertex[vertexNbr];
-					UV[] uvId = new UV[vertexNbr];
-					for (int idx = 0; idx < vertexNbr; idx++)
-					{
-						String[] id = words[idx + 1].split("/");
+            if (command.equals("o"))
+            {
+                part = new Part(vertex, uv);
+                nameToPartHash.put(words[1], part);
+            }
+            else if (command.equals("v"))
+            {
+                Vertex v;
+                part.addVertex(v = new Vertex(Float.parseFloat(words[1]), Float.parseFloat(words[2]), Float.parseFloat(words[3])));
 
-						verticeId[idx] = part.getVertices().get(Integer.parseInt(id[0]) - 1);
-						if (id.length > 1 && !id[1].equals(""))
-						{
-							uvId[idx] = part.getUV().get(Integer.parseInt(id[1]) - 1);
-						}
-						else
-						{
-							uvId[idx] = null;
-						}
-					}
+                xMin = Math.min(xMin, v.x);
+                yMin = Math.min(yMin, v.y);
+                zMin = Math.min(zMin, v.z);
+                xMax = Math.max(xMax, v.x);
+                yMax = Math.max(yMax, v.y);
+                zMax = Math.max(zMax, v.z);
+            }
+            else if (command.equals("vt"))
+            {
+                part.getUV().add(new UV(Float.parseFloat(words[1]), 1 - Float.parseFloat(words[2])));
+            }
+            else if (command.equals("f"))
+            {
+                int vertexNbr = words.length - 1;
+                if (vertexNbr == 3)
+                {
+                    Vertex[] verticeId = new Vertex[vertexNbr];
+                    UV[] uvId = new UV[vertexNbr];
+                    for (int idx = 0; idx < vertexNbr; idx++)
+                    {
+                        String[] id = words[idx + 1].split("/");
 
-					fg.faces.add(new Face(verticeId, uvId, new Normal(verticeId[0], verticeId[1], verticeId[2])));
-				}
-			}
-			else if (command.equals("mtllib"))
-			{
-				mtlName = words[1];
-			}
-			else if (command.equals("usemtl"))
-			{
-				fg = new FaceGroup();
-				fg.mtlName = words[1];
+                        verticeId[idx] = part.getVertices().get(Integer.parseInt(id[0]) - 1);
+                        if (id.length > 1 && !id[1].equals(""))
+                        {
+                            uvId[idx] = part.getUV().get(Integer.parseInt(id[1]) - 1);
+                        }
+                        else
+                        {
+                            uvId[idx] = null;
+                        }
+                    }
 
-				if (part != null && part.faceGroup != null)
-				{
-					part.faceGroup.add(fg);
-				}
-			}
-		}
-		bufferedReader.close();
+                    fg.faces.add(new Face(verticeId, uvId, new Normal(verticeId[0], verticeId[1], verticeId[2])));
+                }
+            }
+            else if (command.equals("mtllib"))
+            {
+                mtlName = words[1];
+            }
+            else if (command.equals("usemtl"))
+            {
+                fg = new FaceGroup();
+                fg.mtlName = words[1];
 
-		return true;
-	}
+                if (part != null && part.faceGroup != null)
+                {
+                    part.faceGroup.add(fg);
+                }
+            }
+        }
+        bufferedReader.close();
 
-	private boolean loadMTL(File fileTexture, String path) throws Exception
-	{
-		InputStream stream = new FileInputStream(fileTexture);
+        return true;
+    }
 
-		System.out.println("Loading MTL: " + fileTexture);
+    private boolean loadMTL(File fileTexture, String path) throws Exception
+    {
+        InputStream stream = new FileInputStream(fileTexture);
 
-		if (stream == null || fileTexture == null || path == null)
-		{
-			AIRI.logger.bug("MTL Loading failed: " + path);
-			stream.close();
-			return false;
-		}
+        System.out.println("Loading MTL: " + fileTexture);
 
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-		String mtlName = "";
-		String line;
-		while ((line = bufferedReader.readLine()) != null)
-		{
-			String[] words = line.split(" ");
-			String command = words[0];
+        if (stream == null || fileTexture == null || path == null)
+        {
+            AIRI.logger.bug("MTL Loading failed: " + path);
+            stream.close();
+            return false;
+        }
 
-			if (command.equals("newmtl"))
-			{
-				mtlName = words[1];
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+        String mtlName = "";
+        String line;
+        while ((line = bufferedReader.readLine()) != null)
+        {
+            String[] words = line.split(" ");
+            String command = words[0];
 
-			}
-			else if (command.equals("map_Kd"))
-			{
-				for (Part partPtr : nameToPartHash.values())
-				{
-					for (FaceGroup faceGroup : partPtr.faceGroup)
-					{
-						if (faceGroup.mtlName != null && faceGroup.mtlName.equals(mtlName))
-						{
-							faceGroup.resource = new ResourceLocation(modid, "models/" + directory + words[1]);
-						}
-					}
-				}
-			}
-			else if (command.equals("Kd"))
-			{
-				for (Part partPtr : nameToPartHash.values())
-				{
-					for (FaceGroup faceGroup : partPtr.faceGroup)
-					{
-						if (faceGroup.mtlName != null && faceGroup.mtlName.equals(mtlName))
-						{
-							faceGroup.color = new Color(Float.parseFloat(words[1]), Float.parseFloat(words[2]), Float.parseFloat(words[3]), 1F);
-						}
-					}
-				}
-			}
-		}
-		bufferedReader.close();
+            if (command.equals("newmtl"))
+            {
+                mtlName = words[1];
 
-		return true;
-	}
+            }
+            else if (command.equals("map_Kd"))
+            {
+                for (Part partPtr : nameToPartHash.values())
+                {
+                    for (FaceGroup faceGroup : partPtr.faceGroup)
+                    {
+                        if (faceGroup.mtlName != null && faceGroup.mtlName.equals(mtlName))
+                        {
+                            faceGroup.resource = new ResourceLocation(modid, "models/" + directory + words[1]);
+                        }
+                    }
+                }
+            }
+            else if (command.equals("Kd"))
+            {
+                for (Part partPtr : nameToPartHash.values())
+                {
+                    for (FaceGroup faceGroup : partPtr.faceGroup)
+                    {
+                        if (faceGroup.mtlName != null && faceGroup.mtlName.equals(mtlName))
+                        {
+                            faceGroup.color = new Color(Float.parseFloat(words[1]), Float.parseFloat(words[2]), Float.parseFloat(words[3]), 1F);
+                        }
+                    }
+                }
+            }
+        }
+        bufferedReader.close();
 
-	private void loadORI(File fileOrigins, Part part) throws Exception
-	{
-		InputStream stream = new FileInputStream(fileOrigins);
+        return true;
+    }
 
-		if (stream != null)
-		{
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-			String line;
+    private void loadORI(File fileOrigins, Part part) throws Exception
+    {
+        InputStream stream = new FileInputStream(fileOrigins);
 
-			while ((line = bufferedReader.readLine()) != null)
-			{
-				String[] words = line.split(" ");
-				String command = words[0];
+        if (stream != null)
+        {
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+            String line;
 
-				if (command.equals("o"))
-				{
-					part = nameToPartHash.get(words[1]);
-				}
-				else if (command.equals("f"))
-				{
-					String key = words[1];
-					float value = Float.valueOf(words[2]);
-					
-					if (key.equals("originX"))
-					{
-						part.setOriginX(value);
-					}
-					else if (key.equals("originY"))
-					{
-						part.setOriginY(value);
-					}
-					else if (key.equals("originZ"))
-					{
-						part.setOriginZ(value);
-					}
-					else if (key.equals("originX2"))
-					{
-						part.setOriginX2(value);
-					}
-					else if (key.equals("originY2"))
-					{
-						part.setOriginY2(value);
-					}
-					else if (key.equals("originZ2"))
-					{
-						part.setOriginZ2(value);
-					}
-					else
-					{
-						part.nameToFloatHash.put(key, Float.valueOf(value));
-					}
-				}
-				else if (command.equals("s"))
-				{
-					nameToStringHash.put(words[1], words[2]);
-				}
-			}
-			
-			bufferedReader.close();
-		}
-	}
+            while ((line = bufferedReader.readLine()) != null)
+            {
+                String[] words = line.split(" ");
+                String command = words[0];
 
-	public void draw(String part)
-	{
-		Part partPtr = getPart(part);
+                if (command.equals("o"))
+                {
+                    part = nameToPartHash.get(words[1]);
+                }
+                else if (command.equals("f"))
+                {
+                    String key = words[1];
+                    float value = Float.valueOf(words[2]);
 
-		if (partPtr != null)
-		{
-			partPtr.draw();
-		}
-	}
+                    if (key.equals("originX"))
+                    {
+                        part.setOriginX(value);
+                    }
+                    else if (key.equals("originY"))
+                    {
+                        part.setOriginY(value);
+                    }
+                    else if (key.equals("originZ"))
+                    {
+                        part.setOriginZ(value);
+                    }
+                    else if (key.equals("originX2"))
+                    {
+                        part.setOriginX2(value);
+                    }
+                    else if (key.equals("originY2"))
+                    {
+                        part.setOriginY2(value);
+                    }
+                    else if (key.equals("originZ2"))
+                    {
+                        part.setOriginZ2(value);
+                    }
+                    else
+                    {
+                        part.nameToFloatHash.put(key, Float.valueOf(value));
+                    }
+                }
+                else if (command.equals("s"))
+                {
+                    nameToStringHash.put(words[1], words[2]);
+                }
+            }
 
-	public Part getPart(String part)
-	{
-		return this.nameToPartHash.get(part);
-	}
+            bufferedReader.close();
+        }
+    }
 
-	public String getString(String name)
-	{
-		return this.nameToStringHash.get(name);
-	}
+    public void draw(String part)
+    {
+        Part partPtr = getPart(part);
 
-	public String getMtlName()
-	{
-		return this.mtlName;
-	}
+        if (partPtr != null)
+        {
+            partPtr.draw();
+        }
+    }
+
+    public Part getPart(String part)
+    {
+        return this.nameToPartHash.get(part);
+    }
+
+    public String getString(String name)
+    {
+        return this.nameToStringHash.get(name);
+    }
+
+    public String getMtlName()
+    {
+        return this.mtlName;
+    }
 }

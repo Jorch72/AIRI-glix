@@ -5,6 +5,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public interface IInitializablePre
 {
-	@Mod.EventHandler
+    @Mod.EventHandler
     public void preInitialize(FMLPreInitializationEvent event);
 }

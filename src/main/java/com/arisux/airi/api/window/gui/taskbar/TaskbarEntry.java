@@ -19,7 +19,7 @@ public class TaskbarEntry
         this.updateEntry();
     }
 
-    public TaskbarEntry(Window...windows)
+    public TaskbarEntry(Window... windows)
     {
         super();
 

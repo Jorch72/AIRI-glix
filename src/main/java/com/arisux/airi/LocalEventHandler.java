@@ -15,45 +15,45 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class LocalEventHandler implements IInitializablePre
 {
-	private IInitializablePre clientEvents;
-	private ArrayList<Structure> structuresInQueue = new ArrayList<Structure>();
-	
-	@Override
-	public void preInitialize(FMLPreInitializationEvent event)
-	{
-		FMLCommonHandler.instance().bus().register(this);
-		MinecraftForge.EVENT_BUS.register(this);
-		
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
-		{
-			FMLCommonHandler.instance().bus().register(clientEvents = new ClientSideEvents());
-			clientEvents.preInitialize(event);
-		}
-	}
-	
-	@SideOnly(Side.CLIENT)
-	public ClientSideEvents getClientEvents()
-	{
-		return (ClientSideEvents) clientEvents;
-	}
-	
-	@SubscribeEvent
-	public void serverTick(TickEvent.ServerTickEvent event)
-	{
-		@SuppressWarnings("unchecked")
-		ArrayList<Structure> structures = (ArrayList<Structure>) structuresInQueue.clone();
-		
-		for (Structure structure : structures)
-		{
-			if (structure.process())
-			{
-				this.structuresInQueue.remove(structure);
-			}
-		}
-	}
-	
-	public ArrayList<Structure> getStructuresInQueue()
-	{
-		return structuresInQueue;
-	}
+    private IInitializablePre clientEvents;
+    private ArrayList<Structure> structuresInQueue = new ArrayList<Structure>();
+
+    @Override
+    public void preInitialize(FMLPreInitializationEvent event)
+    {
+        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
+
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
+        {
+            FMLCommonHandler.instance().bus().register(clientEvents = new ClientSideEvents());
+            clientEvents.preInitialize(event);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public ClientSideEvents getClientEvents()
+    {
+        return (ClientSideEvents) clientEvents;
+    }
+
+    @SubscribeEvent
+    public void serverTick(TickEvent.ServerTickEvent event)
+    {
+        @SuppressWarnings("unchecked")
+        ArrayList<Structure> structures = (ArrayList<Structure>) structuresInQueue.clone();
+
+        for (Structure structure : structures)
+        {
+            if (structure.process())
+            {
+                this.structuresInQueue.remove(structure);
+            }
+        }
+    }
+
+    public ArrayList<Structure> getStructuresInQueue()
+    {
+        return structuresInQueue;
+    }
 }

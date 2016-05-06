@@ -14,46 +14,46 @@ import net.minecraft.nbt.CompressedStreamTools;
 
 public class SchematicLoader
 {
-	/**
-	 * Extract a schematic from the provided URL to the provided File path and then load it.
-	 * The schematic will not be extracted if it is already present in the provided path.
-	 * 
-	 * @param path - The path we are extracting to and loading the schematic from.
-	 * @param resource - The URL path we are extracting the resource from.
-	 * @return - The schematic that was loaded. Null if the schematic was not loaded.
-	 */
-	public static Schematic loadSchematic(File path, URL resource)
-	{
-		if (!getSchematicsDirectory().exists())
-		{
-			getSchematicsDirectory().mkdirs();
-		}
-		
-		if (!path.exists())
-		{
-			try
-			{
-			    FileUtils.copyURLToFile(resource, path);
-				AIRI.logger.info("Extracted %s", path.getAbsoluteFile().getPath());
-			}
-			catch (Exception e)
-			{
-				AIRI.logger.info("Error while extracting %s: %s", path, e);
-			}
-		}
-		
-		return loadSchematic(path);
-	}
-	
-	/**
-	 * Load a schematic from the schematics directory simply by using its name.
-	 * 
-	 * @param name - The name of the schematic we are loading.
-	 * @return - The schematic that was loaded. Null if the schematic was not loaded.
-	 */
+    /**
+     * Extract a schematic from the provided URL to the provided File path and then load it.
+     * The schematic will not be extracted if it is already present in the provided path.
+     * 
+     * @param path - The path we are extracting to and loading the schematic from.
+     * @param resource - The URL path we are extracting the resource from.
+     * @return - The schematic that was loaded. Null if the schematic was not loaded.
+     */
+    public static Schematic loadSchematic(File path, URL resource)
+    {
+        if (!getSchematicsDirectory().exists())
+        {
+            getSchematicsDirectory().mkdirs();
+        }
+
+        if (!path.exists())
+        {
+            try
+            {
+                FileUtils.copyURLToFile(resource, path);
+                AIRI.logger.info("Extracted %s", path.getAbsoluteFile().getPath());
+            }
+            catch (Exception e)
+            {
+                AIRI.logger.info("Error while extracting %s: %s", path, e);
+            }
+        }
+
+        return loadSchematic(path);
+    }
+
+    /**
+     * Load a schematic from the schematics directory simply by using its name.
+     * 
+     * @param name - The name of the schematic we are loading.
+     * @return - The schematic that was loaded. Null if the schematic was not loaded.
+     */
     public static Schematic loadSchematic(String name)
     {
-    	name = FilenameUtils.getExtension(name).length() == 0 ? name + ".schematic" : name;
+        name = FilenameUtils.getExtension(name).length() == 0 ? name + ".schematic" : name;
 
         for (File file : getSchematicsInDirectory())
         {
@@ -76,10 +76,10 @@ public class SchematicLoader
     {
         try
         {
-        	Schematic schematic = new Schematic(path, CompressedStreamTools.readCompressed(new FileInputStream(path)));
-        	AIRI.instance().getLoadedSchematics().add(schematic);
-        	
-        	return schematic;
+            Schematic schematic = new Schematic(path, CompressedStreamTools.readCompressed(new FileInputStream(path)));
+            AIRI.instance().getLoadedSchematics().add(schematic);
+
+            return schematic;
         }
         catch (Exception e)
         {
@@ -98,12 +98,12 @@ public class SchematicLoader
         Collection<File> files = getSchematicsInDirectory();
         String[] filenames = new String[files.size()];
         int i = 0;
-        
+
         for (File file : files)
         {
             filenames[i++] = FilenameUtils.getBaseName(file.getName());
         }
-        
+
         return filenames;
     }
 
@@ -113,7 +113,7 @@ public class SchematicLoader
      */
     public static Collection<File> getSchematicsInDirectory()
     {
-        return FileUtils.listFiles(getSchematicsDirectory(), new String[]{"schematic"}, true);
+        return FileUtils.listFiles(getSchematicsDirectory(), new String[] { "schematic" }, true);
     }
 
     /**

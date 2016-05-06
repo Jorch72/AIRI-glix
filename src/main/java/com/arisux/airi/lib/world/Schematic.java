@@ -20,240 +20,240 @@ import net.minecraftforge.common.util.Constants;
 
 public class Schematic
 {
-	private short width;
-	private short height;
-	private short length;
-	private CoordData origin;
-	private Block[] blocks;
-	private byte[] metadata;
-	private ArrayList<NBTTagCompound> tileEntityTags = new ArrayList<NBTTagCompound>();
-	private Map<Short, String> idMap;
-	private File file;
+    private short width;
+    private short height;
+    private short length;
+    private CoordData origin;
+    private Block[] blocks;
+    private byte[] metadata;
+    private ArrayList<NBTTagCompound> tileEntityTags = new ArrayList<NBTTagCompound>();
+    private Map<Short, String> idMap;
+    private File file;
 
-	public Schematic(File file, NBTTagCompound tagCompound)
-	{
-		String materials = tagCompound.getString("Materials");
+    public Schematic(File file, NBTTagCompound tagCompound)
+    {
+        String materials = tagCompound.getString("Materials");
 
-		if (!materials.equals("Alpha"))
-		{
-			AIRI.logger.warning("Unsupported schematic format for: ", file);
-			return;
-		}
+        if (!materials.equals("Alpha"))
+        {
+            AIRI.logger.warning("Unsupported schematic format for: ", file);
+            return;
+        }
 
-		this.file = file;
-		this.origin = new CoordData(tagCompound.getShort("WEOriginX"), tagCompound.getShort("WEOriginY"), tagCompound.getShort("WEOriginZ"));
-		this.width = tagCompound.getShort("Width");
-		this.height = tagCompound.getShort("Height");
-		this.length = tagCompound.getShort("Length");
-		this.metadata = tagCompound.getByteArray("Data");
-		byte[] blockIds = tagCompound.getByteArray("Blocks");
-		byte[] addBlocks = tagCompound.getByteArray("AddBlocks");
-		NBTTagCompound mappings = tagCompound.getCompoundTag("Mapping");
+        this.file = file;
+        this.origin = new CoordData(tagCompound.getShort("WEOriginX"), tagCompound.getShort("WEOriginY"), tagCompound.getShort("WEOriginZ"));
+        this.width = tagCompound.getShort("Width");
+        this.height = tagCompound.getShort("Height");
+        this.length = tagCompound.getShort("Length");
+        this.metadata = tagCompound.getByteArray("Data");
+        byte[] blockIds = tagCompound.getByteArray("Blocks");
+        byte[] addBlocks = tagCompound.getByteArray("AddBlocks");
+        NBTTagCompound mappings = tagCompound.getCompoundTag("Mapping");
 
-		///////////////////////////////////////////////
-		// Load Mappings
-		///////////////////////////////////////////////
-		Map<Short, String> idMap = new HashMap<Short, String>();
+        ///////////////////////////////////////////////
+        // Load Mappings
+        ///////////////////////////////////////////////
+        Map<Short, String> idMap = new HashMap<Short, String>();
 
-		for (Object obj : mappings.func_150296_c())
-		{
-			String alias = obj.toString();
-			short id = mappings.getShort(alias);
-			idMap.put(id, alias);
-		}
+        for (Object obj : mappings.func_150296_c())
+        {
+            String alias = obj.toString();
+            short id = mappings.getShort(alias);
+            idMap.put(id, alias);
+        }
 
-		if (!idMap.isEmpty())
-		{
-			System.out.println("Schematic is missing mappings: " + file);
-		}
+        if (!idMap.isEmpty())
+        {
+            System.out.println("Schematic is missing mappings: " + file);
+        }
 
-		this.idMap = idMap;
+        this.idMap = idMap;
 
-		///////////////////////////////////////////////
-		// Load Blocks
-		///////////////////////////////////////////////
-		this.blocks = new Block[blockIds.length];
+        ///////////////////////////////////////////////
+        // Load Blocks
+        ///////////////////////////////////////////////
+        this.blocks = new Block[blockIds.length];
 
-		for (int i = 0; i < blockIds.length; i++)
-		{
-			int blockID = blockIds[i] & 0xff;
+        for (int i = 0; i < blockIds.length; i++)
+        {
+            int blockID = blockIds[i] & 0xff;
 
-			if (addBlocks.length >= (blockIds.length + 1) / 2)
-			{
-				boolean lowerNybble = (i & 1) == 0;
-				blockID |= lowerNybble ? ((addBlocks[i >> 1] & 0x0F) << 8) : ((addBlocks[i >> 1] & 0xF0) << 4);
-			}
+            if (addBlocks.length >= (blockIds.length + 1) / 2)
+            {
+                boolean lowerNybble = (i & 1) == 0;
+                blockID |= lowerNybble ? ((addBlocks[i >> 1] & 0x0F) << 8) : ((addBlocks[i >> 1] & 0xF0) << 4);
+            }
 
-			String key = this.idMap.get((short) blockID);
-			Block block = null;
-			block = key != null ? Block.getBlockFromName(key) : null;
-			block = block == null ? Block.getBlockById(blockID) : block;
+            String key = this.idMap.get((short) blockID);
+            Block block = null;
+            block = key != null ? Block.getBlockFromName(key) : null;
+            block = block == null ? Block.getBlockById(blockID) : block;
 
-			this.blocks[i] = block;
-		}
+            this.blocks[i] = block;
+        }
 
-		///////////////////////////////////////////////
-		// Load Tile Entities
-		///////////////////////////////////////////////
-		NBTTagList tileEntities = tagCompound.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND);
+        ///////////////////////////////////////////////
+        // Load Tile Entities
+        ///////////////////////////////////////////////
+        NBTTagList tileEntities = tagCompound.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND);
 
-		for (int i = 0; i < tileEntities.tagCount(); i++)
-		{
-			tileEntityTags.add(tileEntities.getCompoundTagAt(i));
-		}
-	}
+        for (int i = 0; i < tileEntities.tagCount(); i++)
+        {
+            tileEntityTags.add(tileEntities.getCompoundTagAt(i));
+        }
+    }
 
-	public void addBlocksToQueue(Structure structure)
-	{
-		Blocks.CoordSelection blockArea = Blocks.CoordSelection.areaFromSize(new CoordData(0, 0, 0), new int[] { width, height, length });
-		
-		for (int pass = 0; pass < 2; pass++)
-		{
-			for (CoordData relative : blockArea)
-			{
-				int index = (int) relative.posX + ((int) relative.posY * length + (int) relative.posZ) * width;
-				CoordData data = structure.getData().add(relative);
-				Block block = blocks[index];
-				byte meta = this.metadata[index];
+    public void addBlocksToQueue(Structure structure)
+    {
+        Blocks.CoordSelection blockArea = Blocks.CoordSelection.areaFromSize(new CoordData(0, 0, 0), new int[] { width, height, length });
 
-				data.block = block;
-				data.meta = meta;
+        for (int pass = 0; pass < 2; pass++)
+        {
+            for (CoordData relative : blockArea)
+            {
+                int index = (int) relative.posX + ((int) relative.posY * length + (int) relative.posZ) * width;
+                CoordData data = structure.getData().add(relative);
+                Block block = blocks[index];
+                byte meta = this.metadata[index];
 
-				if (block != null && getPass(block, meta) == pass && block != net.minecraft.init.Blocks.air)
-				{
-					structure.getBlockQueue().add(data);
-				}
-			}
-		}
-	}
+                data.block = block;
+                data.meta = meta;
 
-	public void generateTileEntities(World world, CoordData data)
-	{
-		HashMap<Integer, TileEntity> tileEntities = new HashMap<Integer, TileEntity>();
+                if (block != null && getPass(block, meta) == pass && block != net.minecraft.init.Blocks.air)
+                {
+                    structure.getBlockQueue().add(data);
+                }
+            }
+        }
+    }
 
-		for (NBTTagCompound tag : tileEntityTags)
-		{
-			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
+    public void generateTileEntities(World world, CoordData data)
+    {
+        HashMap<Integer, TileEntity> tileEntities = new HashMap<Integer, TileEntity>();
 
-			if (tileEntity != null)
-			{
-				tileEntities.put(new CoordData(tileEntity).hashCode(), tileEntity);
-			}
-		}
+        for (NBTTagCompound tag : tileEntityTags)
+        {
+            TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
 
-		Blocks.CoordSelection blockArea = Blocks.CoordSelection.areaFromSize(new CoordData(0, 0, 0), new int[] { width, height, length });
+            if (tileEntity != null)
+            {
+                tileEntities.put(new CoordData(tileEntity).hashCode(), tileEntity);
+            }
+        }
 
-		for (int pass = 0; pass < 2; pass++)
-		{
-			for (CoordData relative : blockArea)
-			{
-				int index = (int) relative.posX + ((int) relative.posY * length + (int) relative.posZ) * width;
-				Block block = blocks[index];
-				byte meta = this.metadata[index];
+        Blocks.CoordSelection blockArea = Blocks.CoordSelection.areaFromSize(new CoordData(0, 0, 0), new int[] { width, height, length });
 
-				if (block != null && getPass(block, meta) == pass && block != AIRI.WORLDGEN_GHOST)
-				{
-					CoordData pos = new CoordData(data.posX, data.posY, data.posZ, block, meta).add(relative);
-					TileEntity tileEntity = tileEntities.get(relative.hashCode());
+        for (int pass = 0; pass < 2; pass++)
+        {
+            for (CoordData relative : blockArea)
+            {
+                int index = (int) relative.posX + ((int) relative.posY * length + (int) relative.posZ) * width;
+                Block block = blocks[index];
+                byte meta = this.metadata[index];
 
-					if (tileEntity != null)
-					{
-						world.setBlockMetadataWithNotify((int) pos.posX, (int) pos.posY, (int) pos.posZ, meta, 2);
-						TileEntities.setTileEntityPosition(tileEntity, pos);
-						world.setTileEntity((int) pos.posX, (int) pos.posY, (int) pos.posZ, tileEntity);
-						tileEntity.updateContainingBlockInfo();
-					}
-				}
-			}
-		}
-	}
+                if (block != null && getPass(block, meta) == pass && block != AIRI.WORLDGEN_GHOST)
+                {
+                    CoordData pos = new CoordData(data.posX, data.posY, data.posZ, block, meta).add(relative);
+                    TileEntity tileEntity = tileEntities.get(relative.hashCode());
 
-	@Deprecated
-	public void generate(World world, CoordData data)
-	{
-		HashMap<Integer, TileEntity> tileEntities = new HashMap<Integer, TileEntity>();
+                    if (tileEntity != null)
+                    {
+                        world.setBlockMetadataWithNotify((int) pos.posX, (int) pos.posY, (int) pos.posZ, meta, 2);
+                        TileEntities.setTileEntityPosition(tileEntity, pos);
+                        world.setTileEntity((int) pos.posX, (int) pos.posY, (int) pos.posZ, tileEntity);
+                        tileEntity.updateContainingBlockInfo();
+                    }
+                }
+            }
+        }
+    }
 
-		for (NBTTagCompound tag : tileEntityTags)
-		{
-			TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
+    @Deprecated
+    public void generate(World world, CoordData data)
+    {
+        HashMap<Integer, TileEntity> tileEntities = new HashMap<Integer, TileEntity>();
 
-			if (tileEntity != null)
-			{
-				tileEntities.put(new CoordData(tileEntity).hashCode(), tileEntity);
-			}
-		}
+        for (NBTTagCompound tag : tileEntityTags)
+        {
+            TileEntity tileEntity = TileEntity.createAndLoadEntity(tag);
 
-		Blocks.CoordSelection blockArea = Blocks.CoordSelection.areaFromSize(new CoordData(0, 0, 0), new int[] { width, height, length });
+            if (tileEntity != null)
+            {
+                tileEntities.put(new CoordData(tileEntity).hashCode(), tileEntity);
+            }
+        }
 
-		for (int pass = 0; pass < 2; pass++)
-		{
-			for (CoordData relative : blockArea)
-			{
-				int index = (int) relative.posX + ((int) relative.posY * length + (int) relative.posZ) * width;
-				Block block = blocks[index];
-				byte meta = this.metadata[index];
+        Blocks.CoordSelection blockArea = Blocks.CoordSelection.areaFromSize(new CoordData(0, 0, 0), new int[] { width, height, length });
 
-				if (block != null && getPass(block, meta) == pass && block != AIRI.WORLDGEN_GHOST)
-				{
-					CoordData pos = new CoordData(data.posX, data.posY, data.posZ, block, meta).add(relative);
-					world.setBlock((int) pos.posX, (int) pos.posY, (int) pos.posZ, block, meta, 3);
+        for (int pass = 0; pass < 2; pass++)
+        {
+            for (CoordData relative : blockArea)
+            {
+                int index = (int) relative.posX + ((int) relative.posY * length + (int) relative.posZ) * width;
+                Block block = blocks[index];
+                byte meta = this.metadata[index];
 
-					TileEntity tileEntity = tileEntities.get(relative.hashCode());
+                if (block != null && getPass(block, meta) == pass && block != AIRI.WORLDGEN_GHOST)
+                {
+                    CoordData pos = new CoordData(data.posX, data.posY, data.posZ, block, meta).add(relative);
+                    world.setBlock((int) pos.posX, (int) pos.posY, (int) pos.posZ, block, meta, 3);
 
-					if (tileEntity != null)
-					{
-						world.setBlockMetadataWithNotify((int) pos.posX, (int) pos.posY, (int) pos.posZ, meta, 2);
-						TileEntities.setTileEntityPosition(tileEntity, pos);
-						world.setTileEntity((int) pos.posX, (int) pos.posY, (int) pos.posZ, tileEntity);
-						tileEntity.updateContainingBlockInfo();
-					}
-				}
-			}
-		}
-	}
+                    TileEntity tileEntity = tileEntities.get(relative.hashCode());
 
-	private int getPass(Block block, int metadata)
-	{
-		return (block.isNormalCube() || block.getMaterial() == Material.air) ? 0 : 1;
-	}
+                    if (tileEntity != null)
+                    {
+                        world.setBlockMetadataWithNotify((int) pos.posX, (int) pos.posY, (int) pos.posZ, meta, 2);
+                        TileEntities.setTileEntityPosition(tileEntity, pos);
+                        world.setTileEntity((int) pos.posX, (int) pos.posY, (int) pos.posZ, tileEntity);
+                        tileEntity.updateContainingBlockInfo();
+                    }
+                }
+            }
+        }
+    }
 
-	public File getFile()
-	{
-		return file;
-	}
-	
-	public short width()
-	{
-		return this.width;
-	}
+    private int getPass(Block block, int metadata)
+    {
+        return (block.isNormalCube() || block.getMaterial() == Material.air) ? 0 : 1;
+    }
 
-	public short height()
-	{
-		return this.height;
-	}
+    public File getFile()
+    {
+        return file;
+    }
 
-	public short length()
-	{
-		return this.length;
-	}
+    public short width()
+    {
+        return this.width;
+    }
 
-	public Block[] blocks()
-	{
-		return this.blocks;
-	}
+    public short height()
+    {
+        return this.height;
+    }
 
-	public byte[] metadata()
-	{
-		return this.metadata;
-	}
+    public short length()
+    {
+        return this.length;
+    }
 
-	public CoordData origin()
-	{
-		return this.origin;
-	}
+    public Block[] blocks()
+    {
+        return this.blocks;
+    }
 
-	public ArrayList<NBTTagCompound> getTileEntities()
-	{
-		return this.tileEntityTags;
-	}
+    public byte[] metadata()
+    {
+        return this.metadata;
+    }
+
+    public CoordData origin()
+    {
+        return this.origin;
+    }
+
+    public ArrayList<NBTTagCompound> getTileEntities()
+    {
+        return this.tileEntityTags;
+    }
 }

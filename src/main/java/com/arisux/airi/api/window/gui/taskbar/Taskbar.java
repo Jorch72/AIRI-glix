@@ -18,7 +18,7 @@ public class Taskbar
         this.taskbarEntries = new ArrayList<TaskbarEntry>();
     }
 
-    public Taskbar addTaskbarEntry(TaskbarEntry...taskbarEntries)
+    public Taskbar addTaskbarEntry(TaskbarEntry... taskbarEntries)
     {
         for (TaskbarEntry taskbarEntry : taskbarEntries)
         {

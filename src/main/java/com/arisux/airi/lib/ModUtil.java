@@ -44,469 +44,469 @@ import net.minecraft.item.crafting.IRecipe;
 
 public class ModUtil
 {
-	/**
-	 * Used for easier management of large quantities of Item and Block instances.
-	 */
-	public static abstract class IBHandler
-	{
-		private IMod mod;
-		private ArrayList<Object> objectList = new ArrayList<Object>();
+    /**
+     * Used for easier management of large quantities of Item and Block instances.
+     */
+    public static abstract class IBHandler
+    {
+        private IMod mod;
+        private ArrayList<Object> objectList = new ArrayList<Object>();
 
-		public IBHandler(IMod mod)
-		{
-			this.mod = mod;
-		}
+        public IBHandler(IMod mod)
+        {
+            this.mod = mod;
+        }
 
-		public ArrayList<Object> getHandledObjects()
-		{
-			return objectList;
-		}
+        public ArrayList<Object> getHandledObjects()
+        {
+            return objectList;
+        }
 
-		public IMod getMod()
-		{
-			return mod;
-		}
+        public IMod getMod()
+        {
+            return mod;
+        }
 
-		/**
-		 * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
-		 * registration of Blocks. Using this method will result in the Block being automatically assigned
-		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-		 * 
-		 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
-		 * mod's domain. Texture names are based off of the Block's unlocalized name.
-		 * 
-		 * @param block - The Block instance to register.
-		 * @param reference - The reference ID to register the block under.
-		 * @return Returns the Block instances originally provided in the block parameter.
-		 */
-		public Block registerBlock(Block block, String reference)
-		{
-			return registerBlock(block, reference, this.getMod().tab());
-		}
+        /**
+         * Wrapper method for the registerBlock method found in ModEngine. Allows for simplified
+         * registration of Blocks. Using this method will result in the Block being automatically assigned
+         * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
+         * 
+         * Automatically assigned texture IDs are set to the default resource location of Blocks in the
+         * mod's domain. Texture names are based off of the Block's unlocalized name.
+         * 
+         * @param block - The Block instance to register.
+         * @param reference - The reference ID to register the block under.
+         * @return Returns the Block instances originally provided in the block parameter.
+         */
+        public Block registerBlock(Block block, String reference)
+        {
+            return registerBlock(block, reference, this.getMod().tab());
+        }
 
-		public Block registerBlock(Block block, String reference, CreativeTabs tab)
-		{
-			block.setBlockName(getMod().domain() + reference);
-			block.setBlockTextureName((block.getUnlocalizedName()).replace("tile.", ""));
-			this.setCreativeTab(block, tab);
-			
-			return GameRegistry.registerBlock(block, reference);
-		}
-		
-		public void setCreativeTab(Block block, CreativeTabs tab)
-		{
-			if (tab != null)
-			{
-				block.setCreativeTab(tab);
-			}
-		}
+        public Block registerBlock(Block block, String reference, CreativeTabs tab)
+        {
+            block.setBlockName(getMod().domain() + reference);
+            block.setBlockTextureName((block.getUnlocalizedName()).replace("tile.", ""));
+            this.setCreativeTab(block, tab);
 
-		public Item registerItem(Item item, String reference)
-		{
-			return registerItem(item, reference, true, null);
-		}
+            return GameRegistry.registerBlock(block, reference);
+        }
 
-		/**
-		 * Wrapper method for the registerItem method found in ModEngine. Allows for simplified
-		 * registration of Items. Using this method will result in the Item being automatically assigned
-		 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-		 * 
-		 * Automatically assigned texture IDs are set to the default resource location of Items in the
-		 * mod's domain. Texture names are based off of the Item's unlocalized name.
-		 * 
-		 * Unlocalized names are based off of the specified String reference IDs.
-		 * 
-		 * @param item - The Block instance to register.
-		 * @param reference - The reference ID to register the item under.
-		 * @param visibleOnPrimaryTab - If set to true, the Item will be automatically added to the CreativeTab
-		 * specified in the IBHandler. If set to false, you may specifiy a different CreativeTab instance for
-		 * the Item to be added to.
-		 * @param tab - If specified, the Item will be assigned to the specified CreativeTab. Set to null for
-		 * no creative tab.
-		 * @return Returns the Item instances originally provided in the item parameter.
-		 */
-		public Item registerItem(Item item, String reference, boolean visibleOnPrimaryTab, CreativeTabs tab)
-		{
-			return ModUtil.registerItem(item, reference, this, visibleOnPrimaryTab, tab);
-		}
+        public void setCreativeTab(Block block, CreativeTabs tab)
+        {
+            if (tab != null)
+            {
+                block.setCreativeTab(tab);
+            }
+        }
 
-		/**
-		 * Wrapper method for the registerItem method found in ModEngine. Allows for simplified
-		 * registration of Items. Using this method will result in the Item being automatically assigned
-		 * a texture location, and added to the ArrayList of objects in the specified IBHandler.
-		 * 
-		 * Automatically assigned texture IDs are set to the default resource location of Items in the
-		 * mod's domain. Texture names are based off of the Item's unlocalized name.
-		 * 
-		 * Unlocalized names are based off of the specified String reference IDs.
-		 * 
-		 * @param item - The Block instance to register.
-		 * @param reference - The reference ID to register the item under.
-		 * @param visibleOnPrimaryTab - If set to true, the Item will be automatically added to the CreativeTab
-		 * specified in the IBHandler. If set to false, you may specifiy a different CreativeTab instance for
-		 * the Item to be added to.
-		 * @return Returns the Item instances originally provided in the item parameter.
-		 */
-		public Item registerItem(Item item, String reference, boolean visibleOnPrimaryTab)
-		{
-			return ModUtil.registerItem(item, reference, this, visibleOnPrimaryTab, null);
-		}
-	}
+        public Item registerItem(Item item, String reference)
+        {
+            return registerItem(item, reference, true, null);
+        }
 
-	/**
-	 * Wrapper method for the registerBlock method found in GameRegistry. Allows for simplified
-	 * registration of Blocks. Using this method will result in the Block being automatically assigned
-	 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-	 * 
-	 * Automatically assigned texture IDs are set to the default resource location of Blocks in the
-	 * mod's domain. Texture names are based off of the Block's unlocalized name.
-	 * 
-	 * @param block - The Block instance to register.
-	 * @param reference - The reference ID to register the block under.
-	 * @param texture - The path to the texture assigned to this block.
-	 * @param handler - The IBHandler instance that is registerring this block.
-	 * @param visibleOnTab - If set true, the Block will automatically be registered to the CreativeTab
-	 * specified in the IBHandler instance this Block was registered from.
-	 * @param tab - The CreativeTabs instance this Block will be displayed on.
-	 * @return Returns the Block instances originally provided in the block parameter.
-	 */
-	public static Block registerBlock(Block block, String reference, String texture, IBHandler handler, boolean visibleOnTab, CreativeTabs tab)
-	{
-		block.setBlockName(handler.getMod().domain() + reference);
+        /**
+         * Wrapper method for the registerItem method found in ModEngine. Allows for simplified
+         * registration of Items. Using this method will result in the Item being automatically assigned
+         * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
+         * 
+         * Automatically assigned texture IDs are set to the default resource location of Items in the
+         * mod's domain. Texture names are based off of the Item's unlocalized name.
+         * 
+         * Unlocalized names are based off of the specified String reference IDs.
+         * 
+         * @param item - The Block instance to register.
+         * @param reference - The reference ID to register the item under.
+         * @param visibleOnPrimaryTab - If set to true, the Item will be automatically added to the CreativeTab
+         * specified in the IBHandler. If set to false, you may specifiy a different CreativeTab instance for
+         * the Item to be added to.
+         * @param tab - If specified, the Item will be assigned to the specified CreativeTab. Set to null for
+         * no creative tab.
+         * @return Returns the Item instances originally provided in the item parameter.
+         */
+        public Item registerItem(Item item, String reference, boolean visibleOnPrimaryTab, CreativeTabs tab)
+        {
+            return ModUtil.registerItem(item, reference, this, visibleOnPrimaryTab, tab);
+        }
 
-		if (texture == null)
-		{
-			block.setBlockTextureName((block.getUnlocalizedName()).replace("tile.", ""));
-		}
-		else
-		{
-			block.setBlockTextureName(texture);
-		}
+        /**
+         * Wrapper method for the registerItem method found in ModEngine. Allows for simplified
+         * registration of Items. Using this method will result in the Item being automatically assigned
+         * a texture location, and added to the ArrayList of objects in the specified IBHandler.
+         * 
+         * Automatically assigned texture IDs are set to the default resource location of Items in the
+         * mod's domain. Texture names are based off of the Item's unlocalized name.
+         * 
+         * Unlocalized names are based off of the specified String reference IDs.
+         * 
+         * @param item - The Block instance to register.
+         * @param reference - The reference ID to register the item under.
+         * @param visibleOnPrimaryTab - If set to true, the Item will be automatically added to the CreativeTab
+         * specified in the IBHandler. If set to false, you may specifiy a different CreativeTab instance for
+         * the Item to be added to.
+         * @return Returns the Item instances originally provided in the item parameter.
+         */
+        public Item registerItem(Item item, String reference, boolean visibleOnPrimaryTab)
+        {
+            return ModUtil.registerItem(item, reference, this, visibleOnPrimaryTab, null);
+        }
+    }
 
-		if (tab != null && visibleOnTab)
-		{
-			block.setCreativeTab(tab);
-		}
+    /**
+     * Wrapper method for the registerBlock method found in GameRegistry. Allows for simplified
+     * registration of Blocks. Using this method will result in the Block being automatically assigned
+     * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
+     * 
+     * Automatically assigned texture IDs are set to the default resource location of Blocks in the
+     * mod's domain. Texture names are based off of the Block's unlocalized name.
+     * 
+     * @param block - The Block instance to register.
+     * @param reference - The reference ID to register the block under.
+     * @param texture - The path to the texture assigned to this block.
+     * @param handler - The IBHandler instance that is registerring this block.
+     * @param visibleOnTab - If set true, the Block will automatically be registered to the CreativeTab
+     * specified in the IBHandler instance this Block was registered from.
+     * @param tab - The CreativeTabs instance this Block will be displayed on.
+     * @return Returns the Block instances originally provided in the block parameter.
+     */
+    public static Block registerBlock(Block block, String reference, String texture, IBHandler handler, boolean visibleOnTab, CreativeTabs tab)
+    {
+        block.setBlockName(handler.getMod().domain() + reference);
 
-		if (handler.getHandledObjects() != null)
-		{
-			handler.getHandledObjects().add(block);
-		}
+        if (texture == null)
+        {
+            block.setBlockTextureName((block.getUnlocalizedName()).replace("tile.", ""));
+        }
+        else
+        {
+            block.setBlockTextureName(texture);
+        }
 
-		GameRegistry.registerBlock(block, reference);
+        if (tab != null && visibleOnTab)
+        {
+            block.setCreativeTab(tab);
+        }
 
-		return block;
-	}
+        if (handler.getHandledObjects() != null)
+        {
+            handler.getHandledObjects().add(block);
+        }
 
-	/**
-	 * Wrapper method for the registerItem method found in GameRegistry. Allows for simplified
-	 * registration of Items. Using this method will result in the Item being automatically assigned
-	 * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
-	 * 
-	 * Automatically assigned texture IDs are set to the default resource location of Items in the
-	 * mod's domain. Texture names are based off of the Item's unlocalized name.
-	 * 
-	 * Unlocalized names are based off of the specified String reference IDs.
-	 * 
-	 * @param item - The Block instance to register.
-	 * @param reference - The reference ID to register the item under.
-	 * @param handler - The IBHandler instance that is registerring this item.
-	 * @param visibleOnPrimaryTab - If set to true, the Item will be automatically added to the CreativeTab
-	 * specified in the IBHandler. If set to false, you may specifiy a different CreativeTab instance for
-	 * the Item to be added to.
-	 * @param tab - If specified, the Item will be assigned to the specified CreativeTab. Set to null for
-	 * no creative tab.
-	 * @return Returns the Item instances originally provided in the item parameter.
-	 */
-	public static Item registerItem(Item item, String reference, IBHandler handler, boolean visibleOnPrimaryTab, CreativeTabs tab)
-	{
-		GameRegistry.registerItem(item, reference);
+        GameRegistry.registerBlock(block, reference);
 
-		item.setUnlocalizedName(handler.getMod().domain() + reference);
-		item.setTextureName((item.getUnlocalizedName()).replace("item.", ""));
+        return block;
+    }
 
-		if (handler.mod.tab() != null && visibleOnPrimaryTab)
-		{
-			item.setCreativeTab(handler.mod.tab());
-		}
-		else if (tab != null)
-		{
-			item.setCreativeTab(tab);
-		}
+    /**
+     * Wrapper method for the registerItem method found in GameRegistry. Allows for simplified
+     * registration of Items. Using this method will result in the Item being automatically assigned
+     * a texture location, creative tab, and added to the ArrayList of objects in the specified IBHandler.
+     * 
+     * Automatically assigned texture IDs are set to the default resource location of Items in the
+     * mod's domain. Texture names are based off of the Item's unlocalized name.
+     * 
+     * Unlocalized names are based off of the specified String reference IDs.
+     * 
+     * @param item - The Block instance to register.
+     * @param reference - The reference ID to register the item under.
+     * @param handler - The IBHandler instance that is registerring this item.
+     * @param visibleOnPrimaryTab - If set to true, the Item will be automatically added to the CreativeTab
+     * specified in the IBHandler. If set to false, you may specifiy a different CreativeTab instance for
+     * the Item to be added to.
+     * @param tab - If specified, the Item will be assigned to the specified CreativeTab. Set to null for
+     * no creative tab.
+     * @return Returns the Item instances originally provided in the item parameter.
+     */
+    public static Item registerItem(Item item, String reference, IBHandler handler, boolean visibleOnPrimaryTab, CreativeTabs tab)
+    {
+        GameRegistry.registerItem(item, reference);
 
-		if (handler.getHandledObjects() != null)
-		{
-			handler.getHandledObjects().add(item);
-		}
+        item.setUnlocalizedName(handler.getMod().domain() + reference);
+        item.setTextureName((item.getUnlocalizedName()).replace("item.", ""));
 
-		return item;
-	}
+        if (handler.mod.tab() != null && visibleOnPrimaryTab)
+        {
+            item.setCreativeTab(handler.mod.tab());
+        }
+        else if (tab != null)
+        {
+            item.setCreativeTab(tab);
+        }
 
-	/**
-	 * Wrapper method for the registerKeyBinding method found in ClientRegistry. Allows for
-	 * more efficient registration of a KeyBinding. 
-	 * 
-	 * @param keyName - Name of the KeyBinding to be registered.
-	 * @param key - Integer assigned to each individual keyboard key in the Keyboard class.
-	 * @param keyGroup - Group of KeyBindings to assign this KeyBinding to.
-	 * @return The KeyBinding Instance created from the provided parameters.
-	 */
-	@SideOnly(Side.CLIENT)
-	public static KeyBinding registerKeybinding(String keyName, int key, String keyGroup)
-	{
-		KeyBinding keybind = new KeyBinding(String.format("key.%s", keyName), key, keyGroup);
-		ClientRegistry.registerKeyBinding(keybind);
-		return keybind;
-	}
+        if (handler.getHandledObjects() != null)
+        {
+            handler.getHandledObjects().add(item);
+        }
 
-	/**
-	 * Finds the first IRecipe instance registered to a specific Item or Block instance.
-	 * 
-	 * @param obj - Item or Block instance to scan for recipes.
-	 * @return First found instance of an IRecipe registered to the specified Item or Block.
-	 */
-	@SuppressWarnings("unchecked")
-	public static IRecipe getRecipe(Object obj)
-	{
-		ItemStack stack = WorldUtil.Entities.Players.Inventories.newStack(obj);
-		List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
+        return item;
+    }
 
-		if (stack != null)
-		{
-			for (IRecipe recipe : recipes)
-			{
-				if (recipe != null && recipe.getRecipeOutput() != null && recipe.getRecipeOutput().getItem() == stack.getItem())
-				{
-					return recipe;
-				}
-			}
-		}
+    /**
+     * Wrapper method for the registerKeyBinding method found in ClientRegistry. Allows for
+     * more efficient registration of a KeyBinding. 
+     * 
+     * @param keyName - Name of the KeyBinding to be registered.
+     * @param key - Integer assigned to each individual keyboard key in the Keyboard class.
+     * @param keyGroup - Group of KeyBindings to assign this KeyBinding to.
+     * @return The KeyBinding Instance created from the provided parameters.
+     */
+    @SideOnly(Side.CLIENT)
+    public static KeyBinding registerKeybinding(String keyName, int key, String keyGroup)
+    {
+        KeyBinding keybind = new KeyBinding(String.format("key.%s", keyName), key, keyGroup);
+        ClientRegistry.registerKeyBinding(keybind);
+        return keybind;
+    }
 
-		return null;
-	}
+    /**
+     * Finds the first IRecipe instance registered to a specific Item or Block instance.
+     * 
+     * @param obj - Item or Block instance to scan for recipes.
+     * @return First found instance of an IRecipe registered to the specified Item or Block.
+     */
+    @SuppressWarnings("unchecked")
+    public static IRecipe getRecipe(Object obj)
+    {
+        ItemStack stack = WorldUtil.Entities.Players.Inventories.newStack(obj);
+        List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
 
-	/**
-	 * Finds all IRecipe instances registered to a specific Item or Block instance.
-	 * 
-	 * @param obj - Item or Block instance to scan for recipes.
-	 * @return All found instances of IRecipes registered to the specified Item or Block.
-	 */
-	@SuppressWarnings("unchecked")
-	public static List<IRecipe> getRecipes(Object obj)
-	{
-		ItemStack stack = WorldUtil.Entities.Players.Inventories.newStack(obj);
-		List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
-		List<IRecipe> foundRecipes = new ArrayList<IRecipe>();
+        if (stack != null)
+        {
+            for (IRecipe recipe : recipes)
+            {
+                if (recipe != null && recipe.getRecipeOutput() != null && recipe.getRecipeOutput().getItem() == stack.getItem())
+                {
+                    return recipe;
+                }
+            }
+        }
 
-		if (stack != null)
-		{
-			for (IRecipe recipe : recipes)
-			{
-				if (recipe != null && recipe.getRecipeOutput() != null && recipe.getRecipeOutput().getItem() == stack.getItem())
-				{
-					foundRecipes.add(recipe);
-				}
-			}
-		}
+        return null;
+    }
 
-		return foundRecipes;
-	}
+    /**
+     * Finds all IRecipe instances registered to a specific Item or Block instance.
+     * 
+     * @param obj - Item or Block instance to scan for recipes.
+     * @return All found instances of IRecipes registered to the specified Item or Block.
+     */
+    @SuppressWarnings("unchecked")
+    public static List<IRecipe> getRecipes(Object obj)
+    {
+        ItemStack stack = WorldUtil.Entities.Players.Inventories.newStack(obj);
+        List<IRecipe> recipes = CraftingManager.getInstance().getRecipeList();
+        List<IRecipe> foundRecipes = new ArrayList<IRecipe>();
 
-	/**
-	 * Returns if the current Minecraft installation is running 
-	 * in a development environment or normal environment.
-	 * 
-	 * @return Returns true if in a dev environment. Returns false if other.
-	 */
-	public static boolean isDevEnvironment()
-	{
-		return (Boolean) net.minecraft.launchwrapper.Launch.blackboard.get("fml.deobfuscatedEnvironment");
-	}
+        if (stack != null)
+        {
+            for (IRecipe recipe : recipes)
+            {
+                if (recipe != null && recipe.getRecipeOutput() != null && recipe.getRecipeOutput().getItem() == stack.getItem())
+                {
+                    foundRecipes.add(recipe);
+                }
+            }
+        }
 
-	/**
-	 * Extracts a file with specified location from the specified 
-	 * mod's java archive to the specified file instance.
-	 * 
-	 * @param modClass - Mod class to retrieve files from.
-	 * @param filePath - File path to retrieve a file from.
-	 * @param to - File instance that the information will be saved to.
-	 * @throws IOException
-	 */
-	@SuppressWarnings("unused")
-	private static void copyFileFromJar(Class<?> modClass, String filePath, File to) throws IOException
-	{
-		AIRI.logger.info("Extracting %s from %s jar", filePath, modClass.getSimpleName());
-		URL url = modClass.getResource(filePath);
-		FileUtils.copyURLToFile(url, to);
-	}
+        return foundRecipes;
+    }
 
-	/** 
-	 * Retrieve the ModContainer instance for a mod with the specified ID.
-	 * 
-	 * @param id - ID of the mod retrieving an instance from.
-	 * @return An instance of ModContainer that is assigned to this ID.
-	 */
-	public static ModContainer getModContainerForId(String id)
-	{
-		for (ModContainer container : Loader.instance().getModList())
-		{
-			if (container.getModId().equalsIgnoreCase(id))
-			{
-				return container;
-			}
-		}
+    /**
+     * Returns if the current Minecraft installation is running 
+     * in a development environment or normal environment.
+     * 
+     * @return Returns true if in a dev environment. Returns false if other.
+     */
+    public static boolean isDevEnvironment()
+    {
+        return (Boolean) net.minecraft.launchwrapper.Launch.blackboard.get("fml.deobfuscatedEnvironment");
+    }
 
-		return null;
-	}
+    /**
+     * Extracts a file with specified location from the specified 
+     * mod's java archive to the specified file instance.
+     * 
+     * @param modClass - Mod class to retrieve files from.
+     * @param filePath - File path to retrieve a file from.
+     * @param to - File instance that the information will be saved to.
+     * @throws IOException
+     */
+    @SuppressWarnings("unused")
+    private static void copyFileFromJar(Class<?> modClass, String filePath, File to) throws IOException
+    {
+        AIRI.logger.info("Extracting %s from %s jar", filePath, modClass.getSimpleName());
+        URL url = modClass.getResource(filePath);
+        FileUtils.copyURLToFile(url, to);
+    }
 
-	public static JsonElement parseJsonFromFile(File pathToJson)
-	{
-		try
-		{
-			return parseJsonFromStream(new FileInputStream(pathToJson));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return null;
-	}
+    /** 
+     * Retrieve the ModContainer instance for a mod with the specified ID.
+     * 
+     * @param id - ID of the mod retrieving an instance from.
+     * @return An instance of ModContainer that is assigned to this ID.
+     */
+    public static ModContainer getModContainerForId(String id)
+    {
+        for (ModContainer container : Loader.instance().getModList())
+        {
+            if (container.getModId().equalsIgnoreCase(id))
+            {
+                return container;
+            }
+        }
 
-	public static JsonElement parseJsonFromStream(InputStream stream)
-	{
-		try
-		{
-			InputStreamReader reader = new InputStreamReader(stream);
-			JsonParser parser = new JsonParser();
-			JsonElement rootElement = parser.parse(reader);
+        return null;
+    }
 
-			if (rootElement.isJsonArray())
-			{
-				for (JsonElement json : rootElement.getAsJsonArray())
-				{
-					return json;
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			FMLLog.log(Level.ERROR, e, "The stream could not be parsed as valid JSON.");
-			e.printStackTrace();
-		}
-		return null;
-	}
+    public static JsonElement parseJsonFromFile(File pathToJson)
+    {
+        try
+        {
+            return parseJsonFromStream(new FileInputStream(pathToJson));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-	public static final String getAnnotatedModId(Class<?> clazz)
-	{
-		if (clazz.isAnnotationPresent(Mod.class))
-		{
-			Mod mod = clazz.getAnnotation(Mod.class);
+    public static JsonElement parseJsonFromStream(InputStream stream)
+    {
+        try
+        {
+            InputStreamReader reader = new InputStreamReader(stream);
+            JsonParser parser = new JsonParser();
+            JsonElement rootElement = parser.parse(reader);
 
-			return mod.modid();
-		}
+            if (rootElement.isJsonArray())
+            {
+                for (JsonElement json : rootElement.getAsJsonArray())
+                {
+                    return json;
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            FMLLog.log(Level.ERROR, e, "The stream could not be parsed as valid JSON.");
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-		return null;
-	}
+    public static final String getAnnotatedModId(Class<?> clazz)
+    {
+        if (clazz.isAnnotationPresent(Mod.class))
+        {
+            Mod mod = clazz.getAnnotation(Mod.class);
 
-	public static class Jars
-	{
-		public static ArrayList<JarEntry> getZipEntriesInJar(JarFile jar)
-		{
-			return Collections.list(jar.entries());
-		}
+            return mod.modid();
+        }
 
-		public static FileInputStream getFileInputStreamFromJar(JarFile jar, File pathToFile)
-		{
-			try
-			{
-				ZipEntry zipEntry = jar.getEntry(pathToFile.toString());
+        return null;
+    }
 
-				if (zipEntry != null)
-				{
-					return (FileInputStream) jar.getInputStream(zipEntry);
-				}
-			}
-			catch (Exception e)
-			{
-				FMLLog.log(Level.WARN, e, "Jar %s failed to read properly, it will be ignored", jar.getName());
-			}
+    public static class Jars
+    {
+        public static ArrayList<JarEntry> getZipEntriesInJar(JarFile jar)
+        {
+            return Collections.list(jar.entries());
+        }
 
-			return null;
-		}
+        public static FileInputStream getFileInputStreamFromJar(JarFile jar, File pathToFile)
+        {
+            try
+            {
+                ZipEntry zipEntry = jar.getEntry(pathToFile.toString());
 
-		public static File extract(File compressedFile, File extractionDir)
-		{
-			if (!extractionDir.exists())
-			{
-				extractionDir.mkdir();
-			}
+                if (zipEntry != null)
+                {
+                    return (FileInputStream) jar.getInputStream(zipEntry);
+                }
+            }
+            catch (Exception e)
+            {
+                FMLLog.log(Level.WARN, e, "Jar %s failed to read properly, it will be ignored", jar.getName());
+            }
 
-			ZipFile zip = null;
+            return null;
+        }
 
-			try
-			{
-				zip = new ZipFile(compressedFile);
+        public static File extract(File compressedFile, File extractionDir)
+        {
+            if (!extractionDir.exists())
+            {
+                extractionDir.mkdir();
+            }
 
-				Enumeration<? extends ZipEntry> e = zip.entries();
+            ZipFile zip = null;
 
-				while (e.hasMoreElements())
-				{
-					ZipEntry entry = e.nextElement();
+            try
+            {
+                zip = new ZipFile(compressedFile);
 
-					File destinationPath = new File(extractionDir, entry.getName());
+                Enumeration<? extends ZipEntry> e = zip.entries();
 
-					if (!destinationPath.exists())
-					{
-						destinationPath.getParentFile().mkdirs();
-					}
+                while (e.hasMoreElements())
+                {
+                    ZipEntry entry = e.nextElement();
 
-					if (entry.isDirectory())
-					{
-						continue;
-					}
-					else
-					{
-						BufferedInputStream inputStream = new BufferedInputStream(zip.getInputStream(entry));
+                    File destinationPath = new File(extractionDir, entry.getName());
 
-						int b;
-						byte buffer[] = new byte[1024];
+                    if (!destinationPath.exists())
+                    {
+                        destinationPath.getParentFile().mkdirs();
+                    }
 
-						FileOutputStream fileOutputStream = new FileOutputStream(destinationPath);
-						BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, 1024);
+                    if (entry.isDirectory())
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        BufferedInputStream inputStream = new BufferedInputStream(zip.getInputStream(entry));
 
-						while ((b = inputStream.read(buffer, 0, 1024)) != -1)
-						{
-							bufferedOutputStream.write(buffer, 0, b);
-						}
+                        int b;
+                        byte buffer[] = new byte[1024];
 
-						bufferedOutputStream.close();
-						inputStream.close();
-						AIRI.logger.info("Extracted: " + destinationPath);
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				AIRI.logger.warning("Error extracting %s: %s", compressedFile.getAbsolutePath(), e);
-				e.printStackTrace();
-			}
-			finally
-			{
-				if (zip != null)
-				{
-					try
-					{
-						zip.close();
-					}
-					catch (Exception e)
-					{
-						AIRI.logger.warning("Error closing compressed file: %s", e);
-						e.printStackTrace();
-					}
-				}
-			}
+                        FileOutputStream fileOutputStream = new FileOutputStream(destinationPath);
+                        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream, 1024);
 
-			return extractionDir;
-		}
-	}
+                        while ((b = inputStream.read(buffer, 0, 1024)) != -1)
+                        {
+                            bufferedOutputStream.write(buffer, 0, b);
+                        }
+
+                        bufferedOutputStream.close();
+                        inputStream.close();
+                        AIRI.logger.info("Extracted: " + destinationPath);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                AIRI.logger.warning("Error extracting %s: %s", compressedFile.getAbsolutePath(), e);
+                e.printStackTrace();
+            }
+            finally
+            {
+                if (zip != null)
+                {
+                    try
+                    {
+                        zip.close();
+                    }
+                    catch (Exception e)
+                    {
+                        AIRI.logger.warning("Error closing compressed file: %s", e);
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            return extractionDir;
+        }
+    }
 }

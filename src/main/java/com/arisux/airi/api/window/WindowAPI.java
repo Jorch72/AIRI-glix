@@ -17,139 +17,139 @@ import net.minecraft.client.Minecraft;
 
 public class WindowAPI
 {
-	private OverlayWindowManager windowManager;
-	private Theme currentTheme;
-	private ArrayList<Window> windows = new ArrayList<Window>();
-	private HashMap<String, Theme> themes = new HashMap<String, Theme>();
+    private OverlayWindowManager windowManager;
+    private Theme currentTheme;
+    private ArrayList<Window> windows = new ArrayList<Window>();
+    private HashMap<String, Theme> themes = new HashMap<String, Theme>();
 
-	public static final Theme themeDefault = new ThemeDefault("default");
-	public static final Theme themeModern = new ThemeModern("modern");
-	public static final Theme themeMinecraft = new ThemeMinecraft("minecraft");
+    public static final Theme themeDefault = new ThemeDefault("default");
+    public static final Theme themeModern = new ThemeModern("modern");
+    public static final Theme themeMinecraft = new ThemeMinecraft("minecraft");
 
-	public WindowAPI()
-	{
-		this.windowManager = new OverlayWindowManager(this, null);
-		this.registerTheme(themeDefault);
-		this.registerTheme(themeModern);
-		this.registerTheme(themeMinecraft);
-		this.currentTheme = getThemeForName("modern");
-	}
+    public WindowAPI()
+    {
+        this.windowManager = new OverlayWindowManager(this, null);
+        this.registerTheme(themeDefault);
+        this.registerTheme(themeModern);
+        this.registerTheme(themeMinecraft);
+        this.currentTheme = getThemeForName("modern");
+    }
 
-	public void onTick()
-	{
-		if (getWindowsRegistry().size() <= 0 && Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager)
-		{
-			Minecraft.getMinecraft().displayGuiScreen(this.getWindowManager().parentScreen);
-		}
+    public void onTick()
+    {
+        if (getWindowsRegistry().size() <= 0 && Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager)
+        {
+            Minecraft.getMinecraft().displayGuiScreen(this.getWindowManager().parentScreen);
+        }
 
-		if (this.getWindowManager().parentScreen != Minecraft.getMinecraft().currentScreen && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager))
-		{
-			this.getWindowManager().parentScreen = Minecraft.getMinecraft().currentScreen;
-		}
-	}
+        if (this.getWindowManager().parentScreen != Minecraft.getMinecraft().currentScreen && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager))
+        {
+            this.getWindowManager().parentScreen = Minecraft.getMinecraft().currentScreen;
+        }
+    }
 
-	public OverlayWindowManager getWindowManager()
-	{
-		return windowManager;
-	}
-	
-	public void drawWindow(Window window, int mouseX, int mouseY)
-	{
-		GlStateManager.pushMatrix();
-		{
-			this.getCurrentTheme().draw(window, mouseX, mouseY);
-		}
-		GlStateManager.popMatrix();
-	}
+    public OverlayWindowManager getWindowManager()
+    {
+        return windowManager;
+    }
 
-	public void registerTheme(Theme theme)
-	{
-		this.themes.put(theme.getName(), theme);
-	}
+    public void drawWindow(Window window, int mouseX, int mouseY)
+    {
+        GlStateManager.pushMatrix();
+        {
+            this.getCurrentTheme().draw(window, mouseX, mouseY);
+        }
+        GlStateManager.popMatrix();
+    }
 
-	public void addWindow(Window window)
-	{
-		if (!isWindowRegistered(window))
-		{
-			this.windows.add(window);
-		}
-		else if (ModUtil.isDevEnvironment())
-		{
-			AIRI.logger.info("Tried injecting a window with an ID that already exists: " + window.getID());
-		}
-	}
+    public void registerTheme(Theme theme)
+    {
+        this.themes.put(theme.getName(), theme);
+    }
 
-	public void removeWindowWithID(String id)
-	{
-		this.windows.remove(id);
-	}
-	
-	public void removeWindow(Window window)
-	{
-		this.windows.remove(window);
-	}
+    public void addWindow(Window window)
+    {
+        if (!isWindowRegistered(window))
+        {
+            this.windows.add(window);
+        }
+        else if (ModUtil.isDevEnvironment())
+        {
+            AIRI.logger.info("Tried injecting a window with an ID that already exists: " + window.getID());
+        }
+    }
 
-	public Theme getThemeForName(String name)
-	{
-		return this.themes.get(name);
-	}
+    public void removeWindowWithID(String id)
+    {
+        this.windows.remove(id);
+    }
 
-	public Theme getThemeNameForTheme(Theme theme)
-	{
-		return this.themes.get(theme);
-	}
+    public void removeWindow(Window window)
+    {
+        this.windows.remove(window);
+    }
 
-	public Theme getCurrentTheme()
-	{
-		return currentTheme;
-	}
+    public Theme getThemeForName(String name)
+    {
+        return this.themes.get(name);
+    }
 
-	public void setCurrentTheme(Theme currentTheme)
-	{
-		this.currentTheme = currentTheme;
-	}
+    public Theme getThemeNameForTheme(Theme theme)
+    {
+        return this.themes.get(theme);
+    }
 
-	public ArrayList<Window> getWindowsRegistry()
-	{
-		return this.windows;
-	}
+    public Theme getCurrentTheme()
+    {
+        return currentTheme;
+    }
 
-	public HashMap<String, Theme> getThemeRegistry()
-	{
-		return this.themes;
-	}
+    public void setCurrentTheme(Theme currentTheme)
+    {
+        this.currentTheme = currentTheme;
+    }
 
-	public ArrayList<Theme> getThemes()
-	{
-		return new ArrayList<Theme>(this.themes.values());
-	}
+    public ArrayList<Window> getWindowsRegistry()
+    {
+        return this.windows;
+    }
 
-	public boolean canWindowManagerOpen()
-	{
-		return (Minecraft.getMinecraft().currentScreen != null && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager));
-	}
+    public HashMap<String, Theme> getThemeRegistry()
+    {
+        return this.themes;
+    }
 
-	public void showWindowManager()
-	{
-		this.showWindowManager(false);
-	}
+    public ArrayList<Theme> getThemes()
+    {
+        return new ArrayList<Theme>(this.themes.values());
+    }
 
-	public void showWindowManager(boolean force)
-	{
-		if (canWindowManagerOpen() || force)
-			Minecraft.getMinecraft().displayGuiScreen(getWindowManager());
-	}
+    public boolean canWindowManagerOpen()
+    {
+        return (Minecraft.getMinecraft().currentScreen != null && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager));
+    }
 
-	public boolean isWindowRegistered(Window windowObj)
-	{
-		for (Window window : this.windows)
-		{
-			if (window == windowObj)
-			{
-				return true;
-			}
-		}
+    public void showWindowManager()
+    {
+        this.showWindowManager(false);
+    }
 
-		return false;
-	}
+    public void showWindowManager(boolean force)
+    {
+        if (canWindowManagerOpen() || force)
+            Minecraft.getMinecraft().displayGuiScreen(getWindowManager());
+    }
+
+    public boolean isWindowRegistered(Window windowObj)
+    {
+        for (Window window : this.windows)
+        {
+            if (window == windowObj)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

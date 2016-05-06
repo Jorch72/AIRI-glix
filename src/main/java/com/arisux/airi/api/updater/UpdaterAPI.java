@@ -29,215 +29,214 @@ import net.minecraftforge.common.MinecraftForge;
 
 public class UpdaterAPI implements IInitializablePre
 {
-	public static final UpdaterAPI instance = new UpdaterAPI();
-	private ArrayList<Updater> updaters = new ArrayList<Updater>();
-	private boolean recheckUpdates;
-	private boolean canRecheckForUpdates;
-	private Window updaterWindow;
-	private GuiCustomButton buttonUpdates;
-	
-	@Override
-	public void preInitialize(FMLPreInitializationEvent event)
-	{
-		FMLCommonHandler.instance().bus().register(this);
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-	
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public void onClientPlayerLogin(PlayerLoggedInEvent event)
-	{
-		if (AIRI.updaterApi().isUpdateAvailable())
-		{
-			ChatUtil.sendTo(event.player, "&7[&aAIRI&7] &fNew updates are available. To see them, press SHIFT + TAB.");
-		}
-	}
-	
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public void onRenderTitleScreen(TickEvent.RenderTickEvent event)
-	{
-		if (Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu)
-		{
-			int amountOfUpdates = AIRI.updaterApi().getAvailableUpdates().size();
+    public static final UpdaterAPI instance = new UpdaterAPI();
+    private ArrayList<Updater> updaters = new ArrayList<Updater>();
+    private boolean recheckUpdates;
+    private boolean canRecheckForUpdates;
+    private Window updaterWindow;
+    private GuiCustomButton buttonUpdates;
 
-			if (amountOfUpdates > 0)
-			{
-				if (buttonUpdates == null && GuiElementHandler.instance() != null)
-				{
-					buttonUpdates = new GuiCustomButton(0, 0, 0, 0, 0, "", null);
-				}
+    @Override
+    public void preInitialize(FMLPreInitializationEvent event)
+    {
+        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
+    }
 
-				if (buttonUpdates != null)
-				{
-					String updates = String.valueOf(amountOfUpdates);
-					String updateString = amountOfUpdates > 1 ? "Updates" : "Update";
-					int renderWidth = RenderUtil.getStringRenderWidth(updates);
-					int backgroundWidth = 30 + renderWidth + RenderUtil.getStringRenderWidth(updateString);
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onClientPlayerLogin(PlayerLoggedInEvent event)
+    {
+        if (AIRI.updaterApi().isUpdateAvailable())
+        {
+            ChatUtil.sendTo(event.player, "&7[&aAIRI&7] &fNew updates are available. To see them, press SHIFT + TAB.");
+        }
+    }
 
-					RenderUtil.drawRect(0, 0, backgroundWidth, 18, 0xCC444444);
-					GlStateManager.enableBlend();
-					RenderUtil.drawRectWithOutline(0, 0, 18 + renderWidth, 18, 2, 0x88000000, 0x00000000);
-					RenderUtil.drawString(updates, 10, 5, AIRI.windowApi().getCurrentTheme().getButtonColor(), false);
-					RenderUtil.drawString(updateString, 23 + renderWidth, 5, AIRI.windowApi().getCurrentTheme().getTextColor(), false);
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onRenderTitleScreen(TickEvent.RenderTickEvent event)
+    {
+        if (Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu)
+        {
+            int amountOfUpdates = AIRI.updaterApi().getAvailableUpdates().size();
 
-					buttonUpdates.displayString = "";
-					buttonUpdates.baseColor = 0x00000000;
-					buttonUpdates.overlayColorHover = 0x00000000;
-					buttonUpdates.overlayColorNormal = 0x00000000;
-					buttonUpdates.overlayColorPressed = 0x00000000;
-					buttonUpdates.fontColor = 0xFFFF3333;
-					buttonUpdates.xPosition = 0;
-					buttonUpdates.yPosition = 0;
-					buttonUpdates.width = backgroundWidth;
-					buttonUpdates.height = 18;
-					buttonUpdates.tooltip = "Click here or Press SHIFT + TAB to view.";
-					buttonUpdates.drawButton();
-					buttonUpdates.setAction(new IActionPerformed()
-					{
-						@Override
-						public void actionPerformed(GuiCustomButton button)
-						{
-							AIRI.windowApi().addWindow(AIRI.updaterApi().getUpdaterWindow());
-							AIRI.windowApi().showWindowManager();
-						}
-					});
-				}
-			}
-		}
-	}
+            if (amountOfUpdates > 0)
+            {
+                if (buttonUpdates == null && GuiElementHandler.instance() != null)
+                {
+                    buttonUpdates = new GuiCustomButton(0, 0, 0, 0, 0, "", null);
+                }
 
+                if (buttonUpdates != null)
+                {
+                    String updates = String.valueOf(amountOfUpdates);
+                    String updateString = amountOfUpdates > 1 ? "Updates" : "Update";
+                    int renderWidth = RenderUtil.getStringRenderWidth(updates);
+                    int backgroundWidth = 30 + renderWidth + RenderUtil.getStringRenderWidth(updateString);
 
-	@SubscribeEvent
-	public void onClientTick(ClientTickEvent event)
-	{
-		if (AIRI.settings().isNetworkingEnabled())
-		{
-			if (Minecraft.getMinecraft().theWorld != null && !Minecraft.getMinecraft().isGamePaused() && Minecraft.getMinecraft().theWorld.getWorldTime() % (20 * 60 * 30) == 1)
-			{
-				this.recheckUpdates = true;
-			}
-			
-			if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager))
-			{
-				this.canRecheckForUpdates = true;
-			}
+                    RenderUtil.drawRect(0, 0, backgroundWidth, 18, 0xCC444444);
+                    GlStateManager.enableBlend();
+                    RenderUtil.drawRectWithOutline(0, 0, 18 + renderWidth, 18, 2, 0x88000000, 0x00000000);
+                    RenderUtil.drawString(updates, 10, 5, AIRI.windowApi().getCurrentTheme().getButtonColor(), false);
+                    RenderUtil.drawString(updateString, 23 + renderWidth, 5, AIRI.windowApi().getCurrentTheme().getTextColor(), false);
 
-			if (canRecheckForUpdates)
-			{
-				if (Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu)
-				{
-					this.recheckUpdates = true;
-					this.canRecheckForUpdates = false;
-				}
-			}
+                    buttonUpdates.displayString = "";
+                    buttonUpdates.baseColor = 0x00000000;
+                    buttonUpdates.overlayColorHover = 0x00000000;
+                    buttonUpdates.overlayColorNormal = 0x00000000;
+                    buttonUpdates.overlayColorPressed = 0x00000000;
+                    buttonUpdates.fontColor = 0xFFFF3333;
+                    buttonUpdates.xPosition = 0;
+                    buttonUpdates.yPosition = 0;
+                    buttonUpdates.width = backgroundWidth;
+                    buttonUpdates.height = 18;
+                    buttonUpdates.tooltip = "Click here or Press SHIFT + TAB to view.";
+                    buttonUpdates.drawButton();
+                    buttonUpdates.setAction(new IActionPerformed()
+                    {
+                        @Override
+                        public void actionPerformed(GuiCustomButton button)
+                        {
+                            AIRI.windowApi().addWindow(AIRI.updaterApi().getUpdaterWindow());
+                            AIRI.windowApi().showWindowManager();
+                        }
+                    });
+                }
+            }
+        }
+    }
 
-			if (AIRI.updaterApi().isUpdateAvailable())
-			{
-				if (this.updaterWindow == null)
-				{
-					this.updaterWindow = new WindowUpdates("UpdateWindow", "Update Available", -100, 20, 250, 200);
+    @SubscribeEvent
+    public void onClientTick(ClientTickEvent event)
+    {
+        if (AIRI.settings().isNetworkingEnabled())
+        {
+            if (Minecraft.getMinecraft().theWorld != null && !Minecraft.getMinecraft().isGamePaused() && Minecraft.getMinecraft().theWorld.getWorldTime() % (20 * 60 * 30) == 1)
+            {
+                this.recheckUpdates = true;
+            }
 
-					if (!AIRI.windowApi().getWindowsRegistry().contains(this.updaterWindow))
-					{
-						AIRI.windowApi().addWindow(this.updaterWindow);
-					}
-				}
-			}
+            if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager))
+            {
+                this.canRecheckForUpdates = true;
+            }
 
-			for (final Updater updater : this.updaters)
-			{
-				if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager))
-				{
-					if (updater.isUpdateAvailable())
-					{
-						if (!AIRI.windowApi().getWindowsRegistry().contains(this.updaterWindow))
-						{
-							AIRI.windowApi().addWindow(this.updaterWindow);
-						}
-					}
-				}
+            if (canRecheckForUpdates)
+            {
+                if (Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu)
+                {
+                    this.recheckUpdates = true;
+                    this.canRecheckForUpdates = false;
+                }
+            }
 
-				updater.tick();
+            if (AIRI.updaterApi().isUpdateAvailable())
+            {
+                if (this.updaterWindow == null)
+                {
+                    this.updaterWindow = new WindowUpdates("UpdateWindow", "Update Available", -100, 20, 250, 200);
 
-				if (this.recheckUpdates)
-				{
-					if (Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu)
-					{
-						if (recheckUpdates)
-						{
-							(new Thread()
-							{
-								@Override
-								public void run()
-								{
-									super.run();
-									updater.downloadVersionInformation();
-								}
-							}).start();
-						}
-					}
-				}
-			}
+                    if (!AIRI.windowApi().getWindowsRegistry().contains(this.updaterWindow))
+                    {
+                        AIRI.windowApi().addWindow(this.updaterWindow);
+                    }
+                }
+            }
 
-			this.recheckUpdates = false;
-		}
-	}
-	
-	public void register(Updater updater)
-	{
-		this.updaters.add(updater);
-	}
+            for (final Updater updater : this.updaters)
+            {
+                if (!(Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu) && !(Minecraft.getMinecraft().currentScreen instanceof OverlayWindowManager))
+                {
+                    if (updater.isUpdateAvailable())
+                    {
+                        if (!AIRI.windowApi().getWindowsRegistry().contains(this.updaterWindow))
+                        {
+                            AIRI.windowApi().addWindow(this.updaterWindow);
+                        }
+                    }
+                }
 
-	public Updater getUpdaterByModIdentifier(String modid)
-	{
-		Iterator<Updater> iterator = updaters.iterator();
-		Updater updater;
+                updater.tick();
 
-		do
-		{
-			if (!iterator.hasNext())
-				return null;
+                if (this.recheckUpdates)
+                {
+                    if (Minecraft.getMinecraft().currentScreen instanceof GuiMainMenu)
+                    {
+                        if (recheckUpdates)
+                        {
+                            (new Thread()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    super.run();
+                                    updater.downloadVersionInformation();
+                                }
+                            }).start();
+                        }
+                    }
+                }
+            }
 
-			updater = iterator.next();
-		}
-		while (!(updater.getVersionData().get("MODID").equalsIgnoreCase(modid)));
+            this.recheckUpdates = false;
+        }
+    }
 
-		return updater;
-	}
+    public void register(Updater updater)
+    {
+        this.updaters.add(updater);
+    }
 
-	public ArrayList<Updater> getAvailableUpdates()
-	{
-		ArrayList<Updater> updates = new ArrayList<Updater>();
+    public Updater getUpdaterByModIdentifier(String modid)
+    {
+        Iterator<Updater> iterator = updaters.iterator();
+        Updater updater;
 
-		for (Updater updater : this.updaters)
-		{
-			if (updater.isUpdateAvailable())
-			{
-				updates.add(updater);
-			}
-		}
+        do
+        {
+            if (!iterator.hasNext())
+                return null;
 
-		return updates;
-	}
+            updater = iterator.next();
+        }
+        while (!(updater.getVersionData().get("MODID").equalsIgnoreCase(modid)));
 
-	public ArrayList<Updater> getUpdaterRegistry()
-	{
-		return this.updaters;
-	}
+        return updater;
+    }
 
-	public void setRecheckForUpdates(boolean b)
-	{
-		this.recheckUpdates = b;
-	}
+    public ArrayList<Updater> getAvailableUpdates()
+    {
+        ArrayList<Updater> updates = new ArrayList<Updater>();
 
-	public boolean isUpdateAvailable()
-	{
-		return this.getAvailableUpdates().size() > 0;
-	}
+        for (Updater updater : this.updaters)
+        {
+            if (updater.isUpdateAvailable())
+            {
+                updates.add(updater);
+            }
+        }
 
-	public Window getUpdaterWindow()
-	{
-		return updaterWindow;
-	}
+        return updates;
+    }
+
+    public ArrayList<Updater> getUpdaterRegistry()
+    {
+        return this.updaters;
+    }
+
+    public void setRecheckForUpdates(boolean b)
+    {
+        this.recheckUpdates = b;
+    }
+
+    public boolean isUpdateAvailable()
+    {
+        return this.getAvailableUpdates().size() > 0;
+    }
+
+    public Window getUpdaterWindow()
+    {
+        return updaterWindow;
+    }
 }
