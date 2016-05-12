@@ -1,19 +1,64 @@
 package com.arisux.airi.lib.client;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-
 import com.arisux.airi.AIRI;
 import com.arisux.airi.lib.RenderUtil;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.tileentity.TileEntity;
 
 @SideOnly(Side.CLIENT)
 public abstract class ModelBaseWrapper extends ModelBase
 {
+    public static interface IRenderObject
+    {
+        public Object getObject();
+    }
+
+    public static class RenderObject implements IRenderObject
+    {
+        public Object object;
+        public float swingProgress;
+        public float swingProgressPrev;
+        public float idleProgress;
+        public float headYaw;
+        public float headPitch;
+
+        public RenderObject(Object[] renderObjects)
+        {
+            this.object = renderObjects[0];
+
+            if (renderObjects.length > 1)
+            {
+                this.swingProgress = (Float) renderObjects[1];
+                this.swingProgressPrev = (Float) renderObjects[2];
+                this.idleProgress = (Float) renderObjects[3];
+                this.headYaw = (Float) renderObjects[4];
+                this.headPitch = (Float) renderObjects[5];
+            }
+        }
+
+        @Override
+        public Object getObject()
+        {
+            return this.object;
+        }
+
+        public TileEntity getTileEntity()
+        {
+            return (TileEntity) this.object;
+        }
+
+        public Entity getEntity()
+        {
+            return (Entity) this.object;
+        }
+    }
+
     /**
      * Set the width and height of this ModelBaseExtension's texture.
      * 
@@ -36,25 +81,41 @@ public abstract class ModelBaseWrapper extends ModelBase
         model.rotateAngleZ = rotateAngleZ;
     }
 
-    /**
-     * A standard rendering argument. Does not call any super class methods.
-     * @param boxTranslation - Box translation offset.
-     */
-    public void render(float boxTranslation)
+    public void draw(ModelRenderer modelRenderer)
     {
-        ;
+        modelRenderer.render(RenderUtil.DEFAULT_BOX_TRANSLATION);
     }
 
-    /**
-     * A standard rendering argument. Does not call any super class methods.
-     */
     public void render()
     {
-        this.render(RenderUtil.DEFAULT_BOX_TRANSLATION);
+        this.render(new RenderObject(new Object[] { null }));
     }
 
+    public void render(Object o)
+    {
+        if (o instanceof IRenderObject)
+        {
+            this.render((IRenderObject) o, RenderUtil.DEFAULT_BOX_TRANSLATION);
+        }
+
+        if (o instanceof TileEntity)
+        {
+            this.render(new RenderObject(new Object[] { o }), RenderUtil.DEFAULT_BOX_TRANSLATION);
+        }
+
+        if (o instanceof Entity)
+        {
+            this.render(new RenderObject(new Object[] { o, 0F, 0F, 0F, 0F, 0F }), RenderUtil.DEFAULT_BOX_TRANSLATION);
+        }
+    }
+
+    /** 
+     * The base render method 
+     **/
+    protected abstract void render(IRenderObject renderObject, float boxTranslation);
+
     /**
-     * The standard render method from ModelBase with correct parameter mappings. Calls the superclass method.
+     * The entity render method from ModelBase with correct parameter mappings. Calls the base render method.
      * 
      * @param entity - The Entity instance being rendered.
      * @param swingProgress - The arm swing progress of the Entity being rendered.
@@ -67,7 +128,7 @@ public abstract class ModelBaseWrapper extends ModelBase
     @Override
     public void render(Entity entity, float swingProgress, float swingProgressPrev, float idleProgress, float headYaw, float headPitch, float boxTranslation)
     {
-        super.render(entity, swingProgress, swingProgressPrev, idleProgress, headYaw, headPitch, boxTranslation);
+        this.render(new RenderObject(new Object[] { entity, swingProgress, swingProgressPrev, idleProgress, headYaw, headPitch }));
     }
 
     /**

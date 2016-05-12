@@ -5,7 +5,6 @@ import com.arisux.airi.lib.GlStateManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 
 @SideOnly(Side.CLIENT)
@@ -69,60 +68,20 @@ public class ModelBipedExtension extends ModelBaseWrapper
     }
 
     @Override
-    public void render(Entity entity, float swingProgress, float swingProgressPrev, float idleProgress, float headYaw, float headPitch, float boxTranslation)
+    protected void render(IRenderObject renderObject, float boxTranslation)
     {
-        this.setRotationAngles(swingProgress, swingProgressPrev, idleProgress, headYaw, headPitch, boxTranslation, entity);
-
-        if (this.isChild)
-        {
-            float f6 = 2.0F;
-
-            GlStateManager.pushMatrix();
-            {
-                GlStateManager.scale(1.5F / f6, 1.5F / f6, 1.5F / f6);
-                GlStateManager.translate(0.0F, 16.0F * boxTranslation, 0.0F);
-                this.bipedHead.render(boxTranslation);
-            }
-            GlStateManager.popMatrix();
-
-            GlStateManager.pushMatrix();
-            {
-                GlStateManager.scale(1.0F / f6, 1.0F / f6, 1.0F / f6);
-                GlStateManager.translate(0.0F, 24.0F * boxTranslation, 0.0F);
-                this.bipedBody.render(boxTranslation);
-                this.bipedRightArm.render(boxTranslation);
-                this.bipedLeftArm.render(boxTranslation);
-                this.bipedRightLeg.render(boxTranslation);
-                this.bipedLeftLeg.render(boxTranslation);
-                this.bipedHeadwear.render(boxTranslation);
-            }
-            GlStateManager.popMatrix();
-        }
-        else
-        {
-            this.bipedHead.render(boxTranslation);
-            this.bipedBody.render(boxTranslation);
-            this.bipedRightArm.render(boxTranslation);
-            this.bipedLeftArm.render(boxTranslation);
-            this.bipedRightLeg.render(boxTranslation);
-            this.bipedLeftLeg.render(boxTranslation);
-            this.bipedHeadwear.render(boxTranslation);
-        }
-    }
-
-    @Override
-    public void setRotationAngles(float swingProgress, float swingProgressPrev, float idleProgress, float headYaw, float headPitch, float boxTranslation, Entity entity)
-    {
-        this.bipedHead.rotateAngleY = headYaw / (180F / (float) Math.PI);
-        this.bipedHead.rotateAngleX = headPitch / (180F / (float) Math.PI);
+        RenderObject o = (RenderObject) renderObject;
+        
+        this.bipedHead.rotateAngleY = o.headYaw / (180F / (float) Math.PI);
+        this.bipedHead.rotateAngleX = o.headPitch / (180F / (float) Math.PI);
         this.bipedHeadwear.rotateAngleY = this.bipedHead.rotateAngleY;
         this.bipedHeadwear.rotateAngleX = this.bipedHead.rotateAngleX;
-        this.bipedRightArm.rotateAngleX = MathHelper.cos(swingProgress * 0.6662F + (float) Math.PI) * 2.0F * swingProgressPrev * 0.5F;
-        this.bipedLeftArm.rotateAngleX = MathHelper.cos(swingProgress * 0.6662F) * 2.0F * swingProgressPrev * 0.5F;
+        this.bipedRightArm.rotateAngleX = MathHelper.cos(o.swingProgress * 0.6662F + (float) Math.PI) * 2.0F * o.swingProgressPrev * 0.5F;
+        this.bipedLeftArm.rotateAngleX = MathHelper.cos(o.swingProgress * 0.6662F) * 2.0F * o.swingProgressPrev * 0.5F;
         this.bipedRightArm.rotateAngleZ = 0.0F;
         this.bipedLeftArm.rotateAngleZ = 0.0F;
-        this.bipedRightLeg.rotateAngleX = MathHelper.cos(swingProgress * 0.6662F) * 1.4F * swingProgressPrev;
-        this.bipedLeftLeg.rotateAngleX = MathHelper.cos(swingProgress * 0.6662F + (float) Math.PI) * 1.4F * swingProgressPrev;
+        this.bipedRightLeg.rotateAngleX = MathHelper.cos(o.swingProgress * 0.6662F) * 1.4F * o.swingProgressPrev;
+        this.bipedLeftLeg.rotateAngleX = MathHelper.cos(o.swingProgress * 0.6662F + (float) Math.PI) * 1.4F * o.swingProgressPrev;
         this.bipedRightLeg.rotateAngleY = 0.0F;
         this.bipedLeftLeg.rotateAngleY = 0.0F;
 
@@ -195,10 +154,10 @@ public class ModelBipedExtension extends ModelBaseWrapper
             this.bipedHeadwear.rotationPointY = 0.0F;
         }
 
-        this.bipedRightArm.rotateAngleZ += MathHelper.cos(idleProgress * 0.09F) * 0.05F + 0.05F;
-        this.bipedLeftArm.rotateAngleZ -= MathHelper.cos(idleProgress * 0.09F) * 0.05F + 0.05F;
-        this.bipedRightArm.rotateAngleX += MathHelper.sin(idleProgress * 0.067F) * 0.05F;
-        this.bipedLeftArm.rotateAngleX -= MathHelper.sin(idleProgress * 0.067F) * 0.05F;
+        this.bipedRightArm.rotateAngleZ += MathHelper.cos(o.idleProgress * 0.09F) * 0.05F + 0.05F;
+        this.bipedLeftArm.rotateAngleZ -= MathHelper.cos(o.idleProgress * 0.09F) * 0.05F + 0.05F;
+        this.bipedRightArm.rotateAngleX += MathHelper.sin(o.idleProgress * 0.067F) * 0.05F;
+        this.bipedLeftArm.rotateAngleX -= MathHelper.sin(o.idleProgress * 0.067F) * 0.05F;
 
         if (this.aimedBow)
         {
@@ -212,11 +171,47 @@ public class ModelBipedExtension extends ModelBaseWrapper
             this.bipedLeftArm.rotateAngleX = -((float) Math.PI / 2F) + this.bipedHead.rotateAngleX;
             this.bipedRightArm.rotateAngleX -= f6 * 1.2F - f7 * 0.4F;
             this.bipedLeftArm.rotateAngleX -= f6 * 1.2F - f7 * 0.4F;
-            this.bipedRightArm.rotateAngleZ += MathHelper.cos(idleProgress * 0.09F) * 0.05F + 0.05F;
-            this.bipedLeftArm.rotateAngleZ -= MathHelper.cos(idleProgress * 0.09F) * 0.05F + 0.05F;
-            this.bipedRightArm.rotateAngleX += MathHelper.sin(idleProgress * 0.067F) * 0.05F;
-            this.bipedLeftArm.rotateAngleX -= MathHelper.sin(idleProgress * 0.067F) * 0.05F;
+            this.bipedRightArm.rotateAngleZ += MathHelper.cos(o.idleProgress * 0.09F) * 0.05F + 0.05F;
+            this.bipedLeftArm.rotateAngleZ -= MathHelper.cos(o.idleProgress * 0.09F) * 0.05F + 0.05F;
+            this.bipedRightArm.rotateAngleX += MathHelper.sin(o.idleProgress * 0.067F) * 0.05F;
+            this.bipedLeftArm.rotateAngleX -= MathHelper.sin(o.idleProgress * 0.067F) * 0.05F;
         }
+        
+        if (this.isChild)
+        {
+            float scale = 2.0F;
+
+            GlStateManager.pushMatrix();
+            {
+                GlStateManager.scale(1.5F / scale, 1.5F / scale, 1.5F / scale);
+                GlStateManager.translate(0.0F, 16.0F * boxTranslation, 0.0F);
+                this.bipedHead.render(boxTranslation);
+            }
+            GlStateManager.popMatrix();
+
+            GlStateManager.pushMatrix();
+            {
+                GlStateManager.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
+                GlStateManager.translate(0.0F, 24.0F * boxTranslation, 0.0F);
+                this.bipedBody.render(boxTranslation);
+                this.bipedRightArm.render(boxTranslation);
+                this.bipedLeftArm.render(boxTranslation);
+                this.bipedRightLeg.render(boxTranslation);
+                this.bipedLeftLeg.render(boxTranslation);
+                this.bipedHeadwear.render(boxTranslation);
+            }
+            GlStateManager.popMatrix();
+        }
+        else
+        {
+            this.bipedHead.render(boxTranslation);
+            this.bipedBody.render(boxTranslation);
+            this.bipedRightArm.render(boxTranslation);
+            this.bipedLeftArm.render(boxTranslation);
+            this.bipedRightLeg.render(boxTranslation);
+            this.bipedLeftLeg.render(boxTranslation);
+            this.bipedHeadwear.render(boxTranslation);
+        }        
     }
 
     public void renderEars(float boxTranslation)
