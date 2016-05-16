@@ -9,7 +9,6 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.pathfinding.PathNavigate;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Session;
 import net.minecraft.util.Timer;
 
@@ -109,12 +108,6 @@ public class AccessWrapper
     public static void setLightmapUpdateNeeded(boolean value)
     {
         Minecraft.getMinecraft().entityRenderer.lightmapUpdateNeeded = value;
-    }
-
-    @SideOnly(Side.CLIENT)
-    public static ResourceLocation getParticleTextures()
-    {
-        return (ResourceLocation) ReflectionUtil.get(Minecraft.getMinecraft().effectRenderer, "particleTextures", "field_110737_b");
     }
 
     public static void setMoveHelper(EntityLiving living, EntityMoveHelper moveHelper)

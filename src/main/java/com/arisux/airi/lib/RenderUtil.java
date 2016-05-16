@@ -29,8 +29,11 @@ import com.arisux.airi.lib.WorldUtil.Blocks;
 import com.arisux.airi.lib.client.PlayerResource;
 import com.arisux.airi.lib.client.ScaledResolution;
 import com.arisux.airi.lib.client.render.DPI;
+import com.arisux.airi.lib.interfaces.IRotatable;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -49,16 +52,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class RenderUtil
 {
     public static final GuiCustomScreen guiHook = new GuiCustomScreen();
+    public static final ResourceLocation particleTexture = new ResourceLocation("textures/particle/particles.png");
     public static final float DEFAULT_BOX_TRANSLATION = 0.0625F;
 
     public static final DPI DPI1 = new DPI(1, 1.0F);
@@ -1074,13 +1080,16 @@ public class RenderUtil
      * @param width - Width to render the particle at
      * @param height - Height to render the particle at
      */
-    public static void drawParticle(int particleId, int x, int y, int width, int height)
+    public static void drawParticle(int index, int x, int y, int width, int height)
     {
-        ResourceLocation resource = AccessWrapper.getParticleTextures();
-        float u = (particleId % 16) / 16.0f;
-        float v = (particleId / 16) / 16.0f;
-        bindTexture(resource);
-        drawQuad(x, y, width, height, 0, u, u + 0.0624375F, v, v + 0.0624375F);
+        float tS = 0.0624375F;
+        float u = (float) (index % 16) / 16.0F;
+        float mU = u + tS;
+        float v = (float) (index / 16) / 16.0F;
+        float mV = v + tS;
+        
+        bindTexture(particleTexture);
+        drawQuad(x, y, width, height, 0, u, mU, v, mV);
     }
 
     /**
@@ -1150,6 +1159,38 @@ public class RenderUtil
     {
         IIcon icon = block.getBlockTextureFromSide(side);
         return new ResourceLocation(Blocks.getDomain(block).replace(":", ""), "textures/blocks/" + icon.getIconName().replace(Blocks.getDomain(block), "") + ".png");
+    }
+    
+    @SideOnly(Side.CLIENT)
+    public static void rotate(TileEntity tile)
+    {
+        if (tile instanceof IRotatable)
+        {
+            IRotatable rotatable = (IRotatable) tile;
+
+            if (rotatable != null && rotatable.getDirection() != null)
+            {
+                if (rotatable.getDirection() != null)
+                {
+                    if (rotatable.getDirection() == ForgeDirection.NORTH)
+                    {
+                        GlStateManager.rotate(180F, 0F, 1F, 0F);
+                    }
+                    else if (rotatable.getDirection() == ForgeDirection.SOUTH)
+                    {
+                        GlStateManager.rotate(0F, 0F, 0F, 0F);
+                    }
+                    else if (rotatable.getDirection() == ForgeDirection.WEST)
+                    {
+                        GlStateManager.rotate(-90F, 0F, 1F, 0F);
+                    }
+                    else if (rotatable.getDirection() == ForgeDirection.EAST)
+                    {
+                        GlStateManager.rotate(90F, 0F, 1F, 0F);
+                    }
+                }
+            }
+        }
     }
 
     /**
