@@ -16,6 +16,7 @@ import com.arisux.airi.lib.world.CustomExplosion;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.command.ICommandSender;
@@ -813,6 +814,18 @@ public class WorldUtil
                 }
 
                 return pos.add(0.5, 0.0, 0.5);
+            }
+
+            public static CoordData fromBytes(ByteBuf buf)
+            {
+                return new CoordData(buf.readDouble(), buf.readDouble(), buf.readDouble());
+            }
+
+            public void toBytes(ByteBuf buf)
+            {
+                buf.writeDouble(this.x());
+                buf.writeDouble(this.y());
+                buf.writeDouble(this.z());
             }
         }
 
