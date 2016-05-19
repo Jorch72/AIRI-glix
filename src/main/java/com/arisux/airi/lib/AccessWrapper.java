@@ -1,10 +1,16 @@
 package com.arisux.airi.lib;
 
+import java.lang.reflect.Method;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.entity.ai.EntityMoveHelper;
@@ -178,5 +184,24 @@ public class AccessWrapper
     public static String getBlockTextureName(Block block)
     {
         return (String) ReflectionUtil.get(Block.class, block, "textureName", "field_149768_d");
+    }
+    
+    public static ModelBase getMainModel(RendererLivingEntity renderLiving)
+    {
+        return (ModelBase) ReflectionUtil.get(RendererLivingEntity.class, renderLiving, "mainModel", "field_77045_g");
+    }
+
+    public static void bindEntityTexture(Render render, Entity entity)
+    {
+        try
+        {
+            Method bindEntityTexture = Render.class.getDeclaredMethod(ModUtil.isDevEnvironment() ? "bindEntityTexture" : "", Entity.class);
+            bindEntityTexture.setAccessible(true);
+            bindEntityTexture.invoke(render, entity);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
