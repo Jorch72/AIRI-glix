@@ -1192,6 +1192,38 @@ public class RenderUtil
             }
         }
     }
+    
+    @SideOnly(Side.CLIENT)
+    public static void rotateOpposite(TileEntity tile)
+    {
+        if (tile instanceof IRotatable)
+        {
+            IRotatable rotatable = (IRotatable) tile;
+
+            if (rotatable != null && rotatable.getDirection() != null)
+            {
+                if (rotatable.getDirection() != null)
+                {
+                    if (rotatable.getDirection() == ForgeDirection.SOUTH)
+                    {
+                        GlStateManager.rotate(180F, 0F, 1F, 0F);
+                    }
+                    else if (rotatable.getDirection() == ForgeDirection.NORTH)
+                    {
+                        GlStateManager.rotate(0F, 0F, 0F, 0F);
+                    }
+                    else if (rotatable.getDirection() == ForgeDirection.EAST)
+                    {
+                        GlStateManager.rotate(-90F, 0F, 1F, 0F);
+                    }
+                    else if (rotatable.getDirection() == ForgeDirection.WEST)
+                    {
+                        GlStateManager.rotate(90F, 0F, 1F, 0F);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Draw the IRecipe on screen of the specified Item or Block
