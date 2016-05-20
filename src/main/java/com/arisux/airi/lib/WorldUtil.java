@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import com.arisux.airi.AIRI;
 import com.arisux.airi.lib.WorldUtil.Blocks.CoordData;
@@ -315,6 +316,24 @@ public class WorldUtil
                 }
             }
         }
+    }
+
+    public static Entity getEntityByUUID(World world, UUID uuid)
+    {
+        for (Object o : world.getLoadedEntityList().toArray())
+        {
+            if (o instanceof Entity)
+            {
+                Entity entity = (Entity) o;
+                
+                if (entity.getPersistentID().equals(uuid))
+                {
+                    return entity;
+                }
+            }
+        }
+        
+        return null;
     }
 
     public static class NBT
