@@ -195,7 +195,7 @@ public class AccessWrapper
     {
         try
         {
-            Method bindEntityTexture = Render.class.getDeclaredMethod(ModUtil.isDevEnvironment() ? "bindEntityTexture" : "", Entity.class);
+            Method bindEntityTexture = Render.class.getDeclaredMethod(ModUtil.isDevEnvironment() ? "bindEntityTexture" : "func_110777_b", Entity.class);
             bindEntityTexture.setAccessible(true);
             bindEntityTexture.invoke(render, entity);
         }
