@@ -15,6 +15,7 @@ public abstract class ItemRenderer implements IItemRenderer
     protected Minecraft mc = Minecraft.getMinecraft();
     protected PlayerResourceManager resourceManager;
     protected ResourceLocation resource;
+    protected Texture texture;
     protected ModelBaseWrapper model;
     private boolean rendersInFirstPerson, rendersInThirdPerson, rendersInInventory, rendersInWorld;
 
@@ -23,6 +24,7 @@ public abstract class ItemRenderer implements IItemRenderer
         this.resourceManager = new PlayerResourceManager();
         this.model = model;
         this.resource = resource;
+        this.texture = resource == null ? null : new Texture(resource);
         this.rendersInFirstPerson = true;
         this.rendersInThirdPerson = true;
         this.rendersInInventory = true;
@@ -138,6 +140,11 @@ public abstract class ItemRenderer implements IItemRenderer
     public ResourceLocation getResourceLocation()
     {
         return resource;
+    }
+
+    public Texture getTexture()
+    {
+        return texture;
     }
 
     public void setResourceLocation(ResourceLocation resource)

@@ -6,6 +6,11 @@ import net.minecraft.util.ResourceLocation;
 
 public class Texture extends ResourceLocation
 {
+    public Texture(ResourceLocation resource)
+    {
+        this(resource.getResourceDomain(), resource.getResourcePath());
+    }
+    
     public Texture(String location)
     {
         super(location);
