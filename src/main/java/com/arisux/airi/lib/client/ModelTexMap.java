@@ -41,4 +41,13 @@ public class ModelTexMap
             this.model.render();
         }
     }
+    
+    public void draw(Object o)
+    {
+        if (this.model != null && this.texture != null)
+        {
+            this.texture.bindTexture();
+            this.model.render(o);
+        }
+    }
 }

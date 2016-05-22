@@ -14,17 +14,13 @@ public abstract class ItemRenderer implements IItemRenderer
 {
     protected Minecraft mc = Minecraft.getMinecraft();
     protected PlayerResourceManager resourceManager;
-    protected ResourceLocation resource;
-    protected Texture texture;
-    protected ModelBaseWrapper model;
+    private ModelTexMap modelTexMap;
     private boolean rendersInFirstPerson, rendersInThirdPerson, rendersInInventory, rendersInWorld;
 
-    public ItemRenderer(ModelBaseWrapper model, ResourceLocation resource)
+    public ItemRenderer(ModelTexMap modelTexMap)
     {
         this.resourceManager = new PlayerResourceManager();
-        this.model = model;
-        this.resource = resource;
-        this.texture = resource == null ? null : new Texture(resource);
+        this.modelTexMap = modelTexMap;
         this.rendersInFirstPerson = true;
         this.rendersInThirdPerson = true;
         this.rendersInInventory = true;
@@ -62,30 +58,37 @@ public abstract class ItemRenderer implements IItemRenderer
     @Override
     public void renderItem(ItemRenderType type, ItemStack item, Object... data)
     {
-        GlStateManager.pushMatrix();
+        try
         {
-            switch (type)
+            GlStateManager.pushMatrix();
             {
-                case EQUIPPED:
-                    this.renderThirdPerson(item, data);
-                    break;
-                case EQUIPPED_FIRST_PERSON:
-                    this.renderFirstPerson(item, data);
-                    break;
-                case INVENTORY:
-                    GlStateManager.rotate(-45, 1, 0, 0);
-                    GlStateManager.rotate(180, 0, 1, 0);
-                    GlStateManager.translate(-16, 0, 0);
-                    this.renderInInventory(item, data);
-                    break;
-                case ENTITY:
-                    this.renderInWorld(item, data);
-                    break;
-                default:
-                    break;
+                switch (type)
+                {
+                    case EQUIPPED:
+                        this.renderThirdPerson(item, data);
+                        break;
+                    case EQUIPPED_FIRST_PERSON:
+                        this.renderFirstPerson(item, data);
+                        break;
+                    case INVENTORY:
+                        GlStateManager.rotate(-45, 1, 0, 0);
+                        GlStateManager.rotate(180, 0, 1, 0);
+                        GlStateManager.translate(-16, 0, 0);
+                        this.renderInInventory(item, data);
+                        break;
+                    case ENTITY:
+                        this.renderInWorld(item, data);
+                        break;
+                    default:
+                        break;
+                }
             }
+            GlStateManager.popMatrix();
         }
-        GlStateManager.popMatrix();
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public void renderThirdPerson(ItemStack item, Object... data)
@@ -132,24 +135,26 @@ public abstract class ItemRenderer implements IItemRenderer
         return this;
     }
 
+    public ModelTexMap getModelTexMap()
+    {
+        return modelTexMap;
+    }
+
+    @Deprecated
     public ModelBaseWrapper getModel()
     {
-        return model;
+        return this.getModelTexMap().getModel();
     }
 
     public ResourceLocation getResourceLocation()
     {
-        return resource;
+        return this.getModelTexMap().getTexture();
     }
 
+    @Deprecated
     public Texture getTexture()
     {
-        return texture;
-    }
-
-    public void setResourceLocation(ResourceLocation resource)
-    {
-        this.resource = resource;
+        return this.getModelTexMap().getTexture();
     }
 
     public boolean firstPersonRenderCheck(Object o)

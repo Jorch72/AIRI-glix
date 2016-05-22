@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.pathfinding.PathNavigate;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Session;
 import net.minecraft.util.Timer;
 
@@ -190,18 +191,20 @@ public class AccessWrapper
     {
         return (ModelBase) ReflectionUtil.get(RendererLivingEntity.class, renderLiving, "mainModel", "field_77045_g");
     }
-
-    public static void bindEntityTexture(Render render, Entity entity)
+    
+    public static ResourceLocation getEntityTexture(Render render, Entity entity)
     {
         try
         {
-            Method bindEntityTexture = Render.class.getDeclaredMethod(ModUtil.isDevEnvironment() ? "bindEntityTexture" : "func_110777_b", Entity.class);
-            bindEntityTexture.setAccessible(true);
-            bindEntityTexture.invoke(render, entity);
+            Method getEntityTexture = Render.class.getDeclaredMethod("getEntityTexture", Entity.class);
+            getEntityTexture.setAccessible(true);
+            return (ResourceLocation) getEntityTexture.invoke(render, new Object[] { entity });
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
+        
+        return null;
     }
 }
