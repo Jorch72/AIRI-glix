@@ -1,34 +1,44 @@
 package com.arisux.airi.lib.client;
 
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.util.ResourceLocation;
 
 @SideOnly(Side.CLIENT)
 public class ModelTexMap
 {
-    private ResourceLocation resourceLocation;
-    private ModelBase model;
+    private Texture texture;
+    private ModelBaseWrapper model;
 
-    public ModelTexMap(ModelBase model, ResourceLocation resourceLocation)
+    public ModelTexMap(ModelBase model, ResourceLocation resource)
+    {
+        this.model = new ModelBaseWrapper(model);
+        this.texture = new Texture(resource);
+    }
+    
+    public ModelTexMap(ModelBaseWrapper model, Texture texture)
     {
         this.model = model;
-        this.resourceLocation = resourceLocation;
+        this.texture = texture;
     }
 
-    public ModelBase asModelBase()
+    public ModelBaseWrapper getModel()
     {
         return this.model;
     }
 
-    public ModelBaseWrapper asModelWrapper()
+    public Texture getTexture()
     {
-        return (ModelBaseWrapper) this.model;
+        return this.texture;
     }
-
-    public ResourceLocation asResourceLocation()
+    
+    public void draw()
     {
-        return this.resourceLocation;
+        if (this.model != null && this.texture != null)
+        {
+            this.texture.bindTexture();
+            this.model.render();
+        }
     }
 }

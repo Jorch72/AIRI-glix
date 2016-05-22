@@ -12,13 +12,29 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
 
 @SideOnly(Side.CLIENT)
-public abstract class ModelBaseWrapper extends ModelBase
+public class ModelBaseWrapper extends ModelBase
 {
+    public ModelBaseWrapper(ModelBase model)
+    {
+        this.boxList = model.boxList;
+        this.isChild = model.isChild;
+        this.isRiding = model.isRiding;
+        this.onGround = model.onGround;
+        this.textureHeight = model.textureHeight;
+        this.textureWidth = model.textureWidth;
+    }
+    
+    public ModelBaseWrapper()
+    {
+        super();
+    }
+
     public static interface IRenderObject
     {
         public Object getObject();
     }
 
+    @SideOnly(Side.CLIENT)
     public static class RenderObject implements IRenderObject
     {
         public Object object;
@@ -86,11 +102,19 @@ public abstract class ModelBaseWrapper extends ModelBase
         modelRenderer.render(RenderUtil.DEFAULT_BOX_TRANSLATION);
     }
 
+    /**
+     * Render this model statically. An empty render object will be passed to rest of the model.
+     */
     public void render()
     {
         this.render(new RenderObject(new Object[] { null }));
     }
 
+    /**
+     * Render this model dynamically by passing it a render object.
+     * @param o - The render object. Passing a TileEntity or Entity will result in the automatic creation of a render object.
+     * Passing a render object will result in the object being directly passed to the rest of the model. This option is much more dynamic.
+     */
     public void render(Object o)
     {
         if (o instanceof IRenderObject)
@@ -110,9 +134,20 @@ public abstract class ModelBaseWrapper extends ModelBase
     }
 
     /** 
-     * The base render method 
+     * The base render method. Renders all of the boxes stored in the boxList. This is where the rendering is actually done.
+     * 
+     * @param renderObject - The render object used to pass rendering arguments to the rest of the model during 
+     * rendering. Allows for dynamically rendered models.
+     * @param boxTranslation - The box translation offset. Default value is 0.0625F
      **/
-    protected abstract void render(IRenderObject renderObject, float boxTranslation);
+    protected void render(IRenderObject renderObject, float boxTranslation)
+    {
+        for (Object o : this.boxList)
+        {
+            ModelRenderer box = (ModelRenderer) o;
+            box.render(boxTranslation);
+        }
+    }
 
     /**
      * The entity render method from ModelBase with correct parameter mappings. Calls the base render method.
