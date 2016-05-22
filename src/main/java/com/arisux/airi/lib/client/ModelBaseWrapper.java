@@ -125,6 +125,7 @@ public abstract class ModelBaseWrapper extends ModelBase
      * @param headPitch - The head rotation pitch of the Entity being rendered.
      * @param boxTranslation - The box translation offset. Default value is 0.0625F
      */
+    @Deprecated
     @Override
     public void render(Entity entity, float swingProgress, float swingProgressPrev, float idleProgress, float headYaw, float headPitch, float boxTranslation)
     {
