@@ -7,7 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 
 public abstract class ItemRenderer implements IItemRenderer
@@ -140,18 +139,11 @@ public abstract class ItemRenderer implements IItemRenderer
         return modelTexMap;
     }
 
-    @Deprecated
     public ModelBaseWrapper getModel()
     {
         return this.getModelTexMap().getModel();
     }
 
-    public ResourceLocation getResourceLocation()
-    {
-        return this.getModelTexMap().getTexture();
-    }
-
-    @Deprecated
     public Texture getTexture()
     {
         return this.getModelTexMap().getTexture();

@@ -97,9 +97,17 @@ public class ModelBaseWrapper extends ModelBase
         model.rotateAngleZ = rotateAngleZ;
     }
 
-    public void draw(ModelRenderer modelRenderer)
+    public static void draw(ModelRenderer modelRenderer)
     {
         modelRenderer.render(RenderUtil.DEFAULT_BOX_TRANSLATION);
+    }
+    
+    public static void draw(ModelRenderer[] group)
+    {
+        for (ModelRenderer child : group)
+        {
+            draw(child);
+        }
     }
 
     /**
@@ -107,7 +115,7 @@ public class ModelBaseWrapper extends ModelBase
      */
     public void render()
     {
-        this.render(new RenderObject(new Object[] { null }));
+        this.render(null);
     }
 
     /**
@@ -117,6 +125,11 @@ public class ModelBaseWrapper extends ModelBase
      */
     public void render(Object o)
     {
+        if (o == null)
+        {
+            this.render(new RenderObject(new Object[] { null }));
+        }
+        
         if (o instanceof IRenderObject)
         {
             this.render((IRenderObject) o, RenderUtil.DEFAULT_BOX_TRANSLATION);
@@ -197,7 +210,18 @@ public class ModelBaseWrapper extends ModelBase
     {
         super.setLivingAnimations(entityLiving, swingProgress, swingProgressPrev, renderPartialTicks);
     }
-
+    
+    /**
+     * Creates an array or group of ModelRenderers.
+     * 
+     * @param children - The ModelRenderer instances we're adding to this group.
+     * @return The array or group created.
+     */
+    public static ModelRenderer[] group(ModelRenderer ... children)
+    {
+        return children;
+    }
+    
     /**
      * Constructs a standard ModelBase instance from the specified class.
      * 
