@@ -24,7 +24,7 @@ public class Texture extends ResourceLocation
         super(domain, location);
     }
     
-    public void bindTexture()
+    public void bind()
     {
         RenderUtil.bindTexture(this);
     }

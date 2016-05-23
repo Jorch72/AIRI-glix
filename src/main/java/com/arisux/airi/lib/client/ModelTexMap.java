@@ -33,21 +33,32 @@ public class ModelTexMap
         return this.texture;
     }
     
+    public void bindTexture()
+    {
+        this.getTexture().bind();
+    }
+    
+    public void drawStandaloneModel()
+    {
+        this.drawStandaloneModel(null);
+    }
+    
+    public void drawStandaloneModel(Object o)
+    {
+        this.getModel().render(o);
+    }
+    
     public void draw()
     {
-        if (this.model != null && this.texture != null)
-        {
-            this.texture.bindTexture();
-            this.model.render();
-        }
+        this.draw(null);
     }
     
     public void draw(Object o)
     {
         if (this.model != null && this.texture != null)
         {
-            this.texture.bindTexture();
-            this.model.render(o);
+            this.bindTexture();
+            this.drawStandaloneModel(o);
         }
     }
 }
