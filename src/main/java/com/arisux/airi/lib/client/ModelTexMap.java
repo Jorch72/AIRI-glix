@@ -2,20 +2,12 @@ package com.arisux.airi.lib.client;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.util.ResourceLocation;
 
 @SideOnly(Side.CLIENT)
-public class ModelTexMap
+public class ModelTexMap<MODEL extends ModelBaseWrapper>
 {
     private Texture texture;
     private ModelBaseWrapper model;
-
-    public ModelTexMap(ModelBase model, ResourceLocation resource)
-    {
-        this.model = new ModelBaseWrapper(model);
-        this.texture = new Texture(resource);
-    }
     
     public ModelTexMap(ModelBaseWrapper model, Texture texture)
     {
@@ -23,9 +15,10 @@ public class ModelTexMap
         this.texture = texture;
     }
 
-    public ModelBaseWrapper getModel()
+    @SuppressWarnings("unchecked")
+    public MODEL getModel()
     {
-        return this.model;
+        return (MODEL) this.model;
     }
 
     public Texture getTexture()

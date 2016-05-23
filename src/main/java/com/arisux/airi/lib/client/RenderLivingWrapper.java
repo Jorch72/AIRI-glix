@@ -6,14 +6,14 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderLivingWrapper extends RenderLiving
 {
-    protected ModelTexMap model;
+    protected ModelTexMap<? extends ModelBaseWrapper> model;
     
-    public RenderLivingWrapper(ModelTexMap model)
+    public RenderLivingWrapper(ModelTexMap<? extends ModelBaseWrapper> model)
     {
         this(model, 0F);
     }
     
-    public RenderLivingWrapper(ModelTexMap model, float shadowSize)
+    public RenderLivingWrapper(ModelTexMap<? extends ModelBaseWrapper> model, float shadowSize)
     {
         super(model.getModel(), shadowSize);
         this.model = model;
@@ -25,7 +25,7 @@ public class RenderLivingWrapper extends RenderLiving
         return this.model.getTexture();
     }
     
-    public ModelTexMap getModelTexMap()
+    public ModelTexMap<? extends ModelBaseWrapper> getModelTexMap()
     {
         return model;
     }

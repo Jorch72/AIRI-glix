@@ -14,10 +14,10 @@ public abstract class ItemRenderer implements IItemRenderer
 {
     protected Minecraft mc = Minecraft.getMinecraft();
     protected PlayerResourceManager resourceManager;
-    private ModelTexMap modelTexMap;
+    private ModelTexMap<? extends ModelBaseWrapper> modelTexMap;
     private boolean rendersInFirstPerson, rendersInThirdPerson, rendersInInventory, rendersInWorld;
 
-    public ItemRenderer(ModelTexMap modelTexMap)
+    public ItemRenderer(ModelTexMap<? extends ModelBaseWrapper> modelTexMap)
     {
         this.resourceManager = new PlayerResourceManager();
         this.modelTexMap = modelTexMap;
@@ -135,7 +135,7 @@ public abstract class ItemRenderer implements IItemRenderer
         return this;
     }
 
-    public ModelTexMap getModelTexMap()
+    public ModelTexMap<? extends ModelBaseWrapper> getModelTexMap()
     {
         return modelTexMap;
     }
