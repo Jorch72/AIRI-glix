@@ -7,18 +7,17 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ModelTexMap<MODEL extends ModelBaseWrapper>
 {
     private Texture texture;
-    private ModelBaseWrapper model;
+    private MODEL model;
     
-    public ModelTexMap(ModelBaseWrapper model, Texture texture)
+    public ModelTexMap(MODEL model, Texture texture)
     {
         this.model = model;
         this.texture = texture;
     }
 
-    @SuppressWarnings("unchecked")
     public MODEL getModel()
     {
-        return (MODEL) this.model;
+        return this.model;
     }
 
     public Texture getTexture()
