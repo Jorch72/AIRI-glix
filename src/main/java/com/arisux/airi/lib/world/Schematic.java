@@ -55,7 +55,7 @@ public class Schematic
         ///////////////////////////////////////////////
         Map<Short, String> idMap = new HashMap<Short, String>();
 
-        for (Object obj : mappings.func_150296_c())
+        for (Object obj : mappings.getKeySet())
         {
             String alias = obj.toString();
             short id = mappings.getShort(alias);

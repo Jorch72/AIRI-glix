@@ -106,8 +106,8 @@ public class GuiElements
             {
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 GlStateManager.enableBlend();
-                this.field_146123_n = mouseX >= this.xPosition * scale && mouseY >= this.yPosition * scale && mouseX < (this.xPosition + this.width) * scale && mouseY < (this.yPosition + this.height) * scale;
-                int k = this.getHoverState(this.field_146123_n);
+                this.hovered = mouseX >= this.xPosition * scale && mouseY >= this.yPosition * scale && mouseX < (this.xPosition + this.width) * scale && mouseY < (this.yPosition + this.height) * scale;
+                int k = this.getHoverState(this.hovered);
 
                 int overlayColor = k == 2 ? (Mouse.isButtonDown(0) ? overlayColorPressed : overlayColorHover) : overlayColorNormal;
 
@@ -140,7 +140,7 @@ public class GuiElements
         @Override
         public boolean isMouseOver()
         {
-            return this.field_146123_n;
+            return this.hovered;
         }
 
         @Override
@@ -221,7 +221,7 @@ public class GuiElements
 
         public GuiCustomTextbox(int x, int y, int width, int height)
         {
-            super(Minecraft.getMinecraft().fontRenderer, x, y, width, height);
+            super(Minecraft.getMinecraft().fontRendererObj, x, y, width, height);
             this.add();
             this.xPosition = x;
             this.yPosition = y;

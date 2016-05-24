@@ -110,9 +110,9 @@ public class ModelBipedWrapper extends ModelBaseWrapper
         float angle1;
         float angle2;
 
-        if (this.onGround > -9990.0F)
+        if (this.swingProgress > -9990.0F)
         {
-            angle1 = this.onGround;
+            angle1 = this.swingProgress;
             this.bipedBody.rotateAngleY = MathHelper.sin(MathHelper.sqrt_float(angle1) * (float) Math.PI * 2.0F) * 0.2F;
             this.bipedRightArm.rotationPointZ = MathHelper.sin(this.bipedBody.rotateAngleY) * 5.0F;
             this.bipedRightArm.rotationPointX = -MathHelper.cos(this.bipedBody.rotateAngleY) * 5.0F;
@@ -121,14 +121,14 @@ public class ModelBipedWrapper extends ModelBaseWrapper
             this.bipedRightArm.rotateAngleY += this.bipedBody.rotateAngleY;
             this.bipedLeftArm.rotateAngleY += this.bipedBody.rotateAngleY;
             this.bipedLeftArm.rotateAngleX += this.bipedBody.rotateAngleY;
-            angle1 = 1.0F - this.onGround;
+            angle1 = 1.0F - this.swingProgress;
             angle1 *= angle1;
             angle1 *= angle1;
             angle1 = 1.0F - angle1;
             angle2 = MathHelper.sin(angle1 * (float) Math.PI);
-            this.bipedRightArm.rotateAngleX = (float) (this.bipedRightArm.rotateAngleX - (angle2 * 1.2D + (double) MathHelper.sin(this.onGround * (float) Math.PI) * -(this.bipedHead.rotateAngleX - 0.7F) * 0.75F));
+            this.bipedRightArm.rotateAngleX = (float) (this.bipedRightArm.rotateAngleX - (angle2 * 1.2D + (double) MathHelper.sin(this.swingProgress * (float) Math.PI) * -(this.bipedHead.rotateAngleX - 0.7F) * 0.75F));
             this.bipedRightArm.rotateAngleY += this.bipedBody.rotateAngleY * 2.0F;
-            this.bipedRightArm.rotateAngleZ = MathHelper.sin(this.onGround * (float) Math.PI) * -0.4F;
+            this.bipedRightArm.rotateAngleZ = MathHelper.sin(this.swingProgress * (float) Math.PI) * -0.4F;
         }
 
         if (this.isSneak)

@@ -86,8 +86,8 @@ public class ModUtil
 
         public Block registerBlock(Block block, String reference, CreativeTabs tab)
         {
-            block.setBlockName(getMod().domain() + reference);
-            block.setBlockTextureName((block.getUnlocalizedName()).replace("tile.", ""));
+            block.setUnlocalizedName(getMod().domain() + reference);
+            block.setTextureName((block.getUnlocalizedName()).replace("tile.", ""));
             this.setCreativeTab(block, tab);
 
             return GameRegistry.registerBlock(block, reference);
@@ -172,15 +172,15 @@ public class ModUtil
      */
     public static Block registerBlock(Block block, String reference, String texture, IBHandler handler, boolean visibleOnTab, CreativeTabs tab)
     {
-        block.setBlockName(handler.getMod().domain() + reference);
+        block.setUnlocalizedName(handler.getMod().domain() + reference);
 
         if (texture == null)
         {
-            block.setBlockTextureName((block.getUnlocalizedName()).replace("tile.", ""));
+            block.setTextureName((block.getUnlocalizedName()).replace("tile.", ""));
         }
         else
         {
-            block.setBlockTextureName(texture);
+            block.setTextureName(texture);
         }
 
         if (tab != null && visibleOnTab)

@@ -35,7 +35,7 @@ public class ThemeMinecraft extends Theme implements ITheme
     public void drawTitleBar(Window window, int mouseX, int mouseY)
     {
         RenderUtil.drawBlockSide(Blocks.bedrock, 0, window.getX(), window.getY(), window.getWidth(), window.getHeight(), window.getWidth() / 50f, window.getHeight() / 50f);
-        getWindowManager().drawCenteredString(Minecraft.getMinecraft().fontRenderer, window.getTitle(), window.getX() + window.getWidth() / 2, window.getY() - 12, 0xFFFFFF);
+        getWindowManager().drawCenteredString(Minecraft.getMinecraft().fontRendererObj, window.getTitle(), window.getX() + window.getWidth() / 2, window.getY() - 12, 0xFFFFFF);
     }
 
     @Override

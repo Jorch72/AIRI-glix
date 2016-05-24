@@ -67,13 +67,13 @@ public abstract class Window implements IWindow
                     int tagValue = BasicMarkupParser.parseColorTagValue(this.defaultTextLines.get(x), manager.getWindowAPI().getCurrentTheme().getTextColor());
                     String line = BasicMarkupParser.removeColorTag(this.defaultTextLines.get(x));
 
-                    Minecraft.getMinecraft().fontRenderer.drawSplitString(line, padding + xPos, padding + yPos + (x * lineSpacing), width - getPadding() * 2, tagValue);
+                    Minecraft.getMinecraft().fontRendererObj.drawSplitString(line, padding + xPos, padding + yPos + (x * lineSpacing), width - getPadding() * 2, tagValue);
                 }
             }
         }
         else
         {
-            Minecraft.getMinecraft().fontRenderer.drawSplitString(this.defaultText, padding + xPos, padding + yPos, width - getPadding() * 2, manager.getWindowAPI().getCurrentTheme().getTextColor());
+            Minecraft.getMinecraft().fontRendererObj.drawSplitString(this.defaultText, padding + xPos, padding + yPos, width - getPadding() * 2, manager.getWindowAPI().getCurrentTheme().getTextColor());
         }
 
         this.previousText = defaultText;

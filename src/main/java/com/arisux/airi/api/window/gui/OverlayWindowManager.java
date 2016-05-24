@@ -113,7 +113,7 @@ public class OverlayWindowManager extends GuiCustomScreen
                 {
                     if (button.mousePressed(this.mc, mouseX, mouseY))
                     {
-                        button.func_146113_a(this.mc.getSoundHandler());
+                        button.playPressSound(this.mc.getSoundHandler());
                         window.onButtonPress(button);
                     }
                 }

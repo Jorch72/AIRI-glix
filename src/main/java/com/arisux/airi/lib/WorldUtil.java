@@ -536,7 +536,7 @@ public class WorldUtil
 
             public CoordData(TileEntity tileEntity)
             {
-                this(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, tileEntity.getWorldObj() != null ? tileEntity.getWorldObj().getBlock(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord) : null, tileEntity.getWorldObj() != null ? tileEntity.getWorldObj().getBlockMetadata(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord) : 0);
+                this(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, tileEntity.getWorld() != null ? tileEntity.getWorld().getBlock(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord) : null, tileEntity.getWorld() != null ? tileEntity.getWorld().getBlockMetadata(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord) : 0);
             }
 
             public CoordData(double posX, double posY, double posZ, Block block)
@@ -1244,7 +1244,7 @@ public class WorldUtil
 
             if (posReach != null)
             {
-                MovingObjectPosition blockHitVec = player.worldObj.func_147447_a(pos, posReach, true, true, true);
+                MovingObjectPosition blockHitVec = player.worldObj.rayTraceBlocks(pos, posReach, true, true, true);
 
                 if (blockHitVec != null)
                 {
@@ -1307,7 +1307,7 @@ public class WorldUtil
 
             if (posReach != null)
             {
-                MovingObjectPosition blockHitVec = entity.worldObj.func_147447_a(pos, posReach, true, true, true);
+                MovingObjectPosition blockHitVec = entity.worldObj.rayTraceBlocks(pos, posReach, true, true, true);
 
                 if (blockHitVec != null)
                 {

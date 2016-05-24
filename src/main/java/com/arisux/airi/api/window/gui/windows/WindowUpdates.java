@@ -73,7 +73,7 @@ public class WindowUpdates extends Window implements IWindow
 
                     for (int x = lines.length; x > 0; x--)
                     {
-                        Minecraft.getMinecraft().fontRenderer.drawString(lines[x - 1], this.xPos * 2 + 20, this.yPos * 2 + 70 + (x * 10), 0xFF444444);
+                        Minecraft.getMinecraft().fontRendererObj.drawString(lines[x - 1], this.xPos * 2 + 20, this.yPos * 2 + 70 + (x * 10), 0xFF444444);
 
                         if (RenderUtil.getStringRenderWidth(lines[x - 1]) > RenderUtil.getStringRenderWidth(longestLine))
                         {

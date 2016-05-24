@@ -278,12 +278,12 @@ public class RenderUtil
 
         if (shadow)
         {
-            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(text, x, y, color);
+            Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(text, x, y, color);
         }
 
         if (!shadow)
         {
-            Minecraft.getMinecraft().fontRenderer.drawString(text, x, y, color);
+            Minecraft.getMinecraft().fontRendererObj.drawString(text, x, y, color);
         }
 
         GlStateManager.color3i(0xFFFFFF);
@@ -391,7 +391,7 @@ public class RenderUtil
      */
     public static int getStringRenderWidth(String s)
     {
-        return Minecraft.getMinecraft().fontRenderer.getStringWidth(EnumChatFormatting.getTextWithoutFormattingCodes(s));
+        return Minecraft.getMinecraft().fontRendererObj.getStringWidth(EnumChatFormatting.getTextWithoutFormattingCodes(s));
     }
 
     /**
@@ -529,7 +529,7 @@ public class RenderUtil
             }
             else
             {
-                Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(s, x, y, -1);
+                Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow(s, x, y, -1);
                 y += s.endsWith(TOOLTIP_LINESPACE) ? 12 : 10;
             }
         }
@@ -582,7 +582,7 @@ public class RenderUtil
      */
     public static void drawProgressBar(String label, int maxProgress, int curProgress, int posX, int posY, int barWidth, int barHeight, int stringPosY, int color, boolean barStyle)
     {
-        FontRenderer fontrenderer = Minecraft.getMinecraft().fontRenderer;
+        FontRenderer fontrenderer = Minecraft.getMinecraft().fontRendererObj;
 
         GlStateManager.pushMatrix();
         {

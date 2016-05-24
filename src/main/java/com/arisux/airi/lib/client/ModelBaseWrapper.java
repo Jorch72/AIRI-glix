@@ -19,7 +19,7 @@ public class ModelBaseWrapper extends ModelBase
         this.boxList = model.boxList;
         this.isChild = model.isChild;
         this.isRiding = model.isRiding;
-        this.onGround = model.onGround;
+        this.swingProgress = model.swingProgress;
         this.textureHeight = model.textureHeight;
         this.textureWidth = model.textureWidth;
     }
