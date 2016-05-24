@@ -29,7 +29,7 @@ public class GuiElements
 
         public void remove();
 
-        public boolean isMouseOver();
+        public boolean isActive();
 
         public void mousePressed(Vector2d mousePosition);
 
@@ -129,7 +129,7 @@ public class GuiElements
                     RenderUtil.drawStringAlignRight(this.displayString, this.xPosition + this.width - 4, this.yPosition + (this.height - 8) / 2, fontColor);
                 }
 
-                if (this.isMouseOver() && !tooltip.equalsIgnoreCase(""))
+                if (this.isActive() && !tooltip.equalsIgnoreCase(""))
                 {
                     RenderUtil.drawToolTip((int) RenderUtil.scaledMousePosition().x + 10, (int) RenderUtil.scaledMousePosition().y, this.tooltip);
                 }
@@ -138,7 +138,7 @@ public class GuiElements
         }
 
         @Override
-        public boolean isMouseOver()
+        public boolean isActive()
         {
             return this.hovered;
         }
@@ -184,7 +184,7 @@ public class GuiElements
         {
             super.mouseReleased((int) mousePosition.x, (int) mousePosition.y);
 
-            if (isMouseOver())
+            if (isActive())
             {
                 if (this.action != null)
                 {
@@ -242,7 +242,7 @@ public class GuiElements
         }
 
         @Override
-        public boolean isMouseOver()
+        public boolean isActive()
         {
             Vector2d mousePosition = RenderUtil.scaledMousePosition();
             int mouseX = (int) mousePosition.x;

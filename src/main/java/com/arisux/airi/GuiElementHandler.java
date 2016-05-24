@@ -4,18 +4,17 @@ import java.util.ArrayList;
 
 import javax.vecmath.Vector2d;
 
-import net.minecraft.client.Minecraft;
-
 import org.lwjgl.input.Mouse;
 
 import com.arisux.airi.lib.GuiElements.GuiCustomSlider;
 import com.arisux.airi.lib.GuiElements.GuiCustomTextbox;
 import com.arisux.airi.lib.GuiElements.IGuiElement;
-import com.arisux.airi.lib.*;
+import com.arisux.airi.lib.RenderUtil;
 import com.arisux.airi.lib.interfaces.IInitializablePre;
 
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.gameevent.InputEvent.MouseInputEvent;
+import net.minecraft.client.Minecraft;
 
 public class GuiElementHandler implements IInitializablePre
 {
@@ -50,7 +49,7 @@ public class GuiElementHandler implements IInitializablePre
 
                     if (textbox != null && Mouse.isButtonDown(0))
                     {
-                        if (textbox.isMouseOver())
+                        if (textbox.isActive())
                         {
                             textbox.setFocused(true);
                         }
@@ -66,7 +65,7 @@ public class GuiElementHandler implements IInitializablePre
 
     private static void handleButtonInput(MouseInputEvent event, IGuiElement element, Vector2d mousePosition)
     {
-        if (!Minecraft.getMinecraft().inGameHasFocus && element.isMouseOver())
+        if (!Minecraft.getMinecraft().inGameHasFocus && element.isActive())
         {
             if (Mouse.getEventButtonState())
             {

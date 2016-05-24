@@ -111,7 +111,7 @@ public class WindowUpdates extends Window implements IWindow
                     updater = updates.get(updates.indexOf(updater) < (updates.size() - 1) ? updates.indexOf(updater) + 1 : 0);
                 }
             });
-            if (buttonNext.isMouseOver())
+            if (buttonNext.isActive())
             {
                 RenderUtil.drawToolTip(mouseX + 10, mouseY, "View next update");
             }
@@ -135,7 +135,7 @@ public class WindowUpdates extends Window implements IWindow
                     updater = updates.get(updates.indexOf(updater) > 0 && updates.indexOf(updater) <= updates.size() - 1 ? updates.indexOf(updater) - 1 : updates.size() - 1);
                 }
             });
-            if (buttonPrevious.isMouseOver())
+            if (buttonPrevious.isActive())
             {
                 RenderUtil.drawToolTip(mouseX + 10, mouseY, "View previous update");
             }
