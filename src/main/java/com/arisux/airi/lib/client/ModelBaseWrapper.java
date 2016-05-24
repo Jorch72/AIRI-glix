@@ -1,6 +1,7 @@
 package com.arisux.airi.lib.client;
 
 import com.arisux.airi.AIRI;
+import com.arisux.airi.lib.AccessWrapper;
 import com.arisux.airi.lib.RenderUtil;
 
 import cpw.mods.fml.relauncher.Side;
@@ -128,21 +129,41 @@ public class ModelBaseWrapper extends ModelBase
         if (o == null)
         {
             this.render(new RenderObject(new Object[] { null }));
+            return;
         }
         
         if (o instanceof IRenderObject)
         {
             this.render((IRenderObject) o, RenderUtil.DEFAULT_BOX_TRANSLATION);
+            return;
         }
 
         if (o instanceof TileEntity)
         {
             this.render(new RenderObject(new Object[] { o }), RenderUtil.DEFAULT_BOX_TRANSLATION);
+            return;
+        }
+        
+        if (o instanceof EntityLivingBase)
+        {
+            EntityLivingBase entityLiving = (EntityLivingBase) o;
+            float renderPartialTicks = AccessWrapper.getRenderPartialTicks();
+            float yawOffset = RenderUtil.interpolateRotation(entityLiving.prevRenderYawOffset, entityLiving.renderYawOffset, renderPartialTicks);
+            float yawHead = RenderUtil.interpolateRotation(entityLiving.prevRotationYawHead, entityLiving.rotationYawHead, renderPartialTicks);
+            float swingProgress = (entityLiving.limbSwing - entityLiving.limbSwingAmount * (1.0F - renderPartialTicks));
+            float swingProgressPrevious = (entityLiving.prevLimbSwingAmount + (entityLiving.limbSwingAmount - entityLiving.prevLimbSwingAmount) * renderPartialTicks);
+            float idleProgress = (entityLiving.ticksExisted + renderPartialTicks);
+            float headRotateAngleY = (yawHead - yawOffset);
+            float headRotationPitch = (entityLiving.prevRotationPitch + (entityLiving.rotationPitch - entityLiving.prevRotationPitch) * renderPartialTicks);
+            
+            this.render(new RenderObject(new Object[] { o, swingProgress, swingProgressPrevious, idleProgress, headRotateAngleY, headRotationPitch }), RenderUtil.DEFAULT_BOX_TRANSLATION);
+            return;
         }
 
         if (o instanceof Entity)
         {
             this.render(new RenderObject(new Object[] { o, 0F, 0F, 0F, 0F, 0F }), RenderUtil.DEFAULT_BOX_TRANSLATION);
+            return;
         }
     }
 
