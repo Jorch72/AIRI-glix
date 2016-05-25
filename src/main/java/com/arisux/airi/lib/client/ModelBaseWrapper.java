@@ -128,7 +128,7 @@ public class ModelBaseWrapper extends ModelBase
     {
         if (o == null)
         {
-            this.render(new RenderObject(new Object[] { null }));
+            this.render(new RenderObject(new Object[] { null, 0F, 0F, 0F, 0F, 0F }), RenderUtil.DEFAULT_BOX_TRANSLATION);
             return;
         }
         
