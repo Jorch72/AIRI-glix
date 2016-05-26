@@ -11,10 +11,10 @@ import net.minecraftforge.client.IItemRenderer;
 
 public abstract class ItemRenderer implements IItemRenderer
 {
-    protected Minecraft mc = Minecraft.getMinecraft();
-    protected PlayerResourceManager resourceManager;
+    protected Minecraft                             mc = Minecraft.getMinecraft();
+    protected PlayerResourceManager                 resourceManager;
     private ModelTexMap<? extends ModelBaseWrapper> modelTexMap;
-    private boolean rendersInFirstPerson, rendersInThirdPerson, rendersInInventory, rendersInWorld;
+    private boolean                                 rendersInFirstPerson, rendersInThirdPerson, rendersInInventory, rendersInWorld;
 
     public ItemRenderer(ModelTexMap<? extends ModelBaseWrapper> modelTexMap)
     {
@@ -59,30 +59,34 @@ public abstract class ItemRenderer implements IItemRenderer
     {
         try
         {
-            GlStateManager.pushMatrix();
+            switch (type)
             {
-                switch (type)
-                {
-                    case EQUIPPED:
-                        this.renderThirdPerson(item, data);
-                        break;
-                    case EQUIPPED_FIRST_PERSON:
-                        this.renderFirstPerson(item, data);
-                        break;
-                    case INVENTORY:
-                        GlStateManager.rotate(-45, 1, 0, 0);
-                        GlStateManager.rotate(180, 0, 1, 0);
-                        GlStateManager.translate(-16, 0, 0);
-                        this.renderInInventory(item, data);
-                        break;
-                    case ENTITY:
-                        this.renderInWorld(item, data);
-                        break;
-                    default:
-                        break;
-                }
+                case EQUIPPED:
+                    GlStateManager.pushMatrix();
+                    this.renderThirdPerson(item, data);
+                    GlStateManager.popMatrix();
+                    break;
+                case EQUIPPED_FIRST_PERSON:
+                    GlStateManager.pushMatrix();
+                    this.renderFirstPerson(item, data);
+                    GlStateManager.popMatrix();
+                    break;
+                case INVENTORY:
+                    GlStateManager.pushMatrix();
+                    GlStateManager.rotate(-45, 1, 0, 0);
+                    GlStateManager.rotate(180, 0, 1, 0);
+                    GlStateManager.translate(-16, 0, 0);
+                    this.renderInInventory(item, data);
+                    GlStateManager.popMatrix();
+                    break;
+                case ENTITY:
+                    GlStateManager.pushMatrix();
+                    this.renderInWorld(item, data);
+                    GlStateManager.popMatrix();
+                    break;
+                default:
+                    break;
             }
-            GlStateManager.popMatrix();
         }
         catch (Exception e)
         {
