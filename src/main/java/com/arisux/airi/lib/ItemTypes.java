@@ -67,7 +67,7 @@ public class ItemTypes
             }
         }
 
-        public Item disableIcon()
+        public HookedItem disableIcon()
         {
             this.disableIcon = true;
             return this;
