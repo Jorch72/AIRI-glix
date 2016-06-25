@@ -15,15 +15,6 @@ import net.minecraft.tileentity.TileEntity;
 @SideOnly(Side.CLIENT)
 public class ModelBaseWrapper extends ModelBase
 {
-    public ModelBaseWrapper(ModelBase model)
-    {
-        this.boxList = model.boxList;
-        this.isChild = model.isChild;
-        this.isRiding = model.isRiding;
-        this.swingProgress = model.swingProgress;
-        this.textureHeight = model.textureHeight;
-        this.textureWidth = model.textureWidth;
-    }
     
     public ModelBaseWrapper()
     {
